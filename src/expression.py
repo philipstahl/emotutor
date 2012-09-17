@@ -1,3 +1,7 @@
+JOY = "CASA_Joy_01"
+RELAX = "CASA_Relax_01"
+ANGER = "CASA_Anger_01"
+
 class Expression:
     def __init__(self, name, wait = 0.0, intensity = 1.0, interpolate = 1.0):
         self.name = name
@@ -18,3 +22,18 @@ class Expression:
                 </description> </face> </marc:fork> \
                 </bml>".format(self.name, self.name, self.wait, self.name,
                                self.interpolate, self.intensity)
+
+class Anger(Expression):
+    def __init__(self):
+        Expression.__init__(self, ANGER)
+        self.name = ANGER
+
+class Joy(Expression):
+    def __init__(self):
+        Expression.__init__(self, JOY)
+        self.name = JOY
+        
+class Relax(Expression):
+    def __init__(self):
+        Expression.__init__(self, RELAX)
+        self.name = RELAX

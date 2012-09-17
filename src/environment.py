@@ -5,15 +5,29 @@ from gui import Gui
 
 class ExpEnvironment:
     def __init__(self):
-        self.tasks = [Task("Auto", "Car"), Task("Baum", "Tree"),
-                      Task("Stuhl", "Chair"), Task("Messer", "Knife")]
+        self.tasks = [Task("Car", "Auto"), Task("House", "Haus"),
+                      Task("Chair", "Stuhl"), Task("Knife", "Messer")]
+        # create needed sound files:
+        '''
+        tts = TextToSpeech()
+        tts.save("introduction", "Welcome to the vocabulary training!")
+        tts.save("positive_right", "Well done!")
+        tts.save("neutral_right", "You have choosen the right answer.")
+        tts.save("neutral_wrong", "Your answer is wrong")
+        tts.save("negative_wrong", "Annoying. That is not the correct answer!")
+        tts.save("question", "What is the german word for:")
+        tts.save("chair", "Chair")
+        tts.save("knife", "Knife")
+        tts.save("car", "Car")
+        tts.save("house", "House")
+        '''
         self.solved_tasks = []        
         self.agent = Agent(self.tasks)
         self.gui = Gui()
 
     ''' Show init text and wait for start button.
     '''
-    def start(self):
+    def start(self):        
         self.gui.write(self.agent.introduce())
         self.present_task()
 

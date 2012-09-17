@@ -1,12 +1,15 @@
-class Speech:
-    def __init__(self, name):
-        self.name = name
+from tts import TextToSpeech
 
-    #<speech id=\"bml_item_2\"  marc:file=\"C:\\Program Files\\LIMSI\\MARC\\10.4.0\\{1}.wav\" marc:articulate=\"0.4\" /> \
+class Speech:
+    def __init__(self, name, text):
+        self.name = name
+        tts = TextToSpeech()
+        tts.save(name, text)
+
     def getBMLCode(self):
         return "<bml id=\"Perform{0}\"> \
                <marc:fork id=\"Track_0_fork_2\"> \
                <wait duration=\"0.00\" /> \
-               <speech id=\"bml_item_2\"  marc:file=\"C:\\Users\\User\\Desktop\\MARC_python\\sounds\\{1}.wav\" marc:articulate=\"0.4\" /> \
+               <speech id=\"bml_item_2\"  marc:file=\"C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\{1}.wav\" marc:articulate=\"0.4\" /> \
                </marc:fork></bml>".format(self.name, self.name)
 

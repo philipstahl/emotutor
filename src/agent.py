@@ -1,27 +1,42 @@
 from cogmodule import CogModule
 from emomodule import EmoModule
 from speachmodule import SpeachModule
+from marc import Marc
+from expression import Anger, Joy, Relax
+from speech import Speech
 
 class Agent:
 
-    def __init__(self, tasks):
+    def __init__(self, tasks, use_marc = True):
         self.tasks = tasks
         self.cogModule = CogModule()
         self.emoModule = EmoModule()
         self.speachModule = SpeachModule()
-        pass
+        if use_marc:
+            self.marc = Marc()
+        else:
+            self.marc = None
 
 
     ''' The agent introduces the human solver to the experiment, explaining
         the rules of the task.
     '''
     def introduce(self):
-        return "Welcome to your vocabulary session.Press 'Enter' to begin:\n"
+        text = "Welcome to your vocabulary session. Press 'Enter' to begin."
+        
+        self.marc.show(Relax())
+        self.marc.speak(Speech("introduction", text))
+        
+        return text + "\n"
 
 
     ''' The agent presents a single task.
     '''
     def present(self, task):
+        text = "What is the german word for " + task.question
+        
+        self.marc.speak(Speech("task", text))
+
         return task.question + ": "
 
 
@@ -33,9 +48,20 @@ class Agent:
         correct, time = task.last_trial()
         surprise = self.cogModule.check(task)
         mood = self.emoModule.check(task)
+        if mood == "[very happy]" or mood == "[happy]":
+            self.marc.show(Joy())
+        elif mood == "normal":
+            self.marc.show(Relax())
+        elif mood == "[very angry]" or mood == "[angry]":
+            self.marc.show(Anger())
+        
+        
         answer = surprise + mood + " "
-        answer += self.speachModule.get_verbal_reaction(correct, surprise, mood)
-        return answer + "You needed " + str(time) + " sec."
+        text= self.speachModule.get_verbal_reaction(correct, surprise, mood)
+
+        self.marc.speak(Speech("evaluation", text))
+
+        return answer + text + "You needed " + str(time) + " sec."
 
 
     ''' The Agent gives feedback for the whole test telling how many tasks
