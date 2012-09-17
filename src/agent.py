@@ -7,6 +7,8 @@ from speech import Speech
 
 class Agent:
 
+    ''' Constructor
+    '''
     def __init__(self, tasks, use_marc = True):
         self.tasks = tasks
         self.cogModule = CogModule()
