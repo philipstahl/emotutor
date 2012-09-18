@@ -4,44 +4,46 @@ from speachmodule import SpeachModule
 from marc import Marc
 from expression import Anger, Joy, Relax
 from speech import Speech
+from globalsettings import *
 
 class Agent:
 
     ''' Constructor
     '''
-    def __init__(self, tasks, MARC = True):
+    def __init__(self, tasks):
         self.tasks = tasks
         self.cogModule = CogModule()
         self.emoModule = EmoModule()
         self.speachModule = SpeachModule()
+        self.marc = None        
         if MARC:
             self.marc = Marc()
-        else:
-            self.marc = None
-
+        
 
     ''' The agent introduces the human solver to the experiment, explaining
         the rules of the task.
     '''
     def introduce(self):
-        text = "Welcome to your vocabulary session. Press 'Enter' to begin."
+        emotion = Relax()
+        speech = Speech("introduction", "Welcome to your vocabulary session.")
         
         if self.marc:
-            self.marc.show(Relax())
-            self.marc.speak(Speech("introduction", text))
+            self.marc.show(emotion)
+            self.marc.speak(speech)
         
-        return text + "\n"
+        return (emotion.name, speech.text)
 
 
     ''' The agent presents a single task.
     '''
     def present(self, task):
-        text = "What is the german word for " + task.question
+        speech = Speech("task", "What is the german word for " + task.question 
+                                + "?")
         
         if self.marc:
-            self.marc.speak(Speech("task", text))
+            self.marc.speak(speech)
 
-        return task.question + ": "
+        return ('None', speech.text)
 
 
     ''' The agent evalutates the solution given by the human solver and shows
@@ -54,19 +56,23 @@ class Agent:
         mood = self.emoModule.check(task)
 
         answer = surprise + mood + " "
-        text= self.speachModule.get_verbal_reaction(correct, surprise, mood)
-
+        speech = Speech("evaluation", 
+                        self.speachModule.get_verbal_reaction(correct, surprise,
+                                                              mood)
+                        + " You needed " + str(time) + " seconds.")
+        emotion = None
+        if mood == "[very happy]" or mood == "[happy]":
+            emotion = Joy()
+        elif mood == "[normal]":
+            emotion = Relax()
+        elif mood == "[very angry]" or mood == "[angry]":
+            emotion = Anger()
+        
         if self.marc:
-            if mood == "[very happy]" or mood == "[happy]":
-                self.marc.show(Joy())
-            elif mood == "normal":
-                self.marc.show(Relax())
-            elif mood == "[very angry]" or mood == "[angry]":
-                self.marc.show(Anger())
+            self.marc.show(emotion)
+            self.marc.speak(speech)
 
-            self.marc.speak(Speech("evaluation", text))
-
-        return answer + text + "You needed " + str(time) + " sec."
+        return (emotion.name, speech.text)
 
 
     ''' The Agent gives feedback for the whole test telling how many tasks
@@ -76,4 +82,4 @@ class Agent:
         total_misses = 0
         for task in tasks:
             total_misses += task.misses()
-        return "Test finished. You had " + str(total_misses) + " misses in total."
+        return ("None", "Test finished. You had " + str(total_misses) + " misses in total.")

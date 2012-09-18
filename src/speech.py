@@ -1,10 +1,13 @@
 from tts import TextToSpeech
+from globalsettings import *
 
 class Speech:
     def __init__(self, name, text):
         self.name = name
-        tts = TextToSpeech()
-        tts.save(name, text)
+        self.text = text
+        if MARY:
+            tts = TextToSpeech()
+            tts.save(name, text)
 
     def getBMLCode(self):
         return "<bml id=\"Perform{0}\"> \

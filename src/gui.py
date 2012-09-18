@@ -1,15 +1,3 @@
-'''
-import optparse
-
-class Gui:
-    def __init__(self):
-        pass
-
-    def write(self, text):
-        var = raw_input(text)
-        return var
-'''
-
 from PyQt4 import QtCore, QtGui
 
 from environment import *
@@ -18,7 +6,12 @@ class VocabTrainer(QtGui.QWidget):
     def __init__(self, parent=None):
         super(VocabTrainer, self).__init__(parent)
 
-        self.agentOutput = QtGui.QLabel('')
+        self.labelEmoOutput = QtGui.QLabel('Emotional Output:')
+        self.labelSpeechOutput = QtGui.QLabel('Speech Output:')
+
+        self.emoOutput = QtGui.QLabel('')
+        self.speechOutput = QtGui.QLabel('')
+
         self.userInput = QtGui.QLineEdit()
         self.userInput.hide()
 
@@ -32,17 +25,24 @@ class VocabTrainer(QtGui.QWidget):
         self.nextButton.clicked.connect(self.next)        
 
         mainLayout = QtGui.QGridLayout()
-        mainLayout.addWidget(self.agentOutput, 0, 0)
-        mainLayout.addWidget(self.userInput, 1, 0, )
-        mainLayout.addWidget(self.submitButton, 1, 1)
-        mainLayout.addWidget(self.nextButton,1,1)
+        mainLayout.addWidget(self.labelEmoOutput, 0, 0)
+        mainLayout.addWidget(self.labelSpeechOutput, 1, 0)
+
+        mainLayout.addWidget(self.emoOutput, 0, 1)
+        mainLayout.addWidget(self.speechOutput, 1, 1)
+
+        mainLayout.addWidget(self.userInput, 2, 1, )
+        mainLayout.addWidget(self.submitButton, 2, 2)
+        mainLayout.addWidget(self.nextButton,2,2)
 
         self.setLayout(mainLayout)
         self.setWindowTitle("Simple Vocabulary Trainer")
         self.center()
 
-        self.exp = ExpEnvironment(MARC = False)
-        self.agentOutput.setText(self.exp.start())
+        self.exp = ExpEnvironment()
+        emotion, speech = self.exp.start()        
+        self.emoOutput.setText(emotion)
+        self.speechOutput.setText(speech)
 
     def center(self):
         screen = QtGui.QDesktopWidget().screenGeometry()
@@ -58,7 +58,10 @@ class VocabTrainer(QtGui.QWidget):
                     "Please enter a name and address.")
             return
         
-        self.agentOutput.setText(self.exp.evaluate(answer))
+        emotion, speech = self.exp.evaluate(answer) 
+        self.emoOutput.setText(emotion)
+        self.speechOutput.setText(speech)
+
         self.submitButton.hide()
         self.userInput.setReadOnly(True)
         self.nextButton.show()
@@ -68,27 +71,28 @@ class VocabTrainer(QtGui.QWidget):
             self.nextButton.setText("Next")
             self.userInput.show()
 
-        self.agentOutput.setText(self.exp.present_task())
+        if len(self.exp.tasks) == 0:
+            self.end()
+        else:
+            emotion, speech = self.exp.present_task()
+                
+            self.emoOutput.setText(emotion)
+            self.speechOutput.setText(speech)
+
+            self.nextButton.hide()
+            self.userInput.setText('')
+            self.userInput.setReadOnly(False)
+            self.submitButton.show()
+
+    def end(self):
+        emotion, speech = self.exp.end()
+        self.emoOutput.setText(emotion)
+        self.speechOutput.setText(speech)
+
         self.nextButton.hide()
         self.userInput.setText('')
-        self.userInput.setReadOnly(False)
-        self.submitButton.show()
-
-
-    def cancel(self):
-        '''
-        self.nameLine.setText(self.oldName)
-        self.nameLine.setReadOnly(True)
-
-        self.addressText.setText(self.oldAddress)
-        self.addressText.setReadOnly(True)
-
-        self.addButton.setEnabled(True)
-        self.submitButton.hide()
-        self.cancelButton.hide()
-        '''
-        pass
-
+        self.userInput.hide()
+            
 
 if __name__ == '__main__':
     import sys
