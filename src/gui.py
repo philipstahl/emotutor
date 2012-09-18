@@ -6,8 +6,13 @@ class VocabTrainer(QtGui.QWidget):
     def __init__(self, parent=None):
         super(VocabTrainer, self).__init__(parent)
 
+        self.resize(600, 100)
+
         self.labelEmoOutput = QtGui.QLabel('Emotional Output:')
         self.labelSpeechOutput = QtGui.QLabel('Speech Output:')
+
+        self.labelEmoOutput.width = 100
+        self.labelSpeechOutput.width = 100
 
         self.emoOutput = QtGui.QLabel('')
         self.speechOutput = QtGui.QLabel('')
@@ -16,24 +21,31 @@ class VocabTrainer(QtGui.QWidget):
         self.userInput.hide()
 
         self.submitButton = QtGui.QPushButton("&Submit")
+        self.submitButton.resize(100, 20)
         self.submitButton.hide()
 
         self.nextButton = QtGui.QPushButton("&Start")
+        self.nextButton.resize(100,20)        
         self.nextButton.show()
 
         self.submitButton.clicked.connect(self.submit)
         self.nextButton.clicked.connect(self.next)        
 
         mainLayout = QtGui.QGridLayout()
+        # column 0
         mainLayout.addWidget(self.labelEmoOutput, 0, 0)
         mainLayout.addWidget(self.labelSpeechOutput, 1, 0)
-
+        # column 1
         mainLayout.addWidget(self.emoOutput, 0, 1)
         mainLayout.addWidget(self.speechOutput, 1, 1)
-
+        # column 2
         mainLayout.addWidget(self.userInput, 2, 1, )
         mainLayout.addWidget(self.submitButton, 2, 2)
         mainLayout.addWidget(self.nextButton,2,2)
+
+        mainLayout.setColumnMinimumWidth(0, 100)
+        mainLayout.setColumnMinimumWidth(1, 400)
+        mainLayout.setColumnMinimumWidth(2, 100)
 
         self.setLayout(mainLayout)
         self.setWindowTitle("Simple Vocabulary Trainer")
@@ -55,7 +67,7 @@ class VocabTrainer(QtGui.QWidget):
         
         if answer == "":
             QtGui.QMessageBox.information(self, "Empty Field",
-                    "Please enter a name and address.")
+                    "Please enter a word")
             return
         
         emotion, speech = self.exp.evaluate(answer) 

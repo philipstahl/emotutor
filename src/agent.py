@@ -58,8 +58,8 @@ class Agent:
         answer = surprise + mood + " "
         speech = Speech("evaluation", 
                         self.speachModule.get_verbal_reaction(correct, surprise,
-                                                              mood)
-                        + " You needed " + str(time) + " seconds.")
+                                                              mood))
+                        #+ " You needed " + str(time) + " seconds.")
         emotion = None
         if mood == "[very happy]" or mood == "[happy]":
             emotion = Joy()
