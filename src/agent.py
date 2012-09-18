@@ -9,12 +9,12 @@ class Agent:
 
     ''' Constructor
     '''
-    def __init__(self, tasks, use_marc = True):
+    def __init__(self, tasks, MARC = True):
         self.tasks = tasks
         self.cogModule = CogModule()
         self.emoModule = EmoModule()
         self.speachModule = SpeachModule()
-        if use_marc:
+        if MARC:
             self.marc = Marc()
         else:
             self.marc = None
@@ -26,8 +26,9 @@ class Agent:
     def introduce(self):
         text = "Welcome to your vocabulary session. Press 'Enter' to begin."
         
-        self.marc.show(Relax())
-        self.marc.speak(Speech("introduction", text))
+        if self.marc:
+            self.marc.show(Relax())
+            self.marc.speak(Speech("introduction", text))
         
         return text + "\n"
 
@@ -37,7 +38,8 @@ class Agent:
     def present(self, task):
         text = "What is the german word for " + task.question
         
-        self.marc.speak(Speech("task", text))
+        if self.marc:
+            self.marc.speak(Speech("task", text))
 
         return task.question + ": "
 
@@ -50,18 +52,19 @@ class Agent:
         correct, time = task.last_trial()
         surprise = self.cogModule.check(task)
         mood = self.emoModule.check(task)
-        if mood == "[very happy]" or mood == "[happy]":
-            self.marc.show(Joy())
-        elif mood == "normal":
-            self.marc.show(Relax())
-        elif mood == "[very angry]" or mood == "[angry]":
-            self.marc.show(Anger())
-        
-        
+
         answer = surprise + mood + " "
         text= self.speachModule.get_verbal_reaction(correct, surprise, mood)
 
-        self.marc.speak(Speech("evaluation", text))
+        if self.marc:
+            if mood == "[very happy]" or mood == "[happy]":
+                self.marc.show(Joy())
+            elif mood == "normal":
+                self.marc.show(Relax())
+            elif mood == "[very angry]" or mood == "[angry]":
+                self.marc.show(Anger())
+
+            self.marc.speak(Speech("evaluation", text))
 
         return answer + text + "You needed " + str(time) + " sec."
 

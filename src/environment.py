@@ -1,10 +1,9 @@
 import datetime
 from agent import Agent
 from task import Task
-from gui import Gui
 
 class ExpEnvironment:
-    def __init__(self):
+    def __init__(self, MARC = False):
         self.tasks = [Task("Car", "Auto"), Task("House", "Haus"),
                       Task("Chair", "Stuhl"), Task("Knife", "Messer")]
         # create needed sound files:
@@ -22,44 +21,43 @@ class ExpEnvironment:
         tts.save("house", "House")
         '''
         self.solved_tasks = []        
-        self.agent = Agent(self.tasks)
-        self.gui = Gui()
+        self.agent = Agent(self.tasks, MARC = MARC)
 
     ''' Show init text and wait for start button.
     '''
-    def start(self):        
-        self.gui.write(self.agent.introduce())
-        self.present_task()
+    def start(self):
+        return self.agent.introduce()
+        
 
     ''' Show next task and wait for answer.
     '''
     def present_task(self):        
         if len(self.tasks) > 0:
-            task = self.tasks.pop()
-            time_start = datetime.datetime.now().replace(microsecond=0)
-            answer = self.gui.write(self.agent.present(task))
-            time_end = datetime.datetime.now().replace(microsecond=0)
-            time_diff = time_end - time_start
- 
-            self.evaluate(task, answer, time_diff.seconds)
+            self.task = self.tasks.pop()
+            self.time_start = datetime.datetime.now().replace(microsecond=0)
+            return self.agent.present(self.task)
+            #answer = self.gui.write(self.agent.present(task))
+            #time_end = datetime.datetime.now().replace(microsecond=0)
+            #time_diff = time_end - time_start
+            #self.evaluate(task, answer, time_diff.seconds)
         else:
             self.end()
 
     ''' Show feedback of task and wait for next button
     '''
-    def evaluate(self, task, answer, time):
-        if task.check(answer, time):
-            self.solved_tasks.append(task)
-        else:
-            self.tasks.insert(0, task)
+    def evaluate(self, answer):
+        time_end = datetime.datetime.now().replace(microsecond=0)
+        time_diff = time_end - self.time_start
 
-        self.gui.write(self.agent.evaluate(task))
-        self.present_task()
+
+        if self.task.check(answer, time_diff.seconds):
+            self.solved_tasks.append(self.task)
+        else:
+            self.tasks.insert(0, self.task)
+
+        return self.agent.evaluate(self.task)
 
     ''' Show final text   
     '''
     def end(self):
         self.gui.write(self.agent.end(self.solved_tasks))
-        
-exp = ExpEnvironment()
-exp.start()
