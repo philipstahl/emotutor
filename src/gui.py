@@ -92,6 +92,16 @@ class VocabTrainer(QtGui.QWidget):
         self.nextButton.hide()
         self.userInput.setText('')
         self.userInput.hide()
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Return:
+            if ((self.userInput.isHidden()
+                 and not self.nextButton.isHidden()) or
+               (not self.userInput.isHidden() and self.userInput.isReadOnly())):
+                self.next()
+            elif (not self.userInput.isHidden() and
+                  not self.userInput.isReadOnly()):
+                self.submit()
             
 
 if __name__ == '__main__':
