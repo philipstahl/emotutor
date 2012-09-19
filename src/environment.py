@@ -30,13 +30,15 @@ class ExpEnvironment:
         time_end = datetime.datetime.now().replace(microsecond=0)
         time_diff = time_end - self.time_start
 
-
+        solved = False
         if self.task.check(answer, time_diff.seconds):
             self.solved_tasks.append(self.task)
+            solved = True
         else:
             self.tasks.insert(0, self.task)
 
-        return self.agent.evaluate(self.task)
+        emotion, speech = self.agent.evaluate(self.task)
+        return (emotion, speech, solved)
 
     ''' Show final text   
     '''

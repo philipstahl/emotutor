@@ -1,6 +1,4 @@
-JOY = "CASA_Joy_01"
-RELAX = "CASA_Relax_01"
-ANGER = "CASA_Anger_01"
+from globalsettings import *
 
 class Expression:
     def __init__(self, name, wait = 0.0, intensity = 1.0, interpolate = 1.0):

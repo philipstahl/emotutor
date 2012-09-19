@@ -3,11 +3,7 @@ import argparse
 import ftplib
 from expression import Expression
 from speech import Speech
-
-UDP_IP="localhost"
-UDP_PORT_OUT=4013
-UDP_PORT_IN=4014
-
+from globalsettings import *
 
 class Marc:
     def __init__(self):

@@ -1,6 +1,8 @@
 import urllib2
 import wave
 
+from globalsettings import *
+
 
 class TextToSpeech:
     def __init__(self):
@@ -22,7 +24,7 @@ class TextToSpeech:
         text = text.replace(' ', '+')
         query = 'http://localhost:59125/process?INPUT_TEXT=' \
                 + text \
-                + '&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=dfki-obadiah'
+                + '&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + VOICE
                 
         print query
         f = urllib2.urlopen(query)
