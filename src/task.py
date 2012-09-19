@@ -3,7 +3,7 @@ class Task:
         self.question = question
         self.answer = answer
         self.trials = []
-        
+
     def check(self, answer, time):
         correct = self.answer == answer
         self.trials.append((correct, time))

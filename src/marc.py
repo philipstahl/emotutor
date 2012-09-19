@@ -5,15 +5,14 @@ from expression import Expression
 from speech import Speech
 from globalsettings import *
 
+
 class Marc:
     def __init__(self):
-        
-        self.sock_out = socket.socket( socket.AF_INET, # Internet
-                                 socket.SOCK_DGRAM ) # UDP
-        self.sock_in = socket.socket( socket.AF_INET, # Internet
-                              socket.SOCK_DGRAM ) # UDP
-        self.sock_in.bind( (UDP_IP,UDP_PORT_IN) )
-
+        self.sock_out = socket.socket(socket.AF_INET,       # Internet
+                                      socket.SOCK_DGRAM)    # UDP
+        self.sock_in = socket.socket(socket.AF_INET,        # Internet
+                              socket.SOCK_DGRAM)            # UDP
+        self.sock_in.bind((UDP_IP, UDP_PORT_IN))
 
     def perform(self, name, bmlCode):
         self.sock_out.sendto(bmlCode, (UDP_IP, UDP_PORT_OUT))
@@ -30,8 +29,8 @@ class Marc:
     '''
     def show(self, expression):
         print 'Showing', expression.name
-        self.perform(expression.name, expression.getBMLCode())            
-        print 'Finished showing',expression.name
+        self.perform(expression.name, expression.getBMLCode())
+        print 'Finished showing', expression.name
 
     ''' Sends the BML Code for speacking the given wave file to MARC.
     '''

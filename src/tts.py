@@ -1,6 +1,5 @@
 import urllib2
 import wave
-
 from globalsettings import *
 
 
@@ -14,7 +13,6 @@ class TextToSpeech:
         print 'voices:'
         print data
 
-        
     ''' text must have the form of single words connected via '+'
         Example: Hello+world
 
@@ -24,8 +22,9 @@ class TextToSpeech:
         text = text.replace(' ', '+')
         query = 'http://localhost:59125/process?INPUT_TEXT=' \
                 + text \
-                + '&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + VOICE
-                
+                + '&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO\
+                   &AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + VOICE
+
         print query
         f = urllib2.urlopen(query)
         data = f.read()

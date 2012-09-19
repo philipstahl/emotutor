@@ -1,7 +1,8 @@
 from globalsettings import *
 
+
 class Expression:
-    def __init__(self, name, wait = 0.0, intensity = 1.0, interpolate = 1.0):
+    def __init__(self, name, wait=0.0, intensity=1.0, interpolate=1.0):
         self.name = name
         self.wait = wait
         self.intensity = intensity
@@ -21,16 +22,19 @@ class Expression:
                 </bml>".format(self.name, self.name, self.wait, self.name,
                                self.interpolate, self.intensity)
 
+
 class Anger(Expression):
     def __init__(self):
         Expression.__init__(self, ANGER)
         self.name = ANGER
 
+
 class Joy(Expression):
     def __init__(self):
         Expression.__init__(self, JOY)
         self.name = JOY
-        
+
+
 class Relax(Expression):
     def __init__(self):
         Expression.__init__(self, RELAX)

@@ -6,10 +6,10 @@ from PyQt4.QtGui import *
 from environment import *
 from globalsettings import *
 
+
 class VocabTrainer(QtGui.QWidget):
     def __init__(self, parent=None):
         super(VocabTrainer, self).__init__(parent)
-
         # Create widgets:
         labelEmoOutput = QtGui.QLabel('Emotional Output:')
         labelSpeechOutput = QtGui.QLabel('Speech Output:')
@@ -31,7 +31,7 @@ class VocabTrainer(QtGui.QWidget):
 
         # Define button functionality:
         self.submitButton.clicked.connect(self.submit)
-        self.nextButton.clicked.connect(self.next) 
+        self.nextButton.clicked.connect(self.next)
 
         # Design layout:
         agentLayout = QtGui.QGridLayout()
@@ -42,10 +42,10 @@ class VocabTrainer(QtGui.QWidget):
 
         agentLayout.setColumnMinimumWidth(0, 100)
         agentLayout.setColumnMinimumWidth(1, 500)
-        
+
         agent = QtGui.QWidget()
         agent.setLayout(agentLayout)
-        
+
         userLayout = QtGui.QGridLayout()
         userLayout.addWidget(self.userInput, 0, 0)
         userLayout.addWidget(self.submitButton, 0, 1)
@@ -53,7 +53,7 @@ class VocabTrainer(QtGui.QWidget):
         userLayout.addWidget(self.labelSolution, 1, 0)
         userLayout.setColumnMinimumWidth(0, 500)
         userLayout.setColumnMinimumWidth(1, 100)
-        
+
         user = QtGui.QWidget()
         user.setLayout(userLayout)
 
@@ -66,34 +66,32 @@ class VocabTrainer(QtGui.QWidget):
 
         # Setup experimental environment:
         self.exp = ExpEnvironment()
-        emotion, speech = self.exp.start()        
+        emotion, speech = self.exp.start()
         self.emoOutput.setText(emotion)
         self.speechOutput.setText(speech)
 
-
     def submit(self):
         answer = self.userInput.text()
-        
+
         if answer == "":
             QtGui.QMessageBox.information(self, "Empty Field",
                     "Please enter a word")
             return
-        
-        emotion, speech, solved = self.exp.evaluate(answer) 
+
+        emotion, speech, solved = self.exp.evaluate(answer)
 
         if solved:
             self.userInput.setStyleSheet('QLineEdit {color: green}')
-        else:            
+        else:
             self.userInput.setStyleSheet('QLineEdit {color: red}')
             self.labelSolution.setText(self.exp.tasks[0].answer)
-            
+
         self.emoOutput.setText(emotion)
         self.speechOutput.setText(speech)
 
         self.submitButton.hide()
         self.userInput.setReadOnly(True)
         self.nextButton.show()
-
 
     def next(self):
         if self.userInput.isHidden():
@@ -104,7 +102,7 @@ class VocabTrainer(QtGui.QWidget):
             self.end()
         else:
             emotion, speech = self.exp.present_task()
-                
+
             self.emoOutput.setText(emotion)
             self.speechOutput.setText(speech)
 
@@ -115,7 +113,6 @@ class VocabTrainer(QtGui.QWidget):
             self.userInput.setReadOnly(False)
             self.submitButton.show()
 
-
     def end(self):
         emotion, speech = self.exp.end()
         self.emoOutput.setText(emotion)
@@ -125,12 +122,12 @@ class VocabTrainer(QtGui.QWidget):
         self.userInput.setText('')
         self.userInput.hide()
 
-
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Return:
             if ((self.userInput.isHidden()
                  and not self.nextButton.isHidden()) or
-               (not self.userInput.isHidden() and self.userInput.isReadOnly())):
+               (not self.userInput.isHidden()
+                and self.userInput.isReadOnly())):
                 self.next()
             elif (not self.userInput.isHidden() and
                   not self.userInput.isReadOnly()):
@@ -172,19 +169,19 @@ class Settings(QtGui.QWidget):
         self.buttonSave = QtGui.QPushButton("&Save")
         self.buttonReset = QtGui.QPushButton("&Reset")
         self.buttonCancel = QtGui.QPushButton("&Cancel")
-        
+
         # Define button functionality:
         self.buttonSave.clicked.connect(self.save)
         self.buttonReset.clicked.connect(self.reset)
         self.buttonCancel.clicked.connect(self.cancel)
-        
+
         # Design layout:
         settingsLayout = QtGui.QGridLayout()
-        
+
         # column 0
         settingsLayout.addWidget(labelUDP, 0, 0)
         settingsLayout.addWidget(labelIP, 1, 0)
-        settingsLayout.addWidget(labelInputPort, 2, 0)     
+        settingsLayout.addWidget(labelInputPort, 2, 0)
         settingsLayout.addWidget(labelOutputPort, 3, 0)
         settingsLayout.addWidget(labelEmotions, 4, 0)
         settingsLayout.addWidget(labelAnger, 5, 0)
@@ -195,7 +192,7 @@ class Settings(QtGui.QWidget):
 
         # column 1
         settingsLayout.addWidget(self.inputIP, 1, 1)
-        settingsLayout.addWidget(self.inputInputPort, 2, 1)     
+        settingsLayout.addWidget(self.inputInputPort, 2, 1)
         settingsLayout.addWidget(self.inputOutputPort, 3, 1)
         settingsLayout.addWidget(self.inputAnger, 5, 1)
         settingsLayout.addWidget(self.inputRelax, 6, 1)
@@ -213,12 +210,11 @@ class Settings(QtGui.QWidget):
         values = QtGui.QWidget()
         values.setLayout(settingsLayout)
 
-        mainLayout = QtGui.QBoxLayout(2)        
+        mainLayout = QtGui.QBoxLayout(2)
         mainLayout.addWidget(values)
         mainLayout.addWidget(buttons)
         self.setLayout(mainLayout)
         self.resize(600, 100)
-
 
     def save(self):
         #MARC = False
@@ -245,7 +241,7 @@ class Settings(QtGui.QWidget):
 
     def cancel(self):
         self.emit(SIGNAL("quit"))
-        
+
     def reset(self):
         self.inputIP.setText('localhost')
         self.inputInputPort.setText('4013')
@@ -259,15 +255,15 @@ class Settings(QtGui.QWidget):
 
 
 class Welcome(QtGui.QWidget):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(Welcome, self).__init__(parent)
-        
+
         # Create widgets:
         desc = QtGui.QLabel('Welcome to the vocabulary trainer.')
-                
+
         buttonSettings = QtGui.QPushButton("&Edit settings")
         buttonStart = QtGui.QPushButton('&Start training')
-        
+
         # Define button funcionalty:
         buttonSettings.clicked.connect(self.options)
         buttonStart.clicked.connect(self.start)
@@ -278,20 +274,20 @@ class Welcome(QtGui.QWidget):
         optionLayout.addWidget(buttonStart)
         options = QtGui.QWidget()
         options.setLayout(optionLayout)
-        
+
         mainLayout = QtGui.QBoxLayout(2)
         mainLayout.addWidget(desc)
         mainLayout.addWidget(options)
         self.setLayout(mainLayout)
-        self.resize(600,100)
-        
+        self.resize(600, 100)
+
     def options(self):
         self.emit(SIGNAL('settings'))
 
     def start(self):
         self.emit(SIGNAL('training'))
 
-        
+
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -299,19 +295,19 @@ class MainWindow(QtGui.QMainWindow):
         self.resize(600, 400)
         self.setWindowTitle('Vocabulary Trainer')
 
-        new = QtGui.QAction(QtGui.QIcon('icons/icon.png'), 'New training', self)
+        new = QtGui.QAction(QtGui.QIcon('icons/icon.png'), 'New training',
+                                        self)
         self.connect(new, QtCore.SIGNAL('triggered()'), self.showTraining)
 
         exit = QtGui.QAction(QtGui.QIcon('icons/icon.png'), 'Exit', self)
         exit.setShortcut('Ctrl+Q')
         exit.setStatusTip('Exit application')
-        self.connect(exit, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
+        self.connect(exit, QtCore.SIGNAL('triggered()'),
+                     QtCore.SLOT('close()'))
 
-        settings = QtGui.QAction(QtGui.QIcon('icons/icon.png'), 'Settings', self)
-        #exit.setShortcut('Ctrl+Q')
-        #exit.setStatusTip('Exit application')
+        settings = QtGui.QAction(QtGui.QIcon('icons/icon.png'),
+                                 'Settings', self)
         self.connect(settings, QtCore.SIGNAL('triggered()'), self.showOptions)
-
 
         self.statusBar()
 
@@ -323,7 +319,7 @@ class MainWindow(QtGui.QMainWindow):
 
         options = menubar.addMenu('&Options')
         options.addAction(settings)
-    
+
         self.setMenuBar(menubar)
         self.showWelcome()
         self.center()
@@ -333,7 +329,7 @@ class MainWindow(QtGui.QMainWindow):
         self.connect(welcome, SIGNAL('settings'), self.showOptions)
         self.connect(welcome, SIGNAL('training'), self.showTraining)
         welcome.show()
-        self.setCentralWidget(welcome)        
+        self.setCentralWidget(welcome)
 
     def showOptions(self):
         settings = Settings()
@@ -343,27 +339,17 @@ class MainWindow(QtGui.QMainWindow):
 
     def showTraining(self):
         trainer = VocabTrainer()
-        trainer.show()        
+        trainer.show()
         self.setCentralWidget(trainer)
-        
 
     def center(self):
         screen = QtGui.QDesktopWidget().screenGeometry()
-        size =  self.geometry()
-        self.move((screen.width()-size.width())/2, (screen.height()-size.height())/2)
+        size = self.geometry()
+        self.move((screen.width() - size.width()) / 2,
+                  (screen.height() - size.height()) / 2)
 
 
 if __name__ == '__main__':
-    '''
-    import sys
-
-    app = QtGui.QApplication(sys.argv)
-
-    addressBook = VocabTrainer()
-    addressBook.show()
-
-    sys.exit(app.exec_())
-    '''
     app = QtGui.QApplication(sys.argv)
     main = MainWindow()
     main.show()

@@ -2,7 +2,7 @@ class EmoModule:
 
     def __init__(self):
         pass
-        
+
     def check(self, task):
         correct, time = task.last_trial()
         if correct and time < 5 and task.misses() == 0:

@@ -21,5 +21,5 @@ class SpeachModule:
         elif not correct and mood == "[very angry]":
             reaction += "What are you doing? Your answer is really annoying!"
         else:
-            reaction += "Wrong mood or surprise"        
+            reaction += "Wrong mood or surprise"
         return reaction
