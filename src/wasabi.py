@@ -2,6 +2,8 @@ import socket
 import threading
 from decimal import Decimal
 
+#from marc import *
+
 
 ''' Hearing for emotional status in wasabi.
     Sending emotions to wasabi via commandline.
@@ -50,83 +52,10 @@ from decimal import Decimal
  */
 '''
 
-class ThreadClassHear(threading.Thread):
-
-    hearing = True
-    
-    def run(self):
-        UDP_IP_IN = "192.168.0.46"
-        UDP_PORT_IN=42424
-        sock_in = socket.socket( socket.AF_INET, # Internet
-                      socket.SOCK_DGRAM ) # UDP
-        sock_in.bind( (UDP_IP_IN,UDP_PORT_IN) )
-
-        self.emotions = {'happy': 0, 'concentrated': 0, 'depressed': 0, 'sad': 0, 'annoyed': 0, 'bored': 0}
-        
-        while self.hearing:
-            data, addr = sock_in.recvfrom(1024) # buffer size is 1024 bytes
-            
-            self.update_emotions(data)
-            
-
-
-    ''' Gets a string of emotion values received from wasabi
-        and updates the internal emotion dictionary
-    '''
-    def update_emotions(self, data):
-        # get the single emotion assignments
-        values = data.split(" ")
-        # remove eventually empty entries
-        values = [val for val in values if val != ""]
-        for value in values:
-            value = value.replace(' ', '')
-            if len(value.split('=')) != 2:
-                print 'strange', data, '-', value
-            else:
-                emotion = value.split('=')[0]
-                # get the first digit after the
-                intensity = int(float(value.split('=')[1]) * 10)
-                    
-                # check for emotion update:
-                if intensity != self.emotions[emotion]:
-                    self.emotions[emotion] = intensity
-                    self.print_emotions()
-
-
-
-                
-                
-            
-        
-
-
-    def print_emotions(self):
-        output = ''
-        for emotion in self.emotions.keys():
-            intensity = self.emotions[emotion]
-            if intensity != 0:
-                output += emotion + '=' + str(intensity) + " "
-        print output
-
-    def end(self):
-        self.hearing = False
-                
-                    
-
-
-
-
-
-UDP_IP_OUT = "localhost"
-UDP_PORT_OUT=42425
-        
-
-sock_out = socket.socket( socket.AF_INET, # Internet
-                         socket.SOCK_DGRAM ) # UDP
-
 '''
 happy
 angry
+annoyed
 surprised
 bored
 sad
@@ -152,26 +81,97 @@ Ekman-Tristesse
 Ekman-Disgust
 Ekman-Peur
 '''
-def send(emotion, intensity):
-    message = "JohnDoe&TRIGGER&1&" + emotion
-    sock_out.sendto(message, (UDP_IP_OUT, UDP_PORT_OUT))
-    print 'send', message
 
-    message = "JohnDoe&IMPULSE&1&" + str(intensity)
-    sock_out.sendto(message, (UDP_IP_OUT, UDP_PORT_OUT))
-    print 'send', message
+class ThreadClassHear(threading.Thread):
 
-
-
-hear = ThreadClassHear()
-def start_hearing():
-    hear.start()
-
-
-def end_hearing():
-    hear.end()
+    def __init__(self, marc):
+        threading.Thread.__init__(self)
+        self.marc = marc
+        self.hearing = True
     
+    def run(self):
+        UDP_IP_IN = "192.168.0.46"
+        UDP_PORT_IN=42424
+        sock_in = socket.socket( socket.AF_INET, # Internet
+                      socket.SOCK_DGRAM ) # UDP
+        sock_in.bind( (UDP_IP_IN,UDP_PORT_IN) )
+
+        self.emotions = {'happy': 0, 'concentrated': 0, 'depressed': 0, 'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
+        
+        while self.hearing:
+            data, addr = sock_in.recvfrom(1024) # buffer size is 1024 bytes
+            
+            self.update_emotions(data)
+            
+
+    ''' Gets a string of emotion values received from wasabi
+        and updates the internal emotion dictionary
+    '''
+    def update_emotions(self, data):
+        # get the single emotion assignments
+        values = data.split(" ")
+        # remove eventually empty entries
+        values = [val for val in values if val != ""]
+        for value in values:
+            value = value.replace(' ', '')
+            if len(value.split('=')) != 2:
+                print 'strange', data, '-', value
+            else:
+                emotion = value.split('=')[0]
+                # get the first digit after the
+                intensity = int(float(value.split('=')[1]) * 10)
+                    
+                # check for emotion update:
+                if intensity != self.emotions[emotion]:
+                    self.emotions[emotion] = intensity
+                    self.print_emotions()
+
+                    # MARC:
+                    if self.marc:
+                        if emotion == "happy":
+                            self.marc.show_joy(float(intensity) / 10)
+                        elif emotion == "angry":
+                            self.marc.show_anger(float(intensity) / 10)
+
+    def print_emotions(self):
+        output = ''
+        for emotion in self.emotions.keys():
+            intensity = self.emotions[emotion]
+            if intensity != 0:
+                output += emotion + '=' + str(intensity) + " "
+        print output
+
+    def end(self):
+        self.hearing = False
 
 
+class Wasabi():
+    def __init__(self, marc = None):
+        self.marc = marc
+        self.input = ThreadClassHear(self.marc)
 
-#send('bored', 100)
+    ''' Possible emotions are:
+        happy, angry, annoyed, surprised, bored, sad, depressed, fearful
+    '''
+    def send(self, emotion, intensity):
+        UDP_IP_OUT = "localhost"
+        UDP_PORT_OUT=42425
+        sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        message = "JohnDoe&TRIGGER&1&" + emotion
+        sock_out.sendto(message, (UDP_IP_OUT, UDP_PORT_OUT))
+        
+        message = "JohnDoe&IMPULSE&1&" + str(intensity)
+        sock_out.sendto(message, (UDP_IP_OUT, UDP_PORT_OUT))
+        
+    def start_hearing(self):
+        self.input.start()
+
+    def end_hearing(self):
+        self.input.end()
+
+    def get_primary_emotion(self):
+        if self.input.emotions['angry'] > self.input.emotions['happy']:
+            return ('angry', self.input.emotions['angry'])
+        else:
+            return ('happy', self.input.emotions['happy'])
