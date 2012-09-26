@@ -13,12 +13,12 @@ class Agent:
     '''
     def __init__(self, tasks):
         self.tasks = tasks
-        self.cogModule = CogModule()
-        self.emoModule = EmoModule()
-        self.speachModule = SpeachModule()
         self.marc = None
         if MARC:
             self.marc = Marc()
+        self.cogModule = CogModule()
+        self.emoModule = EmoModule(self.marc)
+        self.speachModule = SpeachModule()
 
     ''' The agent introduces the human solver to the experiment, explaining
         the rules of the task.
@@ -51,25 +51,22 @@ class Agent:
     def evaluate(self, task):
         correct, time = task.last_trial()
         surprise = self.cogModule.check(task)
-        mood = self.emoModule.check(task)
+        emotion, intense = self.emoModule.check(task)
 
-        answer = surprise + mood + " "
+
+        answer = surprise + "[" + emotion + ", " + str(intense) + "] "
         speech = Speech("evaluation",
-                        self.speachModule.get_verbal_reaction(correct,
-                                                              surprise, mood))
-        emotion = None
-        if mood == "[very happy]" or mood == "[happy]":
-            emotion = Joy()
-        elif mood == "[normal]":
-            emotion = Relax()
-        elif mood == "[very angry]" or mood == "[angry]":
-            emotion = Anger()
+                        self.speachModule.get_verbal_reaction(correct, surprise,
+                                                              emotion, intense)
+                        + " You needed " + str(time) + " seconds.")
 
         if self.marc:
-            self.marc.show(emotion)
+            #self.marc.show(emotion)
             self.marc.speak(speech)
+        else:
+            print 'marc not specifeie'
 
-        return (emotion.name, speech.text)
+        return (emotion, speech.text)
 
     ''' The Agent gives feedback for the whole test telling how many tasks
         have been done wrong.
