@@ -11,4 +11,4 @@ ANGER = "CASA_Anger_01"
 
 VOICE = 'dfki-obadiah'
 
-PATH == "C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\"
+PATH = "C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\"

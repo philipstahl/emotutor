@@ -1,6 +1,6 @@
 from cogmodule import CogModule
 from emomodule import EmoModule
-from speachmodule import SpeachModule
+from speechmodule import SpeachModule
 from marc import Marc
 from expression import Anger, Joy, Relax
 from speech import Speech
