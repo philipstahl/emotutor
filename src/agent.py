@@ -1,9 +1,8 @@
 from cogmodule import CogModule
 from emomodule import EmoModule
-from speechmodule import SpeechModule
+from speechmodule import *
 from marc import Marc
 from expression import Anger, Joy, Relax
-from speech import Speech
 from globalsettings import *
 
 
