@@ -1,6 +1,6 @@
 from cogmodule import CogModule
 from emomodule import EmoModule
-from speechmodule import SpeachModule
+from speechmodule import SpeechModule
 from marc import Marc
 from expression import Anger, Joy, Relax
 from speech import Speech
@@ -18,7 +18,7 @@ class Agent:
             self.marc = Marc()
         self.cogModule = CogModule()
         self.emoModule = EmoModule(self.marc)
-        self.speachModule = SpeachModule()
+        self.speechModule = SpeechModule()
 
     ''' The agent introduces the human solver to the experiment, explaining
         the rules of the task.
@@ -51,22 +51,20 @@ class Agent:
     def evaluate(self, task):
         correct, time = task.last_trial()
         surprise = self.cogModule.check(task)
-        emotion, intense = self.emoModule.check(task)
+        emotion = self.emoModule.check(task)
 
 
-        answer = surprise + "[" + emotion + ", " + str(intense) + "] "
+        answer = surprise + "[" + emotion.name + ", " \
+                          + str(emotion.impulse) + "] "
         speech = Speech("evaluation",
-                        self.speachModule.get_verbal_reaction(correct, surprise,
-                                                              emotion, intense)
-                        + " You needed " + str(time) + " seconds.")
+                        self.speechModule.get_verbal_reaction(correct, surprise,
+                                                              emotion.name,
+                                                              emotion.impulse))
 
         if self.marc:
-            #self.marc.show(emotion)
             self.marc.speak(speech)
-        else:
-            print 'marc not specifeie'
 
-        return (emotion, speech.text)
+        return (emotion.name + " " + str(emotion.impulse), speech.text)
 
     ''' The Agent gives feedback for the whole test telling how many tasks
         have been done wrong.

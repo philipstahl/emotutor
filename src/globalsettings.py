@@ -1,5 +1,6 @@
 MARC = False
 MARY = False
+WASABI = False
 
 UDP_IP = "localhost"
 UDP_PORT_OUT = 4013

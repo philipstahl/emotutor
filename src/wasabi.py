@@ -1,6 +1,7 @@
 import socket
 import threading
 from decimal import Decimal
+from globalsettings import *
 
 #from marc import *
 
@@ -88,7 +89,9 @@ class ThreadClassHear(threading.Thread):
         threading.Thread.__init__(self)
         self.marc = marc
         self.hearing = True
-    
+        self.emotions = {'happy': 0, 'concentrated': 0, 'depressed': 0,
+                         'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
+
     def run(self):
         UDP_IP_IN = "192.168.0.46"
         UDP_PORT_IN=42424
@@ -96,13 +99,13 @@ class ThreadClassHear(threading.Thread):
                       socket.SOCK_DGRAM ) # UDP
         sock_in.bind( (UDP_IP_IN,UDP_PORT_IN) )
 
-        self.emotions = {'happy': 0, 'concentrated': 0, 'depressed': 0, 'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
-        
+
+
         while self.hearing:
             data, addr = sock_in.recvfrom(1024) # buffer size is 1024 bytes
-            
+
             self.update_emotions(data)
-            
+
 
     ''' Gets a string of emotion values received from wasabi
         and updates the internal emotion dictionary
@@ -120,7 +123,7 @@ class ThreadClassHear(threading.Thread):
                 emotion = value.split('=')[0]
                 # get the first digit after the
                 intensity = int(float(value.split('=')[1]) * 10)
-                    
+
                 # check for emotion update:
                 if intensity != self.emotions[emotion]:
                     self.emotions[emotion] = intensity
@@ -160,10 +163,10 @@ class Wasabi():
 
         message = "JohnDoe&TRIGGER&1&" + emotion
         sock_out.sendto(message, (UDP_IP_OUT, UDP_PORT_OUT))
-        
+
         message = "JohnDoe&IMPULSE&1&" + str(intensity)
         sock_out.sendto(message, (UDP_IP_OUT, UDP_PORT_OUT))
-        
+
     def start_hearing(self):
         self.input.start()
 

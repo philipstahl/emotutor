@@ -1,4 +1,4 @@
-class SpeachModule:
+class SpeechModule:
     def __init__(self):
         pass
 
