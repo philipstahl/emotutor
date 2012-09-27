@@ -1,313 +1,403 @@
+''' The gui implimentation in pyqt4
+'''
+
 import sys
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+import PyQt4.QtGui
+from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
+                        QBoxLayout, QMainWindow, QAction, QIcon, \
+                        QApplication, QDesktopWidget, QMessageBox
 
-from environment import *
-from globalsettings import *
+import PyQt4.QtCore
+from PyQt4.QtCore import SIGNAL, Qt
+
+from environment import ExpEnvironment
+from globalsettings import MARC_IP, MARC_PORT_OUT, MARC_PORT_IN, WASABI_IP, \
+                           WASABI_PORT_IN, WASABI_PORT_OUT, VOICE, MARY_IP, PATH
+
+# intern emotion names:
+JOY = "JOY"
+ANGER = "ANGER"
+RELAX = "RELAX"
+
+WASABI_JOY = 'happy'
+WASABI_ANGER = 'angry'
+WASABI_RELAX = 'happy'
+
+MARC_JOY = "CASA_Joy_01"
+MARC_RELAX = "CASA_Relax_01"
+MARC_ANGER = "CASA_Anger_01"
 
 
-class VocabTrainer(QtGui.QWidget):
+class VocabTrainer(QWidget):
+    ''' Gui for a simple vocabulary trainer
+    '''
     def __init__(self, parent=None):
         super(VocabTrainer, self).__init__(parent)
         # Create widgets:
-        labelEmoOutput = QtGui.QLabel('Emotional Output:')
-        labelSpeechOutput = QtGui.QLabel('Speech Output:')
+        label_emo_output = QLabel('Emotional Output:')
+        label_speech_output = QLabel('Speech Output:')
 
-        self.emoOutput = QtGui.QLabel('')
-        self.speechOutput = QtGui.QLabel('')
+        self.emo_output = QLabel('')
+        self.speech_output = QLabel('')
 
-        self.userInput = QtGui.QLineEdit()
-        self.userInput.hide()
+        self.user_input = QLineEdit()
+        self.user_input.hide()
 
-        self.labelSolution = QtGui.QLabel('')
-        self.labelSolution.show()
+        self.label_solution = QLabel('')
+        self.label_solution.show()
 
-        self.submitButton = QtGui.QPushButton("&Submit")
-        self.submitButton.hide()
+        self.submit_button = QPushButton("&Submit")
+        self.submit_button.hide()
 
-        self.nextButton = QtGui.QPushButton("&Start")
-        self.nextButton.show()
+        self.next_button = QPushButton("&Start")
+        self.next_button.show()
 
-        # Define button functionality:
-        self.submitButton.clicked.connect(self.submit)
-        self.nextButton.clicked.connect(self.next)
+        # Define button functionality:QtCore
+        self.submit_button.clicked.connect(self.submit)
+        self.next_button.clicked.connect(self.next)
 
         # Design layout:
-        agentLayout = QtGui.QGridLayout()
-        agentLayout.addWidget(labelEmoOutput, 0, 0)
-        agentLayout.addWidget(self.emoOutput, 0, 1)
-        agentLayout.addWidget(labelSpeechOutput, 1, 0)
-        agentLayout.addWidget(self.speechOutput, 1, 1)
+        agent_layout = QGridLayout()
+        agent_layout.addWidget(label_emo_output, 0, 0)
+        agent_layout.addWidget(self.emo_output, 0, 1)
+        agent_layout.addWidget(label_speech_output, 1, 0)
+        agent_layout.addWidget(self.speech_output, 1, 1)
 
-        agentLayout.setColumnMinimumWidth(0, 100)
-        agentLayout.setColumnMinimumWidth(1, 500)
+        agent_layout.setColumnMinimumWidth(0, 100)
+        agent_layout.setColumnMinimumWidth(1, 500)
 
-        agent = QtGui.QWidget()
-        agent.setLayout(agentLayout)
+        agent = QWidget()
+        agent.setLayout(agent_layout)
 
-        userLayout = QtGui.QGridLayout()
-        userLayout.addWidget(self.userInput, 0, 0)
-        userLayout.addWidget(self.submitButton, 0, 1)
-        userLayout.addWidget(self.nextButton, 0, 1)
-        userLayout.addWidget(self.labelSolution, 1, 0)
-        userLayout.setColumnMinimumWidth(0, 500)
-        userLayout.setColumnMinimumWidth(1, 100)
+        user_layout = QGridLayout()
+        user_layout.addWidget(self.user_input, 0, 0)
+        user_layout.addWidget(self.submit_button, 0, 1)
+        user_layout.addWidget(self.next_button, 0, 1)
+        user_layout.addWidget(self.label_solution, 1, 0)
+        user_layout.setColumnMinimumWidth(0, 500)
+        user_layout.setColumnMinimumWidth(1, 100)
 
-        user = QtGui.QWidget()
-        user.setLayout(userLayout)
+        user = QWidget()
+        user.setLayout(user_layout)
 
-        mainLayout = QtGui.QBoxLayout(2)
-        mainLayout.addWidget(agent)
-        mainLayout.addWidget(user)
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(agent)
+        main_layout.addWidget(user)
 
-        self.setLayout(mainLayout)
+        self.setLayout(main_layout)
         self.resize(600, 200)
 
         # Setup experimental environment:
         self.exp = ExpEnvironment()
         emotion, speech = self.exp.start()
-        self.emoOutput.setText(emotion)
-        self.speechOutput.setText(speech)
+        self.emo_output.setText(emotion)
+        self.speech_output.setText(speech)
 
     def submit(self):
-        answer = self.userInput.text()
+        ''' Submit an answer by the user
+        '''
+        answer = self.user_input.text()
 
         if answer == "":
-            QtGui.QMessageBox.information(self, "Empty Field",
+            QMessageBox.information(self, "Empty Field",
                     "Please enter a word")
             return
 
         emotion, speech, solved = self.exp.evaluate(answer)
 
         if solved:
-            self.userInput.setStyleSheet('QLineEdit {color: green}')
+            self.user_input.setStyleSheet('QLineEdit {color: green}')
         else:
-            self.userInput.setStyleSheet('QLineEdit {color: red}')
-            self.labelSolution.setText(self.exp.tasks[0].answer)
+            self.user_input.setStyleSheet('QLineEdit {color: red}')
+            self.label_solution.setText(self.exp.tasks[0].answer)
 
-        self.emoOutput.setText(emotion)
-        self.speechOutput.setText(speech)
+        self.emo_output.setText(emotion)
+        self.speech_output.setText(speech)
 
-        self.submitButton.hide()
-        self.userInput.setReadOnly(True)
-        self.nextButton.show()
+        self.submit_button.hide()
+        self.user_input.setReadOnly(True)
+        self.next_button.show()
 
     def next(self):
-        if self.userInput.isHidden():
-            self.nextButton.setText("Next")
-            self.userInput.show()
+        ''' Show next task
+        '''
+        if self.user_input.isHidden():
+            self.next_button.setText("Next")
+            self.user_input.show()
 
         if len(self.exp.tasks) == 0:
             self.end()
         else:
             emotion, speech = self.exp.present_task()
 
-            self.emoOutput.setText(emotion)
-            self.speechOutput.setText(speech)
+            self.emo_output.setText(emotion)
+            self.speech_output.setText(speech)
 
-            self.labelSolution.setText('')
-            self.nextButton.hide()
-            self.userInput.setStyleSheet('QLineEdit {color: black}')
-            self.userInput.setText('')
-            self.userInput.setReadOnly(False)
-            self.submitButton.show()
+            self.label_solution.setText('')
+            self.next_button.hide()
+            self.user_input.setStyleSheet('QLineEdit {color: black}')
+            self.user_input.setText('')
+            self.user_input.setReadOnly(False)
+            self.submit_button.show()
 
     def end(self):
+        ''' End vocabulary test
+        '''
         emotion, speech = self.exp.end()
-        self.emoOutput.setText(emotion)
-        self.speechOutput.setText(speech)
+        self.emo_output.setText(emotion)
+        self.speech_output.setText(speech)
 
-        self.nextButton.hide()
-        self.userInput.setText('')
-        self.userInput.hide()
+        self.next_button.hide()
+        self.user_input.setText('')
+        self.user_input.hide()
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Return:
-            if ((self.userInput.isHidden()
-                 and not self.nextButton.isHidden()) or
-               (not self.userInput.isHidden()
-                and self.userInput.isReadOnly())):
+        ''' Handles key events
+        '''
+        if event.key() == Qt.Key_Return:
+            if ((self.user_input.isHidden()
+                 and not self.next_button.isHidden()) or
+               (not self.user_input.isHidden()
+                and self.user_input.isReadOnly())):
                 self.next()
-            elif (not self.userInput.isHidden() and
-                  not self.userInput.isReadOnly()):
+            elif (not self.user_input.isHidden() and
+                  not self.user_input.isReadOnly()):
                 self.submit()
 
 
-class Settings(QtGui.QWidget):
+class Settings(QWidget):
+    ''' Frame showing all program settings
+    '''
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent)
 
-        # Create widgets:
-        labelUDP = QtGui.QLabel('UDP Communication:')
-        labelUDP.setStyleSheet('QLabel {font-weight:bold}')
 
-        labelIP = QtGui.QLabel('IP:')
-        labelInputPort = QtGui.QLabel('Input Port:')
-        labelOutputPort = QtGui.QLabel('Output Port:')
+        self.marc_settings = {'ip': QLineEdit(MARC_IP),
+                              'port_in': QLineEdit(str(MARC_PORT_IN)),
+                              'port_out': QLineEdit(str(MARC_PORT_OUT)),
+                              'anger': QLineEdit(MARC_ANGER),
+                              'relax': QLineEdit(MARC_RELAX),
+                              'joy': QLineEdit(MARC_JOY)}
 
-        labelEmotions = QtGui.QLabel('Emotions:')
-        labelEmotions.setStyleSheet('QLabel {font-weight:bold}')
-        labelAnger = QtGui.QLabel('Anger:')
-        labelRelax = QtGui.QLabel('Relax:')
-        labelJoy = QtGui.QLabel('Joy:')
+        self.wasabi_settings = {'ip': QLineEdit(WASABI_IP),
+                                'port_in': QLineEdit(str(WASABI_PORT_IN)),
+                                'port_out': QLineEdit(str(WASABI_PORT_OUT)),
+                                'anger': QLineEdit(WASABI_ANGER),
+                                'relax': QLineEdit(WASABI_RELAX),
+                                'joy':QLineEdit(WASABI_JOY)}
 
-        labelMary = QtGui.QLabel('MARY:')
-        labelMary.setStyleSheet('QLabel {font-weight:bold}')
-        labelVoice = QtGui.QLabel('Voice:')
+        self.mary_settings = {'ip': QLineEdit(MARY_IP),
+                              'voice': QLineEdit(VOICE),
+                              'path': QLineEdit(PATH)}
 
-        self.inputIP = QtGui.QLineEdit(UDP_IP)
-        self.inputInputPort = QtGui.QLineEdit(str(UDP_PORT_IN))
-        self.inputOutputPort = QtGui.QLineEdit(str(UDP_PORT_OUT))
 
-        self.inputAnger = QtGui.QLineEdit(ANGER)
-        self.inputRelax = QtGui.QLineEdit(RELAX)
-        self.inputJoy = QtGui.QLineEdit(JOY)
-
-        self.inputVoice = QtGui.QLineEdit(VOICE)
-
-        self.buttonSave = QtGui.QPushButton("&Save")
-        self.buttonReset = QtGui.QPushButton("&Reset")
-        self.buttonCancel = QtGui.QPushButton("&Cancel")
-
-        # Define button functionality:
-        self.buttonSave.clicked.connect(self.save)
-        self.buttonReset.clicked.connect(self.reset)
-        self.buttonCancel.clicked.connect(self.cancel)
-
-        # Design layout:
-        settingsLayout = QtGui.QGridLayout()
-
-        # column 0
-        settingsLayout.addWidget(labelUDP, 0, 0)
-        settingsLayout.addWidget(labelIP, 1, 0)
-        settingsLayout.addWidget(labelInputPort, 2, 0)
-        settingsLayout.addWidget(labelOutputPort, 3, 0)
-        settingsLayout.addWidget(labelEmotions, 4, 0)
-        settingsLayout.addWidget(labelAnger, 5, 0)
-        settingsLayout.addWidget(labelRelax, 6, 0)
-        settingsLayout.addWidget(labelJoy, 7, 0)
-        settingsLayout.addWidget(labelMary, 8, 0)
-        settingsLayout.addWidget(labelVoice, 9, 0)
-
-        # column 1
-        settingsLayout.addWidget(self.inputIP, 1, 1)
-        settingsLayout.addWidget(self.inputInputPort, 2, 1)
-        settingsLayout.addWidget(self.inputOutputPort, 3, 1)
-        settingsLayout.addWidget(self.inputAnger, 5, 1)
-        settingsLayout.addWidget(self.inputRelax, 6, 1)
-        settingsLayout.addWidget(self.inputJoy, 7, 1)
-        settingsLayout.addWidget(self.inputVoice, 9, 1)
-
-        buttonLayout = QtGui.QBoxLayout(0)          # 0 = LeftToRight
-        buttonLayout.addWidget(self.buttonCancel)
-        buttonLayout.addWidget(self.buttonReset)
-        buttonLayout.addWidget(self.buttonSave)
-
-        buttons = QtGui.QWidget()
-        buttons.setLayout(buttonLayout)
-
-        values = QtGui.QWidget()
-        values.setLayout(settingsLayout)
-
-        mainLayout = QtGui.QBoxLayout(2)
-        mainLayout.addWidget(values)
-        mainLayout.addWidget(buttons)
-        self.setLayout(mainLayout)
+        self.setLayout(self.init_ui())
         self.resize(600, 100)
 
+    def init_ui(self):
+        ''' Creates the layout of the settings screen
+        '''
+        layout1 = QGridLayout()
+
+        layout1.addWidget(QLabel('MARC:'), 0, 1)
+        layout1.addWidget(QLabel('WASABI:'), 0, 2)
+
+        label_network = QLabel('Network:')
+        label_network.setStyleSheet('QLabel {font-weight:bold}')
+        layout1.addWidget(label_network, 1, 0)
+
+        layout1.addWidget(QLabel('IP:'), 2, 0)
+        layout1.addWidget(self.marc_settings['ip'], 2, 1)
+        layout1.addWidget(self.wasabi_settings['ip'], 2, 2)
+
+        layout1.addWidget(QLabel('Input Port:'), 3, 0)
+        layout1.addWidget(self.marc_settings['port_in'], 3, 1)
+        layout1.addWidget(self.wasabi_settings['port_in'], 3, 2)
+
+        layout1.addWidget(QLabel('Output Port:'), 4, 0)
+        layout1.addWidget(self.marc_settings['port_out'], 4, 1)
+        layout1.addWidget(self.wasabi_settings['port_out'], 4, 2)
+
+        label_emotions = QLabel('Emotions:')
+        label_emotions.setStyleSheet('QLabel {font-weight:bold}')
+        layout1.addWidget(label_emotions, 5, 0)
+
+        layout1.addWidget(QLabel('Anger:'), 6, 0)
+        layout1.addWidget(self.marc_settings['anger'], 6, 1)
+        layout1.addWidget(self.wasabi_settings['anger'], 6, 2)
+
+        layout1.addWidget(QLabel('Relax:'), 7, 0)
+        layout1.addWidget(self.marc_settings['relax'], 7, 1)
+        layout1.addWidget(self.wasabi_settings['relax'], 7, 2)
+
+        layout1.addWidget(QLabel('Joy:'), 8, 0)
+        layout1.addWidget(self.marc_settings['joy'], 8, 1)
+        layout1.addWidget(self.wasabi_settings['joy'], 8, 2)
+
+        values = QWidget()
+        values.setLayout(layout1)
+
+        # Open Mary:
+        label_mary = QLabel('Open Mary:')
+        label_mary.setStyleSheet('QLabel {font-weight:bold}')
+
+        layout_mary = QGridLayout()
+        layout_mary.addWidget(label_mary, 0, 0)
+        layout_mary.addWidget(QLabel('Request:'), 1, 0)
+        layout_mary.addWidget(QLabel('Voice:'), 2, 0)
+        layout_mary.addWidget(QLabel('Path:'), 3, 0)
+        layout_mary.addWidget(self.mary_settings['ip'], 1, 1)
+        layout_mary.addWidget(self.mary_settings['voice'], 2, 1)
+        layout_mary.addWidget(self.mary_settings['path'], 3, 1)
+        widget_mary = QWidget()
+        widget_mary.setLayout(layout_mary)
+
+        # Define button functionality:
+        button_save = QPushButton("&Save")
+        button_reset = QPushButton("&Reset")
+        button_cancel = QPushButton("&Cancel")
+
+        button_save.clicked.connect(self.save)
+        button_reset.clicked.connect(self.reset)
+        button_cancel.clicked.connect(self.cancel)
+
+        button_layout = QBoxLayout(0)
+        button_layout.addWidget(button_cancel)
+        button_layout.addWidget(button_reset)
+        button_layout.addWidget(button_save)
+
+        buttons = QWidget()
+        buttons.setLayout(button_layout)
+
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(values)
+        main_layout.addWidget(widget_mary)
+        main_layout.addWidget(buttons)
+        return main_layout
+
     def save(self):
-        #MARC = False
-        #MARY = False
-
-        global UDP_IP
-        global UDP_PORT_OUT
-        global UDP_PORT_IN
-        global ANGER
-        global JOY
-        global RELAX
+        ''' Save changed settings
+        '''
+        global MARC_IP
+        global MARC_PORT_OUT
+        global MARC_PORT_IN
+        global WASABI_IP
+        global WASABI_PORT_IN
+        global WASABI_PORT_OUT
         global VOICE
+        global MARY_IP
+        global PATH
+        global WASABI_JOY
+        global WASABI_ANGER
+        global WASABI_RELAX
+        global MARC_JOY
+        global MARC_RELAX
+        global MARC_ANGER
 
-        UDP_IP = self.inputIP.text()
-        UDP_PORT_OUT = int(self.inputInputPort.text())
-        UDP_PORT_IN = int(self.inputOutputPort.text())
+        MARC_IP = self.marc_settings['ip'].text()
+        MARC_PORT_OUT = self.marc_settings['port_out'].text()
+        MARC_PORT_IN = self.marc_settings['port_in'].text()
+        WASABI_IP = self.wasabi_settings['ip'].text()
+        WASABI_PORT_IN = self.wasabi_settings['port_in'].text()
+        WASABI_PORT_OUT = self.wasabi_settings['port_out'].text()
+        VOICE = self.mary_settings['voice'].text()
+        MARY_IP = self.mary_settings['ip'].text()
+        PATH = self.mary_settings['path'].text()
+        WASABI_JOY = self.wasabi_settings['joy'].text()
+        WASABI_ANGER = self.wasabi_settings['anger'].text()
+        WASABI_RELAX = self.wasabi_settings['relax'].text()
+        MARC_JOY = self.marc_settings['joy'].text()
+        MARC_RELAX = self.marc_settings['relax'].text()
+        MARC_ANGER = self.marc_settings['anger'].text()
 
-        JOY = self.inputJoy.text()
-        RELAX = self.inputRelax.text()
-        ANGER = self.inputAnger.text()
 
-        VOICE = self.inputVoice.text()
         self.emit(SIGNAL('quit'))
 
     def cancel(self):
+        ''' Exit settings without saving
+        '''
         self.emit(SIGNAL("quit"))
 
     def reset(self):
-        self.inputIP.setText('localhost')
-        self.inputInputPort.setText('4013')
-        self.inputOutputPort.setText('4014')
+        ''' Reset settins to original values
 
-        self.inputAnger.setText('CASA_Anger_01')
-        self.inputRelax.setText('CASA_Relax_01')
-        self.inputJoy.setText('CASA_Joy_01')
+        '''
+        self.marc_settings['ip'].setText('localhost')
+        self.marc_settings['port_in'].setText('4014')
+        self.marc_settings['port_out'].setText('4013')
+        self.marc_settings['anger'].setText('CASA_Anger_01')
+        self.marc_settings['relax'].setText('CASA_Relax_01')
+        self.marc_settings['joy'].setText('CASA_Joy_01')
 
-        self.inputVoice.setText('dfki-obadiah')
+        self.wasabi_settings['ip'].setText('192.168.0.46')
+        self.wasabi_settings['port_in'].setText('42424')
+        self.wasabi_settings['port_out'].setText('42425')
+        self.wasabi_settings['anger'].setText('happy')
+        self.wasabi_settings['relax'].setText('happy')
+        self.wasabi_settings['joy'].setText('angry')
+
+        self.mary_settings['ip'].setText('http://localhost:59125/')
+        self.mary_settings['voice'].setText('dfki-obadiah')
+        self.mary_settings['path'].setText(
+                            'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\')
 
 
-class Welcome(QtGui.QWidget):
+class Welcome(QWidget):
+    ''' Frame at the start of the vocabulary trainer
+    '''
     def __init__(self, parent=None):
         super(Welcome, self).__init__(parent)
 
         # Create widgets:
-        desc = QtGui.QLabel('Welcome to the vocabulary trainer.')
+        desc = QLabel('Welcome to the vocabulary trainer.')
 
-        buttonSettings = QtGui.QPushButton("&Edit settings")
-        buttonStart = QtGui.QPushButton('&Start training')
+        button_settings = QPushButton("&Edit settings")
+        button_start = QPushButton('&Start training')
 
         # Define button funcionalty:
-        buttonSettings.clicked.connect(self.options)
-        buttonStart.clicked.connect(self.start)
+        button_settings.clicked.connect(self.options)
+        button_start.clicked.connect(self.start)
 
         # Design Layout:
-        optionLayout = QtGui.QBoxLayout(0)
-        optionLayout.addWidget(buttonSettings)
-        optionLayout.addWidget(buttonStart)
-        options = QtGui.QWidget()
-        options.setLayout(optionLayout)
+        option_layout = QBoxLayout(0)
+        option_layout.addWidget(button_settings)
+        option_layout.addWidget(button_start)
+        options = QWidget()
+        options.setLayout(option_layout)
 
-        mainLayout = QtGui.QBoxLayout(2)
-        mainLayout.addWidget(desc)
-        mainLayout.addWidget(options)
-        self.setLayout(mainLayout)
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(desc)
+        main_layout.addWidget(options)
+        self.setLayout(main_layout)
         self.resize(600, 100)
 
     def options(self):
+        ''' Show options
+        '''
         self.emit(SIGNAL('settings'))
 
     def start(self):
+        ''' Start test
+        '''
         self.emit(SIGNAL('training'))
 
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QMainWindow):
+    ''' Main window of the vocabulary trainer
+    '''
     def __init__(self):
-        QtGui.QMainWindow.__init__(self)
+        QMainWindow.__init__(self)
 
         self.resize(600, 400)
         self.setWindowTitle('Vocabulary Trainer')
 
-        new = QtGui.QAction(QtGui.QIcon('icons/icon.png'), 'New training',
+        new = QAction(QIcon('icons/icon.png'), 'New training',
                                         self)
-        self.connect(new, QtCore.SIGNAL('triggered()'), self.showTraining)
+        self.connect(new, SIGNAL('triggered()'), self.show_training)
 
-        exit = QtGui.QAction(QtGui.QIcon('icons/icon.png'), 'Exit', self)
-        exit.setShortcut('Ctrl+Q')
-        exit.setStatusTip('Exit application')
-        self.connect(exit, QtCore.SIGNAL('triggered()'),
-                     QtCore.SLOT('close()'))
-
-        settings = QtGui.QAction(QtGui.QIcon('icons/icon.png'),
+        settings = QAction(QIcon('icons/icon.png'),
                                  'Settings', self)
-        self.connect(settings, QtCore.SIGNAL('triggered()'), self.showOptions)
+        self.connect(settings, SIGNAL('triggered()'), self.show_options)
 
         self.statusBar()
 
@@ -315,42 +405,49 @@ class MainWindow(QtGui.QMainWindow):
 
         menuFile = menubar.addMenu('&File')
         menuFile.addAction(new)
-        menuFile.addAction(exit)
 
         options = menubar.addMenu('&Options')
         options.addAction(settings)
 
         self.setMenuBar(menubar)
-        self.showWelcome()
+        self.show_welcome()
         self.center()
 
-    def showWelcome(self):
+    def show_welcome(self):
+        ''' Shows the welcome screen
+        '''
         welcome = Welcome()
-        self.connect(welcome, SIGNAL('settings'), self.showOptions)
-        self.connect(welcome, SIGNAL('training'), self.showTraining)
+        self.connect(welcome, SIGNAL('settings'), self.show_options)
+        self.connect(welcome, SIGNAL('training'), self.show_training)
         welcome.show()
         self.setCentralWidget(welcome)
 
-    def showOptions(self):
+    def show_options(self):
+        ''' Shows the option screen
+        '''
         settings = Settings()
-        self.connect(settings, SIGNAL("quit"), self.showWelcome)
+        self.connect(settings, SIGNAL("quit"), self.show_welcome)
         settings.show()
         self.setCentralWidget(settings)
 
-    def showTraining(self):
+    def show_training(self):
+        ''' Starts the training
+        '''
         trainer = VocabTrainer()
         trainer.show()
         self.setCentralWidget(trainer)
 
     def center(self):
-        screen = QtGui.QDesktopWidget().screenGeometry()
+        ''' Centers the current window
+        '''
+        screen = QDesktopWidget().screenGeometry()
         size = self.geometry()
         self.move((screen.width() - size.width()) / 2,
                   (screen.height() - size.height()) / 2)
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
-    main = MainWindow()
-    main.show()
-    sys.exit(app.exec_())
+    APP = QApplication(sys.argv)
+    MAIN = MainWindow()
+    MAIN.show()
+    sys.exit(APP.exec_())
