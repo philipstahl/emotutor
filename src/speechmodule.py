@@ -7,12 +7,12 @@ from emomodule import Emotion
 class Speech:
     ''' A class for some spoken text. Generates the spoken text via Open Mary
     '''
-    def __init__(self, name, text):
+    def __init__(self, name, text, tts=None):
         self.name = name
         self.text = text
-        #if MARY:
-        #    tts = TextToSpeech()
-        #    tts.save(name, text)
+        self.tts = tts
+        if tts:
+            tts.save(name, text)
 
     def get_bml_code(self):
         ''' Return the bml code of the text
@@ -21,7 +21,8 @@ class Speech:
                <marc:fork id=\"Track_0_fork_2\"> \
                <wait duration=\"0.00\" /> \
                <speech id=\"bml_item_2\" \
-                marc:file=\"" + PATH + "{1}.wav\" marc:articulate=\"0.4\" /> \
+                marc:file=\"" + self.tts.path \
+                + "{1}.wav\" marc:articulate=\"0.4\" /> \
                </marc:fork></bml>".format(self.name, self.name)
 
 class TextToSpeech:
@@ -71,14 +72,31 @@ class SpeechModule:
     '''
     def __init__(self):
         self.tts = None
+        self.tts = None
 
     def enable_open_mary(self, ip_addr, voice, path):
         ''' Enables open mary
         '''
         self.tts = TextToSpech(ip_addr, voice, path)
 
+    def introduce(self):
+        ''' The agents reaction at the beginning of the training
 
-    def get_verbal_reaction(self, correct, surprise, emotion, intense):
+            The agent introduces the human solver to the experiment, explaining
+            the rules of the task.
+
+        '''
+        return Speech("introduction", "Welcome to your vocabulary session.",
+                      self.tts)
+
+    def present(self, task):
+        ''' The agent present a task
+        '''
+        speech = Speech("task", "What is the german word for " + task.question
+                                + "?", self.tts)
+        return speech
+
+    def evaluate(self, correct, surprise, emotion):
         ''' Returns the verbal reaction of the answer given by the user
         '''
         reaction = ""
@@ -86,18 +104,26 @@ class SpeechModule:
             reaction += "Unbelievable! "
         elif surprise == "[surprised]":
             reaction += "Oh! "
-        if correct and emotion == Emotion.JOY and intense > 50:
+        if correct and emotion.name == Emotion.JOY and emotion.impulse > 50:
             reaction += "Absolutely correct! You are doing a fantastic job!"
-        elif correct and emotion == Emotion.JOY and intense > 10:
+        elif correct and emotion.name == Emotion.JOY and emotion.impulse > 10:
             reaction += "Well done my friend, your answer is correct."
-        elif correct and emotion == Emotion.JOY:
+        elif correct and emotion.name == Emotion.JOY:
             reaction += "Allright, your answer is correct."
-        elif not correct and emotion == Emotion.JOY:
+        elif not correct and emotion.name == Emotion.JOY:
             reaction += "Your answer is wrong."
-        elif not correct and emotion == Emotion.ANGER and intense > -50:
+        elif not correct and emotion.name == Emotion.ANGER \
+                 and emotion.impulse > -50:
             reaction += "No, that's definitely not the right answer."
-        elif not correct and emotion == Emotion.ANGER:
+        elif not correct and emotion.name == Emotion.ANGER:
             reaction += "What are you doing? Your answer is really annoying!"
         else:
-            reaction += "Wrong emotion or surprise" + emotion + " " + Emotion.JOY
-        return reaction
+            reaction += "Wrong emotion or surprise"
+        return Speech('reaction', reaction, self.tts)
+
+    def end(self, misses):
+        ''' Returns the agents verbalk output at the end of the training
+        '''
+        return Speech("end", "Test finished. \
+                        You had {0} misses in total.".format(str(misses)),
+                        self.tts)

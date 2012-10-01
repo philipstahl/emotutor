@@ -10,19 +10,15 @@ class Marc:
     RELAX = ''
     ANGER = ''
 
-    def __init__(self, ip_addr, port_in, port_out, emotions):
+    def __init__(self, ip_addr, port_in, port_out):
         self.ip_addr = ip_addr
         self.port_in = port_in
         self.port_out = port_out
-        self.emotions = emotions
-        JOY = emotions['joy']
-        RELAX = emotions['relax']
-        ANGER = emotions['anger']
 
-        self.sock_out = socket.socket(socket.AF_INET,       # Internet
-                                      socket.SOCK_DGRAM)    # UDP
-        self.sock_in = socket.socket(socket.AF_INET,        # Internet
-                              socket.SOCK_DGRAM)            # UDP
+        self.sock_out = socket.socket(socket.AF_INET,
+                                      socket.SOCK_DGRAM)
+        self.sock_in = socket.socket(socket.AF_INET,
+                              socket.SOCK_DGRAM)
         self.sock_in.bind((self.ip_addr, self.port_in))
 
     def perform(self, name, bml_code):

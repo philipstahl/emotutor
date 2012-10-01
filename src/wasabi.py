@@ -29,10 +29,6 @@
 import socket
 import threading
 
-JOY = 'happy'
-RELAX = 'happy'
-ANGER = 'angry'
-
 class ThreadClassHear(threading.Thread):
     ''' Class for recieving input by WASABI
     '''
@@ -50,7 +46,7 @@ class ThreadClassHear(threading.Thread):
         ''' Starts the thread and waits for WASABI messages
         '''
         sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock_in.bind((self.ip_addr, Self.port))
+        sock_in.bind((self.ip_addr, self.port))
 
         while self.hearing:
             data = sock_in.recvfrom(1024)[0]
@@ -80,11 +76,10 @@ class ThreadClassHear(threading.Thread):
 
                     # MARC:
                     if self.marc:
-                        if emotion == wasabi.JOY:
-                            event = Event()
+                        if emotion == Wasabi.JOY:
                             self.marc.show(Emotion.JOY, float(intensity) / 10)
-                        elif emotion == wasabi.ANGER:
-                            self.marc.show(ANGER, float(intensity) / 10)
+                        elif emotion == Wasabi.ANGER:
+                            self.marc.show(Emotion.ANGER, float(intensity) / 10)
 
     def print_emotions(self):
         ''' Prints the current emotion status
@@ -102,23 +97,20 @@ class ThreadClassHear(threading.Thread):
         self.hearing = False
 
 
-class Wasabi():
+class Wasabi:
     ''' Interface for Wasabi: Sending and Receiving messages.
     '''
-    WASABI_JOY = ''
-    WASABI_ANGER = ''
-    WASABI_RELAX = ''
 
-    def __init__(self, ip_addr, port_in, port_out, emotions, marc = None):
+    JOY = 'happy'
+    RELAX = 'happy'
+    ANGER = 'angry'
+
+    def __init__(self, ip_addr, port_in, port_out, marc = None):
         self.ip_addr = ip_addr
         self.port_in = port_in
         self.port_out = port_out
-        self.emotions = emotions
         self.marc = marc
         self.input = ThreadClassHear(ip_addr, port_in, marc)
-        WASABI_JOY = emotions['joy']
-        WASABI_ANGER = emotions['anger']
-        WASABI_RELAX = emotions['relax']
 
     def send(self, emotion, intensity):
         ''' Possible emotions are:

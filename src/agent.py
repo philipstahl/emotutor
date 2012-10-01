@@ -31,7 +31,10 @@ class Agent:
             @emotions: dictionary specifying which emotions marc shall use
 
         '''
-        self.marc = Marc(ip_addr, port_in, port_out, emotions)
+        Marc.JOY = emotions[JOY]
+        Marc.RELAX = emotions[RELAX]
+        Marc.ANGER = emotions[ANGER]
+        self.marc = Marc(ip_addr, port_in, port_out)
 
     def enable_open_mary(self, ip_addr, voice, path):
         ''' Enables Open Mary.
@@ -47,6 +50,9 @@ class Agent:
             The agent uses wasabi to simulate its emotion status
             @emotions: dictionary specifying the use of emotions in wasabi
         '''
+        Wasabi.JOY = emotions[JOY]
+        Wasabi.RELAX = emotions[RELAX]
+        Wasabi.ANGER = emotions[ANGER]
         self.emo_module.enable_wasabi(ip_addr, port_in, port_out, emotions,
                                       self.marc)
 
@@ -58,9 +64,8 @@ class Agent:
             the rules of the task.
 
         '''
-
         emotion = Relax()
-        speech = Speech("introduction", "Welcome to your vocabulary session.")
+        speech = self.speech_module.introduce()
 
         if self.marc:
             self.marc.show(emotion)
@@ -72,8 +77,7 @@ class Agent:
         ''' The agent presents a single task.
 
         '''
-        speech = Speech("task", "What is the german word for " + task.question
-                                + "?")
+        speech = self.speech_module.present(task)
 
         if self.marc:
             self.marc.speak(speech)
@@ -91,11 +95,7 @@ class Agent:
         correct = task.last_trial()[0]
         surprise = self.cog_module.check(task)
         emotion = self.emo_module.check(task)
-        speech = Speech("evaluation",
-                        self.speech_module.get_verbal_reaction(correct,
-                                                               surprise,
-                                                               emotion.name,
-                                                               emotion.impulse))
+        speech = self.speech_module.evaluate(correct, surprise, emotion)
 
         if self.marc:
             self.marc.speak(speech)
@@ -113,8 +113,8 @@ class Agent:
         for task in tasks:
             total_misses += task.misses()
 
-        speech = Speech("end", "Test finished. \
-                        You had {0} misses in total.".format(str(total_misses)))
+        speech = self.speech_module.end(misses)
+
         if self.marc:
             self.marc.speak(speech)
         return ("None", speech.text)

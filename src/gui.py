@@ -409,26 +409,6 @@ class MainWindow(QMainWindow):
         ''' Starts the training
 
         '''
-        '''
-        settings_marc = {'ip': Environment.MARC_IP, 'port_in': MARC_PORT_IN,
-                         'port_out': MARC_PORT_OUT,
-                         'emotions': {Emotion.JOY: MARC_JOY, Emotion.ANGER: MARC_ANGER,
-                                      Emotion.RELAX: MARC_RELAX}}
-
-        settings_mary = {'ip': MARY_IP, 'path': MARY_PATH, 'voice': MARY_VOICE}
-
-        settins_wasabi = {'ip': WASABI_IP, 'port_in': WASABI_PORT_IN,
-                          'port_out': WASABI_PORT_OUT,
-                          'emotions': {Emotion.JOY: WASABI_JOY, Emotion.ANGER: WASABI_ANGER,
-                                       Emotion.RELAX: WASABI_RELAX}}
-        if not MARC:
-            settings_marc = None
-        if not MARY:
-            settings_mary = None
-        if not WASABI:
-            settings_wasabi = None
-        '''
-        #trainer = VocabTrainer(settings_marc, settings_mary, settings_wasabi)
         trainer = VocabTrainer()
         trainer.show()
         self.setCentralWidget(trainer)
