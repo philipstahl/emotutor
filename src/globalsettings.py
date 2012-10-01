@@ -1,2 +1,0 @@
-MARC = False
-MARY = False
