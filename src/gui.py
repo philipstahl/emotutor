@@ -6,26 +6,11 @@ import PyQt4.QtGui
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QBoxLayout, QMainWindow, QAction, QIcon, \
                         QApplication, QDesktopWidget, QMessageBox
-
 import PyQt4.QtCore
 from PyQt4.QtCore import SIGNAL, Qt
 
-from environment import ExpEnvironment
-from globalsettings import MARC_IP, MARC_PORT_OUT, MARC_PORT_IN, WASABI_IP, \
-                           WASABI_PORT_IN, WASABI_PORT_OUT, VOICE, MARY_IP, PATH
-
-# intern emotion names:
-JOY = "JOY"
-ANGER = "ANGER"
-RELAX = "RELAX"
-
-WASABI_JOY = 'happy'
-WASABI_ANGER = 'angry'
-WASABI_RELAX = 'happy'
-
-MARC_JOY = "CASA_Joy_01"
-MARC_RELAX = "CASA_Relax_01"
-MARC_ANGER = "CASA_Anger_01"
+from environment import Environment
+from emomodule import Emotion
 
 
 class VocabTrainer(QWidget):
@@ -88,7 +73,10 @@ class VocabTrainer(QWidget):
         self.resize(600, 200)
 
         # Setup experimental environment:
-        self.exp = ExpEnvironment()
+        #self.exp = Environment(marc = settings_marc, mary = settings_mary,
+        #                           wasabi = settings_wasabi)
+        self.exp = Environment()
+
         emotion, speech = self.exp.start()
         self.emo_output.setText(emotion)
         self.speech_output.setText(speech)
@@ -168,27 +156,30 @@ class VocabTrainer(QWidget):
 class Settings(QWidget):
     ''' Frame showing all program settings
     '''
+
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent)
 
+        self.marc_settings = \
+            {'ip': QLineEdit(Environment.MARC_IP),
+             'port_in': QLineEdit(str(Environment.MARC_PORT_IN)),
+             'port_out': QLineEdit(str(Environment.MARC_PORT_OUT)),
+             'anger': QLineEdit(Emotion.MARC_ANGER),
+             'relax': QLineEdit(Emotion.MARC_RELAX),
+             'joy': QLineEdit(Emotion.MARC_JOY)}
 
-        self.marc_settings = {'ip': QLineEdit(MARC_IP),
-                              'port_in': QLineEdit(str(MARC_PORT_IN)),
-                              'port_out': QLineEdit(str(MARC_PORT_OUT)),
-                              'anger': QLineEdit(MARC_ANGER),
-                              'relax': QLineEdit(MARC_RELAX),
-                              'joy': QLineEdit(MARC_JOY)}
+        self.wasabi_settings = \
+            {'ip': QLineEdit(Environment.WASABI_IP),
+             'port_in': QLineEdit(str(Environment.WASABI_PORT_IN)),
+             'port_out': QLineEdit(str(Environment.WASABI_PORT_OUT)),
+             'anger': QLineEdit(Emotion.WASABI_ANGER),
+             'relax': QLineEdit(Emotion.WASABI_RELAX),
+             'joy':QLineEdit(Emotion.WASABI_JOY)}
 
-        self.wasabi_settings = {'ip': QLineEdit(WASABI_IP),
-                                'port_in': QLineEdit(str(WASABI_PORT_IN)),
-                                'port_out': QLineEdit(str(WASABI_PORT_OUT)),
-                                'anger': QLineEdit(WASABI_ANGER),
-                                'relax': QLineEdit(WASABI_RELAX),
-                                'joy':QLineEdit(WASABI_JOY)}
-
-        self.mary_settings = {'ip': QLineEdit(MARY_IP),
-                              'voice': QLineEdit(VOICE),
-                              'path': QLineEdit(PATH)}
+        self.mary_settings = \
+            {'ip': QLineEdit(Environment.MARY_IP),
+             'voice': QLineEdit(Environment.MARY_VOICE),
+             'path': QLineEdit(Environment.MARY_PATH)}
 
 
         self.setLayout(self.init_ui())
@@ -278,38 +269,21 @@ class Settings(QWidget):
     def save(self):
         ''' Save changed settings
         '''
-        global MARC_IP
-        global MARC_PORT_OUT
-        global MARC_PORT_IN
-        global WASABI_IP
-        global WASABI_PORT_IN
-        global WASABI_PORT_OUT
-        global VOICE
-        global MARY_IP
-        global PATH
-        global WASABI_JOY
-        global WASABI_ANGER
-        global WASABI_RELAX
-        global MARC_JOY
-        global MARC_RELAX
-        global MARC_ANGER
-
-        MARC_IP = self.marc_settings['ip'].text()
-        MARC_PORT_OUT = self.marc_settings['port_out'].text()
-        MARC_PORT_IN = self.marc_settings['port_in'].text()
-        WASABI_IP = self.wasabi_settings['ip'].text()
-        WASABI_PORT_IN = self.wasabi_settings['port_in'].text()
-        WASABI_PORT_OUT = self.wasabi_settings['port_out'].text()
-        VOICE = self.mary_settings['voice'].text()
-        MARY_IP = self.mary_settings['ip'].text()
-        PATH = self.mary_settings['path'].text()
-        WASABI_JOY = self.wasabi_settings['joy'].text()
-        WASABI_ANGER = self.wasabi_settings['anger'].text()
-        WASABI_RELAX = self.wasabi_settings['relax'].text()
-        MARC_JOY = self.marc_settings['joy'].text()
-        MARC_RELAX = self.marc_settings['relax'].text()
-        MARC_ANGER = self.marc_settings['anger'].text()
-
+        Environment.MARC_IP = self.marc_settings['ip'].text()
+        Environment.MARC_PORT_OUT = self.marc_settings['port_out'].text()
+        Environment.MARC_PORT_IN = self.marc_settings['port_in'].text()
+        Environment.WASABI_IP = self.wasabi_settings['ip'].text()
+        Environment.WASABI_PORT_IN = self.wasabi_settings['port_in'].text()
+        Environment.WASABI_PORT_OUT = self.wasabi_settings['port_out'].text()
+        Environment.MARY_VOICE = self.mary_settings['voice'].text()
+        Environment.MARY_IP = self.mary_settings['ip'].text()
+        Environment.MARY_PATH = self.mary_settings['path'].text()
+        Emotion.WASABI_JOY = self.wasabi_settings['joy'].text()
+        Emotion.WASABI_ANGER = self.wasabi_settings['anger'].text()
+        Emotion.WASABI_RELAX = self.wasabi_settings['relax'].text()
+        Emotion.MARC_JOY = self.marc_settings['joy'].text()
+        Emotion.MARC_RELAX = self.marc_settings['relax'].text()
+        Emotion.MARC_ANGER = self.marc_settings['anger'].text()
 
         self.emit(SIGNAL('quit'))
 
@@ -385,6 +359,7 @@ class Welcome(QWidget):
 class MainWindow(QMainWindow):
     ''' Main window of the vocabulary trainer
     '''
+
     def __init__(self):
         QMainWindow.__init__(self)
 
@@ -432,7 +407,28 @@ class MainWindow(QMainWindow):
 
     def show_training(self):
         ''' Starts the training
+
         '''
+        '''
+        settings_marc = {'ip': Environment.MARC_IP, 'port_in': MARC_PORT_IN,
+                         'port_out': MARC_PORT_OUT,
+                         'emotions': {Emotion.JOY: MARC_JOY, Emotion.ANGER: MARC_ANGER,
+                                      Emotion.RELAX: MARC_RELAX}}
+
+        settings_mary = {'ip': MARY_IP, 'path': MARY_PATH, 'voice': MARY_VOICE}
+
+        settins_wasabi = {'ip': WASABI_IP, 'port_in': WASABI_PORT_IN,
+                          'port_out': WASABI_PORT_OUT,
+                          'emotions': {Emotion.JOY: WASABI_JOY, Emotion.ANGER: WASABI_ANGER,
+                                       Emotion.RELAX: WASABI_RELAX}}
+        if not MARC:
+            settings_marc = None
+        if not MARY:
+            settings_mary = None
+        if not WASABI:
+            settings_wasabi = None
+        '''
+        #trainer = VocabTrainer(settings_marc, settings_mary, settings_wasabi)
         trainer = VocabTrainer()
         trainer.show()
         self.setCentralWidget(trainer)

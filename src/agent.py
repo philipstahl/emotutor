@@ -4,8 +4,10 @@ from cogmodule import CogModule
 from emomodule import EmoModule, Relax
 from speechmodule import SpeechModule, Speech
 from marc import Marc
-from globalsettings import MARC
 
+JOY = "JOY"
+ANGER = "ANGER"
+RELAX = "RELAX"
 
 class Agent:
     ''' The Agent class contains methods for the agents behaviour.
@@ -18,11 +20,36 @@ class Agent:
     def __init__(self, tasks):
         self.tasks = tasks
         self.marc = None
-        if MARC:
-            self.marc = Marc()
         self.cog_module = CogModule()
-        self.emo_module = EmoModule(self.marc)
+        self.emo_module = EmoModule()
         self.speech_module = SpeechModule()
+
+    def enable_marc(self, ip_addr, port_in, port_out, emotions):
+        ''' Enables marc module.
+
+            The agent show emotional and verbal output via marc.
+            @emotions: dictionary specifying which emotions marc shall use
+
+        '''
+        self.marc = Marc(ip_addr, port_in, port_out, emotions)
+
+    def enable_open_mary(self, ip_addr, voice, path):
+        ''' Enables Open Mary.
+
+            The agents speech module uses open mary to produce text to speech
+            output
+         '''
+        self.speech_module.enable_open_mary(self, ip_addr, voice, path)
+
+    def enable_wasabi(self, ip_addr, port_in, port_out, emotions):
+        ''' Enables the wasabi module.
+
+            The agent uses wasabi to simulate its emotion status
+            @emotions: dictionary specifying the use of emotions in wasabi
+        '''
+        self.emo_module.enable_wasabi(ip_addr, port_in, port_out, emotions,
+                                      self.marc)
+
 
     def introduce(self):
         ''' The agents reaction at the beginning of the training

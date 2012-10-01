@@ -1,10 +1,8 @@
 ''' The module to manage the verbal action of the agent.
 '''
-
-from globalsettings import MARY, PATH, JOY, ANGER, MARY_IP, VOICE
 import urllib2
 import wave
-
+from emomodule import Emotion
 
 class Speech:
     ''' A class for some spoken text. Generates the spoken text via Open Mary
@@ -12,9 +10,9 @@ class Speech:
     def __init__(self, name, text):
         self.name = name
         self.text = text
-        if MARY:
-            tts = TextToSpeech()
-            tts.save(name, text)
+        #if MARY:
+        #    tts = TextToSpeech()
+        #    tts.save(name, text)
 
     def get_bml_code(self):
         ''' Return the bml code of the text
@@ -29,13 +27,15 @@ class Speech:
 class TextToSpeech:
     ''' Class for text to speech support via Open Mary
     '''
-    def __init__(self):
-        pass
+    def __init__(self, ip_addr, voice, path):
+        self.ip_addr = ip_addr
+        self.voice = voice
+        self.path = path
 
     def voices(self):
         ''' Sends a request for available voices
         '''
-        received = urllib2.urlopen(MARY_IP + 'voices')
+        received = urllib2.urlopen(self.ip_addr + 'voices')
         data = received.read()
         print 'voices:'
         print data
@@ -47,10 +47,10 @@ class TextToSpeech:
             dfki-obadiah\%20en_GB male\%20unitselection\%20general
         '''
         text = text.replace(' ', '+')
-        query = MARY_IP + 'process?INPUT_TEXT=' \
+        query = self.ip_addr + 'process?INPUT_TEXT=' \
                 + text \
                 + '&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO\
-                   &AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + VOICE
+                   &AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + self.voice
 
         received = urllib2.urlopen(query)
         data = received.read()
@@ -65,9 +65,18 @@ class TextToSpeech:
 
 class SpeechModule:
     ''' The class to manage the verbal activity of the agent.
+
+        This is the only class / section in code where the verbal output of the
+        agent is defined.
     '''
     def __init__(self):
-        pass
+        self.tts = None
+
+    def enable_open_mary(self, ip_addr, voice, path):
+        ''' Enables open mary
+        '''
+        self.tts = TextToSpech(ip_addr, voice, path)
+
 
     def get_verbal_reaction(self, correct, surprise, emotion, intense):
         ''' Returns the verbal reaction of the answer given by the user
@@ -77,18 +86,18 @@ class SpeechModule:
             reaction += "Unbelievable! "
         elif surprise == "[surprised]":
             reaction += "Oh! "
-        if correct and emotion == JOY and intense > 50:
+        if correct and emotion == Emotion.JOY and intense > 50:
             reaction += "Absolutely correct! You are doing a fantastic job!"
-        elif correct and emotion == JOY and intense > 10:
+        elif correct and emotion == Emotion.JOY and intense > 10:
             reaction += "Well done my friend, your answer is correct."
-        elif correct and emotion == JOY:
+        elif correct and emotion == Emotion.JOY:
             reaction += "Allright, your answer is correct."
-        elif not correct and emotion == JOY:
+        elif not correct and emotion == Emotion.JOY:
             reaction += "Your answer is wrong."
-        elif not correct and emotion == ANGER and intense > -50:
+        elif not correct and emotion == Emotion.ANGER and intense > -50:
             reaction += "No, that's definitely not the right answer."
-        elif not correct and emotion == ANGER:
+        elif not correct and emotion == Emotion.ANGER:
             reaction += "What are you doing? Your answer is really annoying!"
         else:
-            reaction += "Wrong emotion or surprise"
+            reaction += "Wrong emotion or surprise" + emotion + " " + Emotion.JOY
         return reaction

@@ -1,23 +1,34 @@
 ''' Interface to MARC software
 '''
 import socket
-from globalsettings import MARC_IP, MARC_PORT_IN, MARC_PORT_OUT
-
 
 class Marc:
     ''' An interface to interact with an agent represented by MARC
     '''
-    def __init__(self):
+
+    JOY = ''
+    RELAX = ''
+    ANGER = ''
+
+    def __init__(self, ip_addr, port_in, port_out, emotions):
+        self.ip_addr = ip_addr
+        self.port_in = port_in
+        self.port_out = port_out
+        self.emotions = emotions
+        JOY = emotions['joy']
+        RELAX = emotions['relax']
+        ANGER = emotions['anger']
+
         self.sock_out = socket.socket(socket.AF_INET,       # Internet
                                       socket.SOCK_DGRAM)    # UDP
         self.sock_in = socket.socket(socket.AF_INET,        # Internet
                               socket.SOCK_DGRAM)            # UDP
-        self.sock_in.bind((MARC_IP, MARC_PORT_IN))
+        self.sock_in.bind((self.ip_addr, self.port_in))
 
     def perform(self, name, bml_code):
         ''' Performs the action specified in the bml code
         '''
-        self.sock_out.sendto(bml_code, (MARC_IP, MARC_PORT_OUT))
+        self.sock_out.sendto(bml_code, (self.ip_addr, self.port_out))
         # TODO: Wait via Thread for End of Emotion?
         # while True:
         #     data, address = self.sock_in.recvfrom(4096)
@@ -34,10 +45,10 @@ class Marc:
 
         '''
         print 'Showing', emotion.name
-        self.perform(emotion.name, emotion.getBMLCode())
+        self.perform(emotion.name, emotion.get_bml_code())
 
     def speak(self, speech):
         ''' Sends the BML Code for speacking the given wave file to MARC.
         '''
         print 'Saying', speech.name
-        self.perform(speech.name, speech.getBMLCode())
+        self.perform(speech.name, speech.get_bml_code())

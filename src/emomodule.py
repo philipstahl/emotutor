@@ -5,12 +5,21 @@
 '''
 
 from wasabi import Wasabi
-from globalsettings import JOY, MARC_JOY, WASABI_JOY, RELAX, MARC_RELAX, \
-                           WASABI_RELAX, ANGER, MARC_ANGER, WASABI_ANGER, \
-                           WASABI
-
 
 class Emotion:
+
+    JOY = 'JOY'
+    ANGER = 'ANGER'
+    RELAX = 'RELAX'
+
+    WASABI_JOY = 'happy'
+    WASABI_ANGER = 'angry'
+    WASABI_RELAX = 'happy'
+
+    MARC_JOY = "CASA_Joy_01"
+    MARC_RELAX = "CASA_Relax_01"
+    MARC_ANGER = "CASA_Anger_01"
+
     ''' Class for representing a single Emotion
 
         Emotion matching: Every emotion has a
@@ -23,19 +32,16 @@ class Emotion:
     def __init__(self, name, wait=0.0, impulse=100,
                  interpolate=1.0):
         self.name = name
-        marc_names = {JOY: MARC_JOY, ANGER: MARC_ANGER, RELAX: MARC_RELAX}
-        self.marc_name = marc_names[name]
-        wasabi_names = {JOY: WASABI_JOY, ANGER: WASABI_ANGER,
-                        RELAX: WASABI_RELAX}
-        self.wasabi_name = wasabi_names[name]
         self.wait = wait
         self.impulse = impulse
         self.intensity = float(impulse) / 100
         if self.intensity < 0:
             self.intensity = self.intensity * -1
         self.interpolate = interpolate
+        print 'joy:', Emotion.MARC_JOY
 
     def get_bml_code(self):
+        #TODO use marc names here
         ''' Returns the BML Code of the emotion, for showing in MARC
         '''
         return "<bml id=\"Perform{0}\"> \
@@ -59,19 +65,19 @@ class Anger(Emotion):
     ''' Class for an anger emotion
     '''
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, ANGER, impulse = impulse)
+        Emotion.__init__(self, Emotion.ANGER, impulse = impulse)
 
 class Joy(Emotion):
     ''' Class for an joy emotion
     '''
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, JOY, impulse = impulse)
+        Emotion.__init__(self, Emotion.JOY, impulse = impulse)
 
 class Relax(Emotion):
     ''' Class for an relax emotion
     '''
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, RELAX, impulse = impulse)
+        Emotion.__init__(self, Emotion.RELAX, impulse = impulse)
 
 
 class EmoModule:
@@ -80,11 +86,15 @@ class EmoModule:
         Otherwise the agent shows only direct emotional reactions and does not
         have an overduring emotional model.
     '''
-    def __init__(self, marc = None):
-        self.marc = marc
-        if WASABI:
-            self.wasabi = Wasabi(self.marc)
-            self.wasabi.start_hearing()
+    def __init__(self):
+        self.wasabi = None
+        pass
+
+    def enable_wasabi(self, ip, port_in, port_out, emotions, marc = None):
+        ''' The emotion module uses wasabi to simulate the emotion status
+        '''
+        self.wasabi = Wasabi(ip, port_in, port_out, emotions, marc)
+        self.wasabi.start_hearing()
 
     def check(self, task):
         ''' Task evaluation according to the emotional reaction
@@ -102,7 +112,7 @@ class EmoModule:
         else:
             emotion = Anger(-100)
 
-        if WASABI:
+        if self.wasabi:
             self.wasabi.send(emotion.name, emotion.impulse)
             current_emo, current_imp = self.wasabi.get_primary_emotion()
             return Emotion(current_emo, current_imp)
