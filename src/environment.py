@@ -6,20 +6,6 @@
 import datetime
 from agent import Agent
 
-MARC = False
-MARY = False
-WASABI = False
-
-MARC_IP = 'localhost'
-MARC_PORT_OUT = 4013
-MARC_PORT_IN = 4014
-WASABI_IP = '192.168.0.46'
-WASABI_PORT_OUT = 42425
-WASABI_PORT_IN = 42424
-MARY_VOICE = 'dfki-obadiah'
-MARY_IP = 'http://localhost:59125/'
-MARY_PATH = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
-
 
 class Task:
     ''' Class representing a single task in the experimental environment
@@ -55,7 +41,21 @@ class Environment:
     ''' The class for the experimental environment
     '''
 
-    def __init__(self, marc=None, mary=None, wasabi=None):
+    MARC = True
+    MARY = True
+    WASABI = True
+
+    MARC_IP = 'localhost'
+    MARC_PORT_OUT = 4013
+    MARC_PORT_IN = 4014
+    WASABI_IP = '192.168.0.46'
+    WASABI_PORT_OUT = 42425
+    WASABI_PORT_IN = 42424
+    MARY_VOICE = 'dfki-obadiah'
+    MARY_IP = 'http://localhost:59125/'
+    MARY_PATH = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+
+    def __init__(self):
         ''' settings must be a dict with the following keys:
                 marc_ip, marc_port_in, marc_port_out, marc_emotions,
                 mary_ip, mary_voice, mary_path,
@@ -66,27 +66,42 @@ class Environment:
         self.solved_tasks = []
         self.task = None
         self.time_start = 0
-        self.agent = Agent(self.tasks)
+        self.agent = Agent()
+        
+        if Environment.MARC:
+            self.agent.enable_marc(Environment.MARC_IP,
+                                   Environment.MARC_PORT_IN,
+                                   Environment.MARC_PORT_OUT)
+        if Environment.MARY:
+            self.agent.enable_open_mary(Environment.MARY_IP,
+                                        Environment.MARY_VOICE,
+                                        Environment.MARY_PATH)
+        if Environment.WASABI:
+            self.agent.enable_wasabi(Environment.WASABI_IP,
+                                     Environment.WASABI_PORT_IN,
+                                     Environment.WASABI_PORT_OUT)
         '''
-        if marc:
-            self.agent.enable_marc(marc['ip'], marc['port_in'],
-                                   marc['port_out'], marc['emotions'])
-        if mary:
-            self.agent.enable_open_mary(mary['ip'], mary['voice'], mary['path'])
-        if wasabi:
-            self.agent.enable_wasabi(wasabi['ip'], wasabi['port_in'],
-                                     wasabi['port_out'], wasabi['emotions'])
+        if Environment.MARC:
+            Marc.IP = Environment.MARC_IP
+            Marc.PORT_IN = MARC_PORT_IN
+            Marc.PORT_OUT = Environment.MARC_PORT_OUT,
+            Marc.JOY = Environment.MARC_JOY,
+            Marc.ANGER: Environment.MARC_ANGER,
+            Marc.RELAX: Environment.MARC_RELAX
+        if Environment.MARY:
+            OpenMary.IP = Environment.MARY_IP,
+            OpenMary.PATH = Environment.MARY_PATH,
+            OpenMary.VOICE = Environment.MARY_VOICE
+        if Environment.WASABI:
+            Wasabi.IP = Environment.WASABI_IP,
+            Wasabi.PORT_IN = Environment.WASABI_PORT_IN,
+            Wasabi.PORT_OUT = Environment.WASABI_PORT_OUT,
+            Wasabi.JOY = Environment.WASABI_JOY,
+            Wasabi.ANGER = Environment.WASABI_ANGER,
+            Wasabi.Relax = Environment.WASABI_RELAX
+        self.agent = Agent(self.tasks, Environment.MARC, Environment.MARY,
+                           Environment.WASABI)
         '''
-        if MARC:
-            self.agent.enable_marc(MARC_IP, MARC_PORT_IN, MARC_PORT_OUT,
-                         {Emotion.JOY: MARC_JOY, Emotion.ANGER: MARC_ANGER,
-                         Emotion.RELAX: MARC_RELAX})
-        if MARY:
-            self.agent.enable_open_mary(MARY_IP, MARY_PATH, MARY_VOICE)
-        if WASABI:
-            self.agent.enable_wasabi(WASABI_IP, WASABI_PORT_IN, WASABI_PORT_OUT,
-                          {Emotion.JOY: WASABI_JOY, Emotion.ANGER: WASABI_ANGER,
-                                       Emotion.RELAX: WASABI_RELAX})
 
     def start(self):
         ''' Show init text and wait for start button.

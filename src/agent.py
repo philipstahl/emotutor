@@ -14,26 +14,25 @@ class Agent:
 
         All methods return the current emotional and verbal reaction to the event
         that triggered the method.
-
     '''
 
-    def __init__(self, tasks):
-        self.tasks = tasks
+    def __init__(self):
         self.marc = None
         self.cog_module = CogModule()
         self.emo_module = EmoModule()
         self.speech_module = SpeechModule()
 
-    def enable_marc(self, ip_addr, port_in, port_out, emotions):
+    def enable_marc(self, ip_addr, port_in, port_out):
         ''' Enables marc module.
 
             The agent show emotional and verbal output via marc.
             @emotions: dictionary specifying which emotions marc shall use
 
         '''
-        Marc.JOY = emotions[JOY]
-        Marc.RELAX = emotions[RELAX]
-        Marc.ANGER = emotions[ANGER]
+        print 'MARC enabled'
+        #Marc.JOY = emotions[JOY]
+        #Marc.RELAX = emotions[RELAX]
+        #Marc.ANGER = emotions[ANGER]
         self.marc = Marc(ip_addr, port_in, port_out)
 
     def enable_open_mary(self, ip_addr, voice, path):
@@ -42,19 +41,20 @@ class Agent:
             The agents speech module uses open mary to produce text to speech
             output
          '''
-        self.speech_module.enable_open_mary(self, ip_addr, voice, path)
+        print 'OPEN MARY enabled'
+        self.speech_module.enable_open_mary(ip_addr, voice, path)
 
-    def enable_wasabi(self, ip_addr, port_in, port_out, emotions):
+    def enable_wasabi(self, ip_addr, port_in, port_out):
         ''' Enables the wasabi module.
 
             The agent uses wasabi to simulate its emotion status
             @emotions: dictionary specifying the use of emotions in wasabi
         '''
-        Wasabi.JOY = emotions[JOY]
-        Wasabi.RELAX = emotions[RELAX]
-        Wasabi.ANGER = emotions[ANGER]
-        self.emo_module.enable_wasabi(ip_addr, port_in, port_out, emotions,
-                                      self.marc)
+        print 'WASABI enabled'
+        #Wasabi.JOY = emotions[JOY]
+        #Wasabi.RELAX = emotions[RELAX]
+        #Wasabi.ANGER = emotions[ANGER]
+        self.emo_module.enable_wasabi(ip_addr, port_in, port_out, self.marc)
 
 
     def introduce(self):
@@ -113,7 +113,7 @@ class Agent:
         for task in tasks:
             total_misses += task.misses()
 
-        speech = self.speech_module.end(misses)
+        speech = self.speech_module.end(total_misses)
 
         if self.marc:
             self.marc.speak(speech)

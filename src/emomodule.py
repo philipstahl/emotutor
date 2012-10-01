@@ -90,10 +90,10 @@ class EmoModule:
         self.wasabi = None
         pass
 
-    def enable_wasabi(self, ip, port_in, port_out, emotions, marc = None):
+    def enable_wasabi(self, ip, port_in, port_out, marc = None):
         ''' The emotion module uses wasabi to simulate the emotion status
         '''
-        self.wasabi = Wasabi(ip, port_in, port_out, emotions, marc)
+        self.wasabi = Wasabi(ip, port_in, port_out, marc)
         self.wasabi.start_hearing()
 
     def check(self, task):
@@ -106,7 +106,7 @@ class EmoModule:
         elif correct and time < 5:
             emotion = Joy(50)
         elif correct:
-            emotion = Relax(10)
+            emotion = Joy(10)
         elif not correct and task.misses() < 2:
             emotion = Anger(-50)
         else:
@@ -115,6 +115,9 @@ class EmoModule:
         if self.wasabi:
             self.wasabi.send(emotion.name, emotion.impulse)
             current_emo, current_imp = self.wasabi.get_primary_emotion()
-            return Emotion(current_emo, current_imp)
+            if current_emo == Wasabi.JOY:
+                return Joy(current_imp)
+            if current_emo == WASABI.Anger:
+                return Anger(current_imp)
         else:
             return emotion

@@ -50,9 +50,9 @@ class TextToSpeech:
         text = text.replace(' ', '+')
         query = self.ip_addr + 'process?INPUT_TEXT=' \
                 + text \
-                + '&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO\
-                   &AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + self.voice
-
+                + '&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO' \
+                + '&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + self.voice
+        print "REQUEST OPEN MARY: ", query
         received = urllib2.urlopen(query)
         data = received.read()
         wav = wave.open("sounds\\" + name + ".wav", 'w')
@@ -77,7 +77,7 @@ class SpeechModule:
     def enable_open_mary(self, ip_addr, voice, path):
         ''' Enables open mary
         '''
-        self.tts = TextToSpech(ip_addr, voice, path)
+        self.tts = TextToSpeech(ip_addr, voice, path)
 
     def introduce(self):
         ''' The agents reaction at the beginning of the training
@@ -118,7 +118,7 @@ class SpeechModule:
         elif not correct and emotion.name == Emotion.ANGER:
             reaction += "What are you doing? Your answer is really annoying!"
         else:
-            reaction += "Wrong emotion or surprise"
+            reaction += "Wrong emotion or surprise" + emotion.name
         return Speech('reaction', reaction, self.tts)
 
     def end(self, misses):
