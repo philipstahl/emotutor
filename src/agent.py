@@ -1,83 +1,120 @@
+''' The class for the agent
+'''
 from cogmodule import CogModule
-from emomodule import EmoModule
-from speachmodule import SpeachModule
+from emomodule import EmoModule, Relax
+from speechmodule import SpeechModule, Speech
 from marc import Marc
-from expression import Anger, Joy, Relax
-from speech import Speech
-from globalsettings import *
+
+JOY = "JOY"
+ANGER = "ANGER"
+RELAX = "RELAX"
 
 class Agent:
+    ''' The Agent class contains methods for the agents behaviour.
 
-    ''' Constructor
+        All methods return the current emotional and verbal reaction to the event
+        that triggered the method.
+
     '''
+
     def __init__(self, tasks):
         self.tasks = tasks
-        self.marc = None      
-        if MARC:
-            self.marc = Marc()
-        self.cogModule = CogModule()
-        self.emoModule = EmoModule(self.marc)
-        self.speachModule = SpeachModule()
-          
-        
-        
+        self.marc = None
+        self.cog_module = CogModule()
+        self.emo_module = EmoModule()
+        self.speech_module = SpeechModule()
 
-    ''' The agent introduces the human solver to the experiment, explaining
-        the rules of the task.
-    '''
+    def enable_marc(self, ip_addr, port_in, port_out, emotions):
+        ''' Enables marc module.
+
+            The agent show emotional and verbal output via marc.
+            @emotions: dictionary specifying which emotions marc shall use
+
+        '''
+        Marc.JOY = emotions[JOY]
+        Marc.RELAX = emotions[RELAX]
+        Marc.ANGER = emotions[ANGER]
+        self.marc = Marc(ip_addr, port_in, port_out)
+
+    def enable_open_mary(self, ip_addr, voice, path):
+        ''' Enables Open Mary.
+
+            The agents speech module uses open mary to produce text to speech
+            output
+         '''
+        self.speech_module.enable_open_mary(self, ip_addr, voice, path)
+
+    def enable_wasabi(self, ip_addr, port_in, port_out, emotions):
+        ''' Enables the wasabi module.
+
+            The agent uses wasabi to simulate its emotion status
+            @emotions: dictionary specifying the use of emotions in wasabi
+        '''
+        Wasabi.JOY = emotions[JOY]
+        Wasabi.RELAX = emotions[RELAX]
+        Wasabi.ANGER = emotions[ANGER]
+        self.emo_module.enable_wasabi(ip_addr, port_in, port_out, emotions,
+                                      self.marc)
+
+
     def introduce(self):
+        ''' The agents reaction at the beginning of the training
+
+            The agent introduces the human solver to the experiment, explaining
+            the rules of the task.
+
+        '''
         emotion = Relax()
-        speech = Speech("introduction", "Welcome to your vocabulary session.")
-        
+        speech = self.speech_module.introduce()
+
         if self.marc:
             self.marc.show(emotion)
             self.marc.speak(speech)
-        
+
         return (emotion.name, speech.text)
 
-
-    ''' The agent presents a single task.
-    '''
     def present(self, task):
-        speech = Speech("task", "What is the german word for " + task.question 
-                                + "?")
-        
+        ''' The agent presents a single task.
+
+        '''
+        speech = self.speech_module.present(task)
+
         if self.marc:
             self.marc.speak(speech)
 
         return ('None', speech.text)
 
-
-    ''' The agent evalutates the solution given by the human solver and shows
-        an emotional and verbal reaction.The reaction depends on the feedback
-        of the cognitive (= surprise) and emotional (= mood) modules.
-    '''
     def evaluate(self, task):
-        correct, time = task.last_trial()
-        surprise = self.cogModule.check(task)
-        emotion, intense = self.emoModule.check(task)
+        ''' The agents reaction to an answer by the user.
 
-        answer = surprise + "[" + emotion + ", " + str(intense) + "] "
-        speech = Speech("evaluation", 
-                        self.speachModule.get_verbal_reaction(correct, surprise,
-                                                              emotion, intense)
-                        + " You needed " + str(time) + " seconds.")
-        
-        
+            The agent evalutates the solution given by the human solver and shows
+            an emotional and verbal reaction.The reaction depends on the feedback
+            of the cognitive (= surprise) and emotional (= mood) modules.
+
+        '''
+        correct = task.last_trial()[0]
+        surprise = self.cog_module.check(task)
+        emotion = self.emo_module.check(task)
+        speech = self.speech_module.evaluate(correct, surprise, emotion)
+
         if self.marc:
-            #self.marc.show(emotion)
             self.marc.speak(speech)
-        else:
-            print 'marc not specifeie'
 
-        return (emotion, speech.text)
+        return (emotion.name + " " + str(emotion.impulse), speech.text)
 
-
-    ''' The Agent gives feedback for the whole test telling how many tasks
-        have been done wrong.
-    ''' 
     def end(self, tasks):
+        ''' The Agents output at the end of the training.
+
+            The Agent gives feedback for the whole test telling how many tasks
+            have been done wrong.
+
+        '''
         total_misses = 0
         for task in tasks:
             total_misses += task.misses()
-        return ("None", "Test finished. You had " + str(total_misses) + " misses in total.")
+
+        speech = self.speech_module.end(misses)
+
+        if self.marc:
+            self.marc.speak(speech)
+        return ("None", speech.text)
