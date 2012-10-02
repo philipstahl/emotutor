@@ -141,3 +141,14 @@ class Wasabi:
             return ('angry', self.input.emotions['angry'])
         else:
             return ('happy', self.input.emotions['happy'])
+
+
+if __name__ == '__main__':
+    import sys
+    from emomodule import Emotion
+    if len(sys.argv) == 4 and sys.argv[1] == 'send':
+        wasabi = Wasabi('192.168.0.46', 42424, 42425)
+        wasabi.send(sys.argv[2], sys.argv[3])
+    else:
+        wasabi = Wasabi('192.168.0.46', 42424, 42425)
+        wasabi.start_hearing()
