@@ -48,3 +48,12 @@ class Marc:
         '''
         print 'Saying', speech.name
         self.perform(speech.name, speech.get_bml_code())
+
+
+if __name__ == '__main__':
+    print 'Started'
+    import sys
+    from emomodule import Emotion
+    if len(sys.argv) > 1:
+        marc = Marc('localhost', 4014, 4013)
+        marc.perform(sys.argv[1], Emotion(sys.argv[1]).get_bml_code())
