@@ -19,7 +19,7 @@ class Agent:
     def __init__(self):
         self.marc = None
         self.cog_module = CogModule()
-        self.emo_module = EmoModule()
+        #self.emo_module = EmoModule()
         self.speech_module = SpeechModule()
 
     def enable_marc(self, ip_addr, port_in, port_out):
@@ -54,7 +54,7 @@ class Agent:
         #Wasabi.JOY = emotions[JOY]
         #Wasabi.RELAX = emotions[RELAX]
         #Wasabi.ANGER = emotions[ANGER]
-        self.emo_module.enable_wasabi(ip_addr, port_in, port_out, self.marc)
+        self.emo_module = EmoModule(self.marc)
 
 
     def introduce(self):

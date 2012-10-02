@@ -51,7 +51,6 @@ class Marc:
 
 
 if __name__ == '__main__':
-    print 'Started'
     import sys
     from emomodule import Emotion
     if len(sys.argv) > 1:

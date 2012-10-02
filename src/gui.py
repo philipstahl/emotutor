@@ -272,9 +272,10 @@ class Settings(QWidget):
         Environment.MARC_IP = self.marc_settings['ip'].text()
         Environment.MARC_PORT_OUT = self.marc_settings['port_out'].text()
         Environment.MARC_PORT_IN = self.marc_settings['port_in'].text()
-        Environment.WASABI_IP = self.wasabi_settings['ip'].text()
-        Environment.WASABI_PORT_IN = self.wasabi_settings['port_in'].text()
-        Environment.WASABI_PORT_OUT = self.wasabi_settings['port_out'].text()
+        EmoModule.WASABI = True
+        EmoModule.WASABI_IP = self.wasabi_settings['ip'].text()
+        EmoModule.WASABI_PORT_IN = self.wasabi_settings['port_in'].text()
+        EmoModule.WASABI_PORT_OUT = self.wasabi_settings['port_out'].text()
         Environment.MARY_VOICE = self.mary_settings['voice'].text()
         Environment.MARY_IP = self.mary_settings['ip'].text()
         Environment.MARY_PATH = self.mary_settings['path'].text()

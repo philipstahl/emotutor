@@ -28,6 +28,7 @@
 
 import socket
 import threading
+import math
 
 class ThreadClassHear(threading.Thread):
     ''' Class for recieving input by WASABI
@@ -41,6 +42,7 @@ class ThreadClassHear(threading.Thread):
         self.hearing = True
         self.emotions = {'happy': 0, 'concentrated': 0, 'depressed': 0,
                          'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
+        self.blocked = False
 
     def run(self):
         ''' Starts the thread and waits for WASABI messages
@@ -55,31 +57,61 @@ class ThreadClassHear(threading.Thread):
     def update_emotions(self, data):
         ''' Gets a string of emotion values received from wasabi
             and updates the internal emotion dictionary
+
+            1. Try: Always show dominating emotion
         '''
         # get the single emotion assignments
         values = data.split(" ")
         # remove eventually empty entries
         values = [val for val in values if val != ""]
+
+        remaining_keys = self.emotions.keys()
         for value in values:
             value = value.replace(' ', '')
             if len(value.split('=')) != 2:
                 print 'strange', data, '-', value
             else:
                 emotion = value.split('=')[0]
-                # get the first digit after the
-                intensity = int(float(value.split('=')[1]) * 10)
+                remaining_keys.remove(emotion)
+                # get the first two digits
+                intensity = int(float(value.split('=')[1]) * 100)
 
                 # check for emotion update:
                 if intensity != self.emotions[emotion]:
                     self.emotions[emotion] = intensity
-                    self.print_emotions()
 
-                    # MARC:
-                    if self.marc:
-                        if emotion == Wasabi.JOY:
-                            self.marc.show(Emotion.JOY, float(intensity) / 10)
-                        elif emotion == Wasabi.ANGER:
-                            self.marc.show(Emotion.ANGER, float(intensity) / 10)
+        # Update emotions with new value 0
+        for key in remaining_keys:
+            self.emotions[key] = 0
+
+
+        # Get dominating emotion:
+        primary_emo = ''
+        highest_imp = 0
+        for emotion in self.emotions.keys():
+            if math.fabs(self.emotions[emotion]) > math.fabs(highest_imp):
+                primary_emo = emotion
+                highest_imp = self.emotions[emotion]
+
+        self.print_emotions()
+        print 'domoinating is ', primary_emo, ' with ', highest_imp
+
+        # MARC:
+        if self.marc and not self.blocked:
+            self.blocked = True
+            if primary_emo == Wasabi.ANGER:
+                self.marc.perform('Ekman-Colere', Emotion('Ekman-Colere', impulse = highest_imp/3*2).get_bml_code())
+            elif primary_emo == 'annoyed':
+                self.marc.perform('Ekman-Colere', Emotion('Ekman-Colere', impulse = highest_imp/2).get_bml_code())
+            elif primary_emo == 'bored':
+                self.marc.perform('Ekman-Colere', Emotion('MindReading - Interet', impulse = highest_imp/3).get_bml_code())
+            elif primary_emo == 'concentrated':
+                self.marc.perform('Ekman-Colere', Emotion('AC-Mind Reading-interested vid8-fascinated', impulse = highest_imp/4).get_bml_code())
+            elif primary_emo == Wasabi.JOY:
+                self.marc.perform('Ekman-Joie', Emotion('Ekman-Joie', impulse = highest_imp/3*2).get_bml_code())
+    
+        elif self.marc and self.blocked:
+            self.blocked = False
 
     def print_emotions(self):
         ''' Prints the current emotion status
@@ -145,10 +177,12 @@ class Wasabi:
 
 if __name__ == '__main__':
     import sys
-    from emomodule import Emotion
+    from emomodule import *
     if len(sys.argv) == 4 and sys.argv[1] == 'send':
         wasabi = Wasabi('192.168.0.46', 42424, 42425)
         wasabi.send(sys.argv[2], sys.argv[3])
     else:
-        wasabi = Wasabi('192.168.0.46', 42424, 42425)
+        from marc import Marc
+        marc = Marc('localhost', 4014, 4013)
+        wasabi = Wasabi('192.168.0.46', 42424, 42425, marc)
         wasabi.start_hearing()
