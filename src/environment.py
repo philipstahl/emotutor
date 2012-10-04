@@ -6,7 +6,6 @@
 import datetime
 from agent import Agent
 from marc import Marc
-from emomodule import WasabiMarcTest
 
 
 class Task:
@@ -87,21 +86,12 @@ class Environment:
         ''' Simulate a facial expression for a certain time
         '''
         print 'run test with', emotion.name, ' ', iterations
-        print 'connect to marc with', Environment.MARC_IP, \
-              Environment.MARC_PORT_IN, Environment.MARC_PORT_OUT
         marc = Marc(Environment.MARC_IP,
                     Environment.MARC_PORT_IN,
                     Environment.MARC_PORT_OUT)
-        print 'connect to wasabi with', Environment.WASABI_IP, \
-              Environment.WASABI_PORT_OUT
-
-        '''
-        listener = WasabiMarcTest(Environment.WASABI_IP,
-                                  Environment.WASABI_PORT_OUT, marc)
-        listener.start()
-        listener.test(emotion, iterations)
-        #listener.run_test(emotion, iterations)
-        '''
+        print 'connect to marc with', Environment.MARC_IP, \
+              Environment.MARC_PORT_IN, Environment.MARC_PORT_OUT
+        
 
         from threading import Thread
         import socket
@@ -109,17 +99,21 @@ class Environment:
         def my_function(emotion, iterations):
             sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock_in.bind((Environment.WASABI_IP, Environment.WASABI_PORT_OUT))
-            
+            print 'connect to wasabi with', Environment.WASABI_IP, \
+                  Environment.WASABI_PORT_OUT
+            blocked = 0
             while iterations > 0:
-                data = sock_in.recvfrom(1024)[0]
-                print iterations, 'send to marc:', emotion.name, emotion.impulse, emotion.interpolate
-                marc.perform(emotion.name, emotion.get_bml_code())
-                iterations -= 1
+                if blocked == 0:
+                    data = sock_in.recvfrom(1024)[0]
+                    marc.perform(emotion.name, emotion.get_bml_code())
+                    iterations -= 1
+                    
+                blocked += 1
+                if blocked == emotion.frequence:
+                    blocked = 0
+                
             print 'test finished'
     
-        
-
-
         t = Thread(target=my_function, args=(emotion, iterations,))
         t.start()
 

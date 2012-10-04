@@ -5,7 +5,7 @@ import sys
 import PyQt4.QtGui
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QBoxLayout, QMainWindow, QAction, QIcon, \
-                        QApplication, QDesktopWidget, QMessageBox, QDoubleSpinBox 
+                        QApplication, QDesktopWidget, QMessageBox, QDoubleSpinBox, QSpinBox
 import PyQt4.QtCore
 from PyQt4.QtCore import SIGNAL, Qt
 
@@ -187,7 +187,13 @@ class Settings(QWidget):
              'concentrated_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01),
              'bored_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01),
              'annoyed_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01),
-             'angry_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01)}
+             'angry_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01),
+
+             'happy_freq': self.get_int_widget(2, 1, 20, 1),
+             'concentrated_freq': self.get_int_widget(2, 1, 20, 1),
+             'bored_freq': self.get_int_widget(2, 1, 20, 1),
+             'annoyed_freq': self.get_int_widget(2, 1, 20, 1),
+             'angry_freq': self.get_int_widget(2, 1, 20, 1)}
         
 
         self.wasabi_settings = \
@@ -206,6 +212,13 @@ class Settings(QWidget):
 
     def get_float_widget(self, start_val, min_val, max_val, step):
         box = QDoubleSpinBox()
+        box.setRange(min_val, max_val)
+        box.setValue(start_val)
+        box.setSingleStep(step)
+        return box
+
+    def get_int_widget(self, start_val, min_val, max_val, step):
+        box = QSpinBox()
         box.setRange(min_val, max_val)
         box.setValue(start_val)
         box.setSingleStep(step)
@@ -250,31 +263,37 @@ class Settings(QWidget):
         emo_layout.addWidget(QLabel('Marc:'), 1, 1)
         emo_layout.addWidget(QLabel('Impulse:'), 1, 2)
         emo_layout.addWidget(QLabel('Interpolate:'), 1, 3)
+        emo_layout.addWidget(QLabel('Frequence:'), 1, 4)
 
         emo_layout.addWidget(QLabel('Happy:'), 2, 0)
         emo_layout.addWidget(self.marc_settings['happy'], 2, 1)
         emo_layout.addWidget(self.marc_settings['happy_imp'], 2, 2)
         emo_layout.addWidget(self.marc_settings['happy_int'], 2, 3)
+        emo_layout.addWidget(self.marc_settings['happy_freq'], 2, 4)
 
         emo_layout.addWidget(QLabel('Concentrated:'), 3, 0)
         emo_layout.addWidget(self.marc_settings['concentrated'], 3, 1)
         emo_layout.addWidget(self.marc_settings['concentrated_imp'], 3, 2)
         emo_layout.addWidget(self.marc_settings['concentrated_int'], 3, 3)
+        emo_layout.addWidget(self.marc_settings['concentrated_freq'], 3, 4)
         
         emo_layout.addWidget(QLabel('Bored:'), 4, 0)
         emo_layout.addWidget(self.marc_settings['bored'], 4, 1)
         emo_layout.addWidget(self.marc_settings['bored_imp'], 4, 2)
         emo_layout.addWidget(self.marc_settings['bored_int'], 4, 3)
+        emo_layout.addWidget(self.marc_settings['bored_freq'], 4, 4)
         
         emo_layout.addWidget(QLabel('Annoyed:'), 5, 0)
         emo_layout.addWidget(self.marc_settings['annoyed'], 5, 1)
         emo_layout.addWidget(self.marc_settings['annoyed_imp'], 5, 2)
         emo_layout.addWidget(self.marc_settings['annoyed_int'], 5, 3)
+        emo_layout.addWidget(self.marc_settings['annoyed_freq'], 5, 4)
         
         emo_layout.addWidget(QLabel('Angry:'), 6, 0)
         emo_layout.addWidget(self.marc_settings['angry'], 6, 1)
         emo_layout.addWidget(self.marc_settings['angry_imp'], 6, 2)
         emo_layout.addWidget(self.marc_settings['angry_int'], 6, 3)
+        emo_layout.addWidget(self.marc_settings['angry_freq'], 6, 4)
 
         button_test_happy = QPushButton("&Test")
         button_test_happy.clicked.connect(self.test_happy)
@@ -287,11 +306,11 @@ class Settings(QWidget):
         button_test_angry = QPushButton("&Test")
         button_test_angry.clicked.connect(self.test_angry)
 
-        emo_layout.addWidget(button_test_happy, 2, 4)
-        emo_layout.addWidget(button_test_concentrated, 3, 4)
-        emo_layout.addWidget(button_test_bored, 4, 4)
-        emo_layout.addWidget(button_test_annoyed, 5, 4)
-        emo_layout.addWidget(button_test_angry, 6, 4)
+        emo_layout.addWidget(button_test_happy, 2, 5)
+        emo_layout.addWidget(button_test_concentrated, 3, 5)
+        emo_layout.addWidget(button_test_bored, 4, 5)
+        emo_layout.addWidget(button_test_annoyed, 5, 5)
+        emo_layout.addWidget(button_test_angry, 6, 5)
 
         emo_values = QWidget()
         emo_values.setLayout(emo_layout)
@@ -352,22 +371,28 @@ class Settings(QWidget):
         Happy.MARC = self.marc_settings['happy'].text()
         Happy.IMPULSE = self.marc_settings['happy_imp'].value()
         Happy.INTERPOLATE = self.marc_settings['happy_int'].value()
+        Happy.FREQUENCE = self.marc_settings['happy_freq'].value()
+        print 'set happy frequence to', self.marc_settings['happy_freq'].value()
         
         Concentrated.MARC = self.marc_settings['concentrated'].text()
         Concentrated.IMPULSE = self.marc_settings['concentrated_imp'].value()
         Concentrated.INTERPOLATE = self.marc_settings['concentrated_int'].value()
+        Concentrated.FREQUENCE = self.marc_settings['concentrated_freq'].value()
         
         Bored.MARC = self.marc_settings['bored'].text()
         Bored.IMPULSE = self.marc_settings['bored_imp'].value()
         Bored.INTERPOLATE = self.marc_settings['bored_int'].value()
+        Bored.FREQUENCE = self.marc_settings['bored_freq'].value()
         
         Annoyed.MARC = self.marc_settings['annoyed'].text()
         Annoyed.IMPULSE = self.marc_settings['annoyed_imp'].value()
         Annoyed.INTERPOLATE = self.marc_settings['annoyed_int'].value()
+        Annoyed.FREQUENCE = self.marc_settings['annoyed_freq'].value()
         
         Angry.MARC = self.marc_settings['angry'].text()
         Angry.IMPULSE = self.marc_settings['angry_imp'].value()
         Angry.INTERPOLATE = self.marc_settings['angry_int'].value()
+        Angry.FREQUENCE = self.marc_settings['angry_freq'].value()
 
     def test_happy(self):
         self.test(Happy())
@@ -415,22 +440,27 @@ class Settings(QWidget):
         self.marc_settings['happy'].setText('Ekman-Joie')
         self.marc_settings['happy_imp'].setValue(0.66)
         self.marc_settings['happy_int'].setValue(1.0)
+        self.marc_settings['happy_freq'].setValue(2)
 
         self.marc_settings['concentrated'].setText('AC-Mind Reading-interested vid8-fascinated')
         self.marc_settings['concentrated_imp'].setValue(0.25)
         self.marc_settings['concentrated_int'].setValue(1.0)
+        self.marc_settings['concentrated_freq'].setValue(2)
 
         self.marc_settings['bored'].setText('MindReading - Interet')
         self.marc_settings['bored_imp'].setValue(0.33)
         self.marc_settings['bored_int'].setValue(1.0)
+        self.marc_settings['bored_freq'].setValue(2)
 
         self.marc_settings['annoyed'].setText('Ekman-Colere')
         self.marc_settings['annoyed_imp'].setValue(0.5)
         self.marc_settings['annoyed_int'].setValue(1.0)
+        self.marc_settings['annoyed_freq'].setValue(2)
 
         self.marc_settings['angry'].setText('Ekman-Colere')
         self.marc_settings['angry_imp'].setValue(0.66)
         self.marc_settings['angry_int'].setValue(1.0)
+        self.marc_settings['angry_freq'].setValue(2)
 
         self.mary_settings['ip'].setText('http://localhost:59125/')
         self.mary_settings['voice'].setText('dfki-obadiah')

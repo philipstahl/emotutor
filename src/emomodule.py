@@ -21,11 +21,12 @@ class Emotion:
 
     '''
     def __init__(self, name, wait=0.0, impulse=100,
-                 interpolate=1.0):
+                 interpolate=1.0, frequence=2):
         self.name = name
         self.wait = wait
         self.impulse = impulse
         self.intensity = float(impulse) / 100
+        self.frequence = frequence
         if self.intensity < 0:
             self.intensity = self.intensity * -1
         self.interpolate = interpolate
@@ -34,6 +35,7 @@ class Emotion:
     def get_bml_code(self):
         ''' Returns the BML Code of the emotion, for showing in MARC
         '''
+        print 'send ' + self.name + ' (' + str(self.impulse) + ',' + str(self.intensity) + ') ' + str(self.interpolate) + ' ' + str(self.frequence)
         return "<bml id=\"Perform{0}\"> \
                 <marc:fork id=\"Show_{1}_fork_1\"> \
                 <wait duration=\"{2}\" /> \
@@ -57,9 +59,10 @@ class Happy(Emotion):
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
+    FREQUENCE = 2
     
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Happy.MARC, impulse = Happy.IMPULSE*impulse, interpolate = Happy.INTERPOLATE*interpolate)
+        Emotion.__init__(self, Happy.MARC, impulse = Happy.IMPULSE*impulse, interpolate = Happy.INTERPOLATE*interpolate, frequence = Happy.FREQUENCE)
 
 
 class Concentrated(Emotion):
@@ -68,9 +71,10 @@ class Concentrated(Emotion):
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
+    FREQUENCE = 2
     
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Concentrated.MARC, impulse = Concentrated.IMPULSE*impulse, interpolate = Concentrated.INTERPOLATE*interpolate)
+        Emotion.__init__(self, Concentrated.MARC, impulse = Concentrated.IMPULSE*impulse, interpolate = Concentrated.INTERPOLATE*interpolate,  frequence = Concentrated.FREQUENCE)
 
 
 class Bored(Emotion):
@@ -79,9 +83,10 @@ class Bored(Emotion):
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
+    FREQUENCE = 2
     
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Bored.MARC, impulse = Bored.IMPULSE*impulse, interpolate = Bored.INTERPOLATE*interpolate)
+        Emotion.__init__(self, Bored.MARC, impulse = Bored.IMPULSE*impulse, interpolate = Bored.INTERPOLATE*interpolate,  frequence = Bored.FREQUENCE)
 
 
 class Annoyed(Emotion):
@@ -90,9 +95,10 @@ class Annoyed(Emotion):
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
+    FREQUENCE = 2
     
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Annoyed.MARC, impulse = Annoyed.IMPULSE*impulse, interpolate = Annoyed.INTERPOLATE*interpolate)
+        Emotion.__init__(self, Annoyed.MARC, impulse = Annoyed.IMPULSE*impulse, interpolate = Annoyed.INTERPOLATE*interpolate,  frequence = Annoyed.FREQUENCE)
 
 
 class Angry(Emotion):
@@ -101,9 +107,10 @@ class Angry(Emotion):
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
+    FREQUENCE = 2
     
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Angry.MARC, impulse = Angry.IMPULSE*impulse, interpolate = Angry.INTERPOLATE*interpolate)
+        Emotion.__init__(self, Angry.MARC, impulse = Angry.IMPULSE*impulse, interpolate = Angry.INTERPOLATE*interpolate,  frequence = Angry.FREQUENCE)
    
 
 
@@ -168,33 +175,6 @@ class EmoModule:
         '''
         self.wasabi.end()
 
-
-class WasabiMarcTest(threading.Thread):
-    ''' A class to check the configurated emotions
-
-    '''
-    def __init__(self, ip_addr, port, marc):
-        threading.Thread.__init__(self)
-        self.ip_addr = ip_addr
-        self.port = port
-        self.marc = marc
-
-    def run(self):
-        ''' Tests the given emotion
-        '''
-        print 'Emotion test started'
-
-    def test(self, emotion, iterations):
-        sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock_in.bind((self.ip_addr, self.port))
-            
-        while iterations > 0:
-            data = sock_in.recvfrom(1024)[0]
-            print iterations, 'send to marc:', emotion.name, emotion.impulse, emotion.interpolate
-            self.marc.perform(emotion.name, emotion.get_bml_code())
-            iterations -= 1
-        print 'test finished'
-        self.join()
 
 class WasabiListener(threading.Thread):
     ''' Class for recieving input by WASABI
