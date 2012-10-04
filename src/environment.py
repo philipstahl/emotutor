@@ -5,6 +5,8 @@
 '''
 import datetime
 from agent import Agent
+from marc import Marc
+from emomodule import WasabiMarcTest
 
 
 class Task:
@@ -49,8 +51,8 @@ class Environment:
     MARC_PORT_OUT = 4013
     MARC_PORT_IN = 4014
     WASABI_IP = '192.168.0.46'
-    WASABI_PORT_OUT = 42425
-    WASABI_PORT_IN = 42424
+    WASABI_PORT_OUT = 42424
+    WASABI_PORT_IN = 42425
     MARY_VOICE = 'dfki-obadiah'
     MARY_IP = 'http://localhost:59125/'
     MARY_PATH = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
@@ -80,28 +82,48 @@ class Environment:
             self.agent.enable_wasabi(Environment.WASABI_IP,
                                      Environment.WASABI_PORT_IN,
                                      Environment.WASABI_PORT_OUT)
+
+    def test(self, emotion, iterations):
+        ''' Simulate a facial expression for a certain time
         '''
-        if Environment.MARC:
-            Marc.IP = Environment.MARC_IP
-            Marc.PORT_IN = MARC_PORT_IN
-            Marc.PORT_OUT = Environment.MARC_PORT_OUT,
-            Marc.JOY = Environment.MARC_JOY,
-            Marc.ANGER: Environment.MARC_ANGER,
-            Marc.RELAX: Environment.MARC_RELAX
-        if Environment.MARY:
-            OpenMary.IP = Environment.MARY_IP,
-            OpenMary.PATH = Environment.MARY_PATH,
-            OpenMary.VOICE = Environment.MARY_VOICE
-        if Environment.WASABI:
-            Wasabi.IP = Environment.WASABI_IP,
-            Wasabi.PORT_IN = Environment.WASABI_PORT_IN,
-            Wasabi.PORT_OUT = Environment.WASABI_PORT_OUT,
-            Wasabi.JOY = Environment.WASABI_JOY,
-            Wasabi.ANGER = Environment.WASABI_ANGER,
-            Wasabi.Relax = Environment.WASABI_RELAX
-        self.agent = Agent(self.tasks, Environment.MARC, Environment.MARY,
-                           Environment.WASABI)
+        print 'run test with', emotion.name, ' ', iterations
+        print 'connect to marc with', Environment.MARC_IP, \
+              Environment.MARC_PORT_IN, Environment.MARC_PORT_OUT
+        marc = Marc(Environment.MARC_IP,
+                    Environment.MARC_PORT_IN,
+                    Environment.MARC_PORT_OUT)
+        print 'connect to wasabi with', Environment.WASABI_IP, \
+              Environment.WASABI_PORT_OUT
+
         '''
+        listener = WasabiMarcTest(Environment.WASABI_IP,
+                                  Environment.WASABI_PORT_OUT, marc)
+        listener.start()
+        listener.test(emotion, iterations)
+        #listener.run_test(emotion, iterations)
+        '''
+
+        from threading import Thread
+        import socket
+
+        def my_function(emotion, iterations):
+            sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock_in.bind((Environment.WASABI_IP, Environment.WASABI_PORT_OUT))
+            
+            while iterations > 0:
+                data = sock_in.recvfrom(1024)[0]
+                print iterations, 'send to marc:', emotion.name, emotion.impulse, emotion.interpolate
+                marc.perform(emotion.name, emotion.get_bml_code())
+                iterations -= 1
+            print 'test finished'
+    
+        
+
+
+        t = Thread(target=my_function, args=(emotion, iterations,))
+        t.start()
+
+        
 
     def start(self):
         ''' Show init text and wait for start button.

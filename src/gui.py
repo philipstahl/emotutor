@@ -5,12 +5,12 @@ import sys
 import PyQt4.QtGui
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QBoxLayout, QMainWindow, QAction, QIcon, \
-                        QApplication, QDesktopWidget, QMessageBox
+                        QApplication, QDesktopWidget, QMessageBox, QDoubleSpinBox 
 import PyQt4.QtCore
 from PyQt4.QtCore import SIGNAL, Qt
 
 from environment import Environment
-from emomodule import Emotion
+from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry
 
 
 class VocabTrainer(QWidget):
@@ -155,26 +155,45 @@ class VocabTrainer(QWidget):
 
 class Settings(QWidget):
     ''' Frame showing all program settings
+
+        wasabi      ->  emotion  intensity  interpolate  hz/trigger
+        happy           
+        concentrated    
+        bored
+        annoyed
+        angry
     '''
 
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent)
-
         self.marc_settings = \
             {'ip': QLineEdit(Environment.MARC_IP),
              'port_in': QLineEdit(str(Environment.MARC_PORT_IN)),
              'port_out': QLineEdit(str(Environment.MARC_PORT_OUT)),
-             'anger': QLineEdit(Emotion.MARC_ANGER),
-             'relax': QLineEdit(Emotion.MARC_RELAX),
-             'joy': QLineEdit(Emotion.MARC_JOY)}
+
+             'happy': QLineEdit('Ekman-Joie'),
+             'concentrated': QLineEdit('AC-Mind Reading-interested vid8-fascinated'),
+             'bored': QLineEdit('MindReading - Interet'),
+             'annoyed': QLineEdit('Ekman-Colere'),
+             'angry': QLineEdit('Ekman-Colere'),
+
+             'happy_imp': self.get_float_widget(0.66, 0.01, 2.00, 0.01),
+             'concentrated_imp': self.get_float_widget(0.25, 0.01, 2.00, 0.01),
+             'bored_imp': self.get_float_widget(0.33, 0.01, 2.00, 0.01),
+             'annoyed_imp': self.get_float_widget(0.5, 0.01, 2.00, 0.01),
+             'angry_imp': self.get_float_widget(0.66, 0.01, 2.00, 0.01),
+
+             'happy_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01),
+             'concentrated_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01),
+             'bored_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01),
+             'annoyed_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01),
+             'angry_int': self.get_float_widget(1.0, 0.01, 2.00, 0.01)}
+        
 
         self.wasabi_settings = \
             {'ip': QLineEdit(Environment.WASABI_IP),
              'port_in': QLineEdit(str(Environment.WASABI_PORT_IN)),
-             'port_out': QLineEdit(str(Environment.WASABI_PORT_OUT)),
-             'anger': QLineEdit(Emotion.WASABI_ANGER),
-             'relax': QLineEdit(Emotion.WASABI_RELAX),
-             'joy':QLineEdit(Emotion.WASABI_JOY)}
+             'port_out': QLineEdit(str(Environment.WASABI_PORT_OUT))}
 
         self.mary_settings = \
             {'ip': QLineEdit(Environment.MARY_IP),
@@ -185,48 +204,97 @@ class Settings(QWidget):
         self.setLayout(self.init_ui())
         self.resize(600, 100)
 
+    def get_float_widget(self, start_val, min_val, max_val, step):
+        box = QDoubleSpinBox()
+        box.setRange(min_val, max_val)
+        box.setValue(start_val)
+        box.setSingleStep(step)
+        return box
+
     def init_ui(self):
         ''' Creates the layout of the settings screen
         '''
-        layout1 = QGridLayout()
+        # network settings
+        net_layout = QGridLayout()
 
-        layout1.addWidget(QLabel('MARC:'), 0, 1)
-        layout1.addWidget(QLabel('WASABI:'), 0, 2)
+        net_layout.addWidget(QLabel('MARC:'), 0, 1)
+        net_layout.addWidget(QLabel('WASABI:'), 0, 2)
 
         label_network = QLabel('Network:')
         label_network.setStyleSheet('QLabel {font-weight:bold}')
-        layout1.addWidget(label_network, 1, 0)
+        net_layout.addWidget(label_network, 1, 0)
 
-        layout1.addWidget(QLabel('IP:'), 2, 0)
-        layout1.addWidget(self.marc_settings['ip'], 2, 1)
-        layout1.addWidget(self.wasabi_settings['ip'], 2, 2)
+        net_layout.addWidget(QLabel('IP:'), 2, 0)
+        net_layout.addWidget(self.marc_settings['ip'], 2, 1)
+        net_layout.addWidget(self.wasabi_settings['ip'], 2, 2)
 
-        layout1.addWidget(QLabel('Input Port:'), 3, 0)
-        layout1.addWidget(self.marc_settings['port_in'], 3, 1)
-        layout1.addWidget(self.wasabi_settings['port_in'], 3, 2)
+        net_layout.addWidget(QLabel('Input Port:'), 3, 0)
+        net_layout.addWidget(self.marc_settings['port_in'], 3, 1)
+        net_layout.addWidget(self.wasabi_settings['port_in'], 3, 2)
 
-        layout1.addWidget(QLabel('Output Port:'), 4, 0)
-        layout1.addWidget(self.marc_settings['port_out'], 4, 1)
-        layout1.addWidget(self.wasabi_settings['port_out'], 4, 2)
+        net_layout.addWidget(QLabel('Output Port:'), 4, 0)
+        net_layout.addWidget(self.marc_settings['port_out'], 4, 1)
+        net_layout.addWidget(self.wasabi_settings['port_out'], 4, 2)
+        
+        net_values = QWidget()
+        net_values.setLayout(net_layout)
+
+        #emotion settings
+        emo_layout = QGridLayout()
 
         label_emotions = QLabel('Emotions:')
         label_emotions.setStyleSheet('QLabel {font-weight:bold}')
-        layout1.addWidget(label_emotions, 5, 0)
+        emo_layout.addWidget(label_emotions, 0, 0)
 
-        layout1.addWidget(QLabel('Anger:'), 6, 0)
-        layout1.addWidget(self.marc_settings['anger'], 6, 1)
-        layout1.addWidget(self.wasabi_settings['anger'], 6, 2)
+        emo_layout.addWidget(QLabel('Wasabi:'), 1, 0)
+        emo_layout.addWidget(QLabel('Marc:'), 1, 1)
+        emo_layout.addWidget(QLabel('Impulse:'), 1, 2)
+        emo_layout.addWidget(QLabel('Interpolate:'), 1, 3)
 
-        layout1.addWidget(QLabel('Relax:'), 7, 0)
-        layout1.addWidget(self.marc_settings['relax'], 7, 1)
-        layout1.addWidget(self.wasabi_settings['relax'], 7, 2)
+        emo_layout.addWidget(QLabel('Happy:'), 2, 0)
+        emo_layout.addWidget(self.marc_settings['happy'], 2, 1)
+        emo_layout.addWidget(self.marc_settings['happy_imp'], 2, 2)
+        emo_layout.addWidget(self.marc_settings['happy_int'], 2, 3)
 
-        layout1.addWidget(QLabel('Joy:'), 8, 0)
-        layout1.addWidget(self.marc_settings['joy'], 8, 1)
-        layout1.addWidget(self.wasabi_settings['joy'], 8, 2)
+        emo_layout.addWidget(QLabel('Concentrated:'), 3, 0)
+        emo_layout.addWidget(self.marc_settings['concentrated'], 3, 1)
+        emo_layout.addWidget(self.marc_settings['concentrated_imp'], 3, 2)
+        emo_layout.addWidget(self.marc_settings['concentrated_int'], 3, 3)
+        
+        emo_layout.addWidget(QLabel('Bored:'), 4, 0)
+        emo_layout.addWidget(self.marc_settings['bored'], 4, 1)
+        emo_layout.addWidget(self.marc_settings['bored_imp'], 4, 2)
+        emo_layout.addWidget(self.marc_settings['bored_int'], 4, 3)
+        
+        emo_layout.addWidget(QLabel('Annoyed:'), 5, 0)
+        emo_layout.addWidget(self.marc_settings['annoyed'], 5, 1)
+        emo_layout.addWidget(self.marc_settings['annoyed_imp'], 5, 2)
+        emo_layout.addWidget(self.marc_settings['annoyed_int'], 5, 3)
+        
+        emo_layout.addWidget(QLabel('Angry:'), 6, 0)
+        emo_layout.addWidget(self.marc_settings['angry'], 6, 1)
+        emo_layout.addWidget(self.marc_settings['angry_imp'], 6, 2)
+        emo_layout.addWidget(self.marc_settings['angry_int'], 6, 3)
 
-        values = QWidget()
-        values.setLayout(layout1)
+        button_test_happy = QPushButton("&Test")
+        button_test_happy.clicked.connect(self.test_happy)
+        button_test_concentrated = QPushButton("&Test")
+        button_test_concentrated.clicked.connect(self.test_concentrated)
+        button_test_bored = QPushButton("&Test")
+        button_test_bored.clicked.connect(self.test_bored)
+        button_test_annoyed = QPushButton("&Test")
+        button_test_annoyed.clicked.connect(self.test_annoyed)
+        button_test_angry = QPushButton("&Test")
+        button_test_angry.clicked.connect(self.test_angry)
+
+        emo_layout.addWidget(button_test_happy, 2, 4)
+        emo_layout.addWidget(button_test_concentrated, 3, 4)
+        emo_layout.addWidget(button_test_bored, 4, 4)
+        emo_layout.addWidget(button_test_annoyed, 5, 4)
+        emo_layout.addWidget(button_test_angry, 6, 4)
+
+        emo_values = QWidget()
+        emo_values.setLayout(emo_layout)
 
         # Open Mary:
         label_mary = QLabel('Open Mary:')
@@ -261,31 +329,70 @@ class Settings(QWidget):
         buttons.setLayout(button_layout)
 
         main_layout = QBoxLayout(2)
-        main_layout.addWidget(values)
+        main_layout.addWidget(net_values)
+        main_layout.addWidget(emo_values)
         main_layout.addWidget(widget_mary)
         main_layout.addWidget(buttons)
         return main_layout
 
-    def save(self):
-        ''' Save changed settings
-        '''
+    def set_settings(self):
         Environment.MARC_IP = self.marc_settings['ip'].text()
-        Environment.MARC_PORT_OUT = self.marc_settings['port_out'].text()
-        Environment.MARC_PORT_IN = self.marc_settings['port_in'].text()
+        Environment.MARC_PORT_OUT = int(self.marc_settings['port_out'].text())
+        Environment.MARC_PORT_IN = int(self.marc_settings['port_in'].text())
+
         EmoModule.WASABI = True
         EmoModule.WASABI_IP = self.wasabi_settings['ip'].text()
-        EmoModule.WASABI_PORT_IN = self.wasabi_settings['port_in'].text()
-        EmoModule.WASABI_PORT_OUT = self.wasabi_settings['port_out'].text()
+        EmoModule.WASABI_PORT_IN = int(self.wasabi_settings['port_in'].text())
+        EmoModule.WASABI_PORT_OUT = int(self.wasabi_settings['port_out'].text())
+        
         Environment.MARY_VOICE = self.mary_settings['voice'].text()
         Environment.MARY_IP = self.mary_settings['ip'].text()
         Environment.MARY_PATH = self.mary_settings['path'].text()
-        Emotion.WASABI_JOY = self.wasabi_settings['joy'].text()
-        Emotion.WASABI_ANGER = self.wasabi_settings['anger'].text()
-        Emotion.WASABI_RELAX = self.wasabi_settings['relax'].text()
-        Emotion.MARC_JOY = self.marc_settings['joy'].text()
-        Emotion.MARC_RELAX = self.marc_settings['relax'].text()
-        Emotion.MARC_ANGER = self.marc_settings['anger'].text()
 
+        Happy.MARC = self.marc_settings['happy'].text()
+        Happy.IMPULSE = self.marc_settings['happy_imp'].value()
+        Happy.INTERPOLATE = self.marc_settings['happy_int'].value()
+        
+        Concentrated.MARC = self.marc_settings['concentrated'].text()
+        Concentrated.IMPULSE = self.marc_settings['concentrated_imp'].value()
+        Concentrated.INTERPOLATE = self.marc_settings['concentrated_int'].value()
+        
+        Bored.MARC = self.marc_settings['bored'].text()
+        Bored.IMPULSE = self.marc_settings['bored_imp'].value()
+        Bored.INTERPOLATE = self.marc_settings['bored_int'].value()
+        
+        Annoyed.MARC = self.marc_settings['annoyed'].text()
+        Annoyed.IMPULSE = self.marc_settings['annoyed_imp'].value()
+        Annoyed.INTERPOLATE = self.marc_settings['annoyed_int'].value()
+        
+        Angry.MARC = self.marc_settings['angry'].text()
+        Angry.IMPULSE = self.marc_settings['angry_imp'].value()
+        Angry.INTERPOLATE = self.marc_settings['angry_int'].value()
+
+    def test_happy(self):
+        self.test(Happy())
+    def test_concentrated(self):
+        self.test(Concentrated())
+    def test_bored(self):
+        self.test(Bored())
+    def test_annoyed(self):
+        self.test(Annoyed())
+    def test_angry(self):
+        self.test(Angry())
+
+    def test(self, emotion):
+        ''' Test current settings
+        '''
+        Environment.MARC = False
+        Environment.WASABI = False
+        self.set_settings()
+        e = Environment()
+        e.test(emotion, 10)
+
+    def save(self):
+        ''' Save changed settings
+        '''
+        self.set_settings()
         self.emit(SIGNAL('quit'))
 
     def cancel(self):
@@ -297,19 +404,33 @@ class Settings(QWidget):
         ''' Reset settins to original values
 
         '''
-        self.marc_settings['ip'].setText('localhost')
-        self.marc_settings['port_in'].setText('4014')
-        self.marc_settings['port_out'].setText('4013')
-        self.marc_settings['anger'].setText('CASA_Anger_01')
-        self.marc_settings['relax'].setText('CASA_Relax_01')
-        self.marc_settings['joy'].setText('CASA_Joy_01')
-
         self.wasabi_settings['ip'].setText('192.168.0.46')
         self.wasabi_settings['port_in'].setText('42424')
         self.wasabi_settings['port_out'].setText('42425')
-        self.wasabi_settings['anger'].setText('happy')
-        self.wasabi_settings['relax'].setText('happy')
-        self.wasabi_settings['joy'].setText('angry')
+        
+        self.marc_settings['ip'].setText('localhost')
+        self.marc_settings['port_in'].setText('4014')
+        self.marc_settings['port_out'].setText('4013')
+        
+        self.marc_settings['happy'].setText('Ekman-Joie')
+        self.marc_settings['happy_imp'].setValue(0.66)
+        self.marc_settings['happy_int'].setValue(1.0)
+
+        self.marc_settings['concentrated'].setText('AC-Mind Reading-interested vid8-fascinated')
+        self.marc_settings['concentrated_imp'].setValue(0.25)
+        self.marc_settings['concentrated_int'].setValue(1.0)
+
+        self.marc_settings['bored'].setText('MindReading - Interet')
+        self.marc_settings['bored_imp'].setValue(0.33)
+        self.marc_settings['bored_int'].setValue(1.0)
+
+        self.marc_settings['annoyed'].setText('Ekman-Colere')
+        self.marc_settings['annoyed_imp'].setValue(0.5)
+        self.marc_settings['annoyed_int'].setValue(1.0)
+
+        self.marc_settings['angry'].setText('Ekman-Colere')
+        self.marc_settings['angry_imp'].setValue(0.66)
+        self.marc_settings['angry_int'].setValue(1.0)
 
         self.mary_settings['ip'].setText('http://localhost:59125/')
         self.mary_settings['voice'].setText('dfki-obadiah')

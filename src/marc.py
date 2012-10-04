@@ -5,11 +5,6 @@ import socket
 class Marc:
     ''' An interface to interact with an agent represented by MARC
     '''
-
-    JOY = ''
-    RELAX = ''
-    ANGER = ''
-
     def __init__(self, ip_addr, port_in, port_out):
         self.ip_addr = ip_addr
         self.port_in = port_in

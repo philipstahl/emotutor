@@ -1,13 +1,10 @@
 ''' The class for the agent
 '''
 from cogmodule import CogModule
-from emomodule import EmoModule, Relax
+from emomodule import EmoModule
 from speechmodule import SpeechModule, Speech
 from marc import Marc
 
-JOY = "JOY"
-ANGER = "ANGER"
-RELAX = "RELAX"
 
 class Agent:
     ''' The Agent class contains methods for the agents behaviour.
@@ -51,9 +48,6 @@ class Agent:
             @emotions: dictionary specifying the use of emotions in wasabi
         '''
         print 'WASABI enabled'
-        #Wasabi.JOY = emotions[JOY]
-        #Wasabi.RELAX = emotions[RELAX]
-        #Wasabi.ANGER = emotions[ANGER]
         self.emo_module = EmoModule(self.marc)
 
 
@@ -64,6 +58,8 @@ class Agent:
             the rules of the task.
 
         '''
+        self.emo_module.start_hearing()
+        
         emotion = Relax()
         speech = self.speech_module.introduce()
 
