@@ -7,6 +7,8 @@ import datetime
 from agent import Agent
 from marc import Marc
 
+from emomodule import Happy, Concentrated, Bored, Annoyed, Angry
+
 
 class Task:
     ''' Class representing a single task in the experimental environment
@@ -68,7 +70,7 @@ class Environment:
         self.task = None
         self.time_start = 0
         self.agent = Agent()
-        
+
         if Environment.MARC:
             self.agent.enable_marc(Environment.MARC_IP,
                                    Environment.MARC_PORT_IN,
@@ -85,13 +87,14 @@ class Environment:
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time
         '''
-        print 'run test with', emotion.name, ' ', iterations
+        if not Environment.MARC:
+            return
+
         marc = Marc(Environment.MARC_IP,
                     Environment.MARC_PORT_IN,
                     Environment.MARC_PORT_OUT)
         print 'connect to marc with', Environment.MARC_IP, \
               Environment.MARC_PORT_IN, Environment.MARC_PORT_OUT
-        
 
         from threading import Thread
         import socket
@@ -107,17 +110,17 @@ class Environment:
                     data = sock_in.recvfrom(1024)[0]
                     marc.perform(emotion.name, emotion.get_bml_code())
                     iterations -= 1
-                    
+
                 blocked += 1
                 if blocked == emotion.frequence:
                     blocked = 0
-                
+
             print 'test finished'
-    
+
         t = Thread(target=my_function, args=(emotion, iterations,))
         t.start()
 
-        
+
 
     def start(self):
         ''' Show init text and wait for start button.
