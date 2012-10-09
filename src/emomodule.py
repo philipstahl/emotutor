@@ -122,6 +122,19 @@ class Angry(Emotion):
                          interpolate = Angry.INTERPOLATE*interpolate,
                          frequence = Angry.FREQUENCE)
 
+class Surprise(Emotion):
+    ''' Class for an angry emotion
+    '''
+    MARC = ''
+    IMPULSE = 1.0
+    INTERPOLATE = 1.0
+    FREQUENCE = 2
+
+    def __init__(self, impulse = 100, interpolate = 1.0):
+        Emotion.__init__(self, Surprise.MARC, impulse = Surprise.IMPULSE*impulse,
+                         interpolate = Surprise.INTERPOLATE*interpolate,
+                         frequence = Surprise.FREQUENCE)
+
 
 class EmoModule:
     ''' If WASABI is used, the emotional status of the agent is represented by

@@ -13,7 +13,7 @@ import PyQt4.QtCore
 from PyQt4.QtCore import SIGNAL, Qt
 
 from environment import Environment
-from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry
+from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, Surprise
 
 
 class VocabTrainer(QWidget):
@@ -200,7 +200,12 @@ class Settings(QWidget):
                 [QLineEdit(Angry.MARC),
                  self.float_widget(Angry.IMPULSE, 0.01, 2.00, 0.01),
                  self.float_widget(Angry.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Angry.FREQUENCE, 1, 20, 1)]}
+                 self.int_widget(Angry.FREQUENCE, 1, 20, 1)],
+             'surprise': \
+                 [QLineEdit(Surprise.MARC),
+                  self.float_widget(Surprise.IMPULSE, 0.01, 2.00, 0.01),
+                  self.float_widget(Surprise.INTERPOLATE, 0.01, 2.00, 0.01),
+                  self.int_widget(Surprise.FREQUENCE, 1, 20, 1)]}
 
         self.mary_settings = \
             {'ip': QLineEdit(Environment.MARY_IP),
@@ -296,6 +301,13 @@ class Settings(QWidget):
         emo_layout.addWidget(self.emo_settings['angry'][2], 6, 3)
         emo_layout.addWidget(self.emo_settings['angry'][3], 6, 4)
 
+        
+        emo_layout.addWidget(QLabel('Surprise:'), 7, 0)
+        emo_layout.addWidget(self.emo_settings['surprise'][0], 7, 1)
+        emo_layout.addWidget(self.emo_settings['surprise'][1], 7, 2)
+        emo_layout.addWidget(self.emo_settings['surprise'][2], 7, 3)
+        emo_layout.addWidget(self.emo_settings['surprise'][3], 7, 4)
+
         button_test_happy = QPushButton("&Test")
         button_test_happy.clicked.connect(self.test_happy)
         button_test_concentrated = QPushButton("&Test")
@@ -306,12 +318,15 @@ class Settings(QWidget):
         button_test_annoyed.clicked.connect(self.test_annoyed)
         button_test_angry = QPushButton("&Test")
         button_test_angry.clicked.connect(self.test_angry)
+        button_test_surprise = QPushButton("&Test")
+        button_test_surprise.clicked.connect(self.test_surprise)
 
         emo_layout.addWidget(button_test_happy, 2, 5)
         emo_layout.addWidget(button_test_concentrated, 3, 5)
         emo_layout.addWidget(button_test_bored, 4, 5)
         emo_layout.addWidget(button_test_annoyed, 5, 5)
         emo_layout.addWidget(button_test_angry, 6, 5)
+        emo_layout.addWidget(button_test_surprise, 7, 5)
 
         emo_values = QWidget()
         emo_values.setLayout(emo_layout)
@@ -381,6 +396,7 @@ class Settings(QWidget):
         apply_emo(Bored, 'bored')
         apply_emo(Annoyed, 'annoyed')
         apply_emo(Angry, 'angry')
+        apply_emo(Surprise, 'surprise')
 
         self.e = Environment(False, False, False)
 
@@ -403,6 +419,10 @@ class Settings(QWidget):
     def test_angry(self):
         self.apply_settings()
         self.test(Angry())
+
+    def test_surprise(self):
+        self.apply_settings()
+        self.test(Surprise())
 
     def test(self, emotion):
         ''' Test current settings
@@ -456,6 +476,11 @@ class Settings(QWidget):
         self.emo_settings['angry'][1].setValue(0.66)
         self.emo_settings['angry'][2].setValue(1.0)
         self.emo_settings['angry'][3].setValue(2)
+
+        self.emo_settings['surprise'][0].setText('Surprise - CubeEmotion')
+        self.emo_settings['surprise'][1].setValue(0.66)
+        self.emo_settings['surprise'][2].setValue(1.0)
+        self.emo_settings['surprise'][3].setValue(2)
 
         self.mary_settings['ip'].setText('http://localhost:59125/')
         self.mary_settings['voice'].setText('dfki-obadiah')
@@ -569,6 +594,7 @@ class MainWindow(QMainWindow):
         apply_emo(Bored, 'Bored')
         apply_emo(Annoyed, 'Annoyed')
         apply_emo(Angry, 'Angry')
+        apply_emo(Surprise, 'Surprise')
 
     def show_welcome(self):
         ''' Shows the welcome screen
