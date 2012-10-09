@@ -362,7 +362,6 @@ class Settings(QWidget):
         Environment.MARC_PORT_OUT = int(self.marc_settings['port_out'].text())
         Environment.MARC_PORT_IN = int(self.marc_settings['port_in'].text())
 
-        EmoModule.WASABI = True
         EmoModule.WASABI_IP = self.wasabi_settings['ip'].text()
         EmoModule.WASABI_PORT_IN = int(self.wasabi_settings['port_in'].text())
         EmoModule.WASABI_PORT_OUT = int(self.wasabi_settings['port_out'].text())
@@ -383,9 +382,7 @@ class Settings(QWidget):
         apply_emo(Annoyed, 'annoyed')
         apply_emo(Angry, 'angry')
 
-        Environment.MARC = False
-        Environment.WASABI = False
-        self.e = Environment()
+        self.e = Environment(False, False, False)
 
     def test_happy(self):
         self.apply_settings()
@@ -549,7 +546,7 @@ class MainWindow(QMainWindow):
         '''
         config = ConfigParser.SafeConfigParser()
         config.read('emotutor.cfg')
-
+        # TODO(path is relative to the path gui.py is called.)
         Environment.MARC_IP = config.get('Marc', 'ip')
         Environment.MARC_PORT_IN = config.getint('Marc', 'port_in')
         Environment.MARC_PORT_OUT = config.getint('Marc', 'port_out')

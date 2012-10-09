@@ -43,11 +43,6 @@ class Task:
 class Environment:
     ''' The class for the experimental environment
     '''
-
-    MARC = True
-    MARY = True
-    WASABI = True
-
     MARC_IP = 'localhost'
     MARC_PORT_OUT = 4013
     MARC_PORT_IN = 4014
@@ -58,29 +53,28 @@ class Environment:
     MARY_IP = 'http://localhost:59125/'
     MARY_PATH = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
 
-    def __init__(self):
-        ''' settings must be a dict with the following keys:
-                marc_ip, marc_port_in, marc_port_out, marc_emotions,
-                mary_ip, mary_voice, mary_path,
-                wasabi_ip, wasabi_port_in, wasabi_port_out, wasabi_emotions
+    def __init__(self, marc=False, wasabi=False, mary=False):
+        ''' vars indicate the use of marc, wasabi and open mary
         '''
         self.tasks = [Task("Car", "Auto"), Task("House", "Haus"),
                       Task("Chair", "Stuhl"), Task("Knife", "Messer")]
         self.solved_tasks = []
         self.task = None
         self.time_start = 0
-        self.agent = Agent()
+        self.agent = Agent(marc, wasabi, mary)
 
-        if Environment.MARC:
+        '''
+        if marc:
             self.agent.enable_marc(Environment.MARC_IP,
                                    Environment.MARC_PORT_IN,
                                    Environment.MARC_PORT_OUT)
-        if Environment.MARY:
+        if mary:
             self.agent.enable_open_mary(Environment.MARY_IP,
                                         Environment.MARY_VOICE,
                                         Environment.MARY_PATH)
-        if Environment.WASABI:
+        if wasabi:
             self.agent.enable_wasabi()
+        '''
 
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time

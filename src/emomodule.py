@@ -269,9 +269,9 @@ class WasabiListener(threading.Thread):
                 self.marc.perform('Bored', Bored().get_bml_code())
             elif primary_emo == 'concentrated':
                 self.marc.perform('Concentrated',
-                                  Concentrated()).get_bml_code())
+                                  Concentrated().get_bml_code())
             elif primary_emo == Emotion.WASABI_JOY:
-                self.marc.perform('Ekman-Joie', Happy()).get_bml_code())
+                self.marc.perform('Ekman-Joie', Happy().get_bml_code())
 
         elif self.marc and self.blocked:
             self.blocked = False

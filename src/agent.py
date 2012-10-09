@@ -13,40 +13,20 @@ class Agent:
         that triggered the method.
     '''
 
-    def __init__(self):
+    def __init__(self, marc, wasabi, mary):
         self.marc = None
         self.cog_module = CogModule()
         #self.emo_module = EmoModule()
         self.speech_module = SpeechModule()
 
-    def enable_marc(self, ip_addr, port_in, port_out):
-        ''' Enables marc module.
+        if marc:
+            self.marc = Marc(ip_addr, port_in, port_out)
 
-            The agent show emotional and verbal output via marc.
-            @emotions: dictionary specifying which emotions marc shall use
+        if wasabi:
+            self.emo_module = EmoModule(self.marc)
 
-        '''
-        print 'MARC enabled'
-        self.marc = Marc(ip_addr, port_in, port_out)
-
-    def enable_open_mary(self, ip_addr, voice, path):
-        ''' Enables Open Mary.
-
-            The agents speech module uses open mary to produce text to speech
-            output
-         '''
-        print 'OPEN MARY enabled'
-        self.speech_module.enable_open_mary(ip_addr, voice, path)
-
-    def enable_wasabi(self):
-        ''' Enables the wasabi module.
-
-            The agent uses wasabi to simulate its emotion status
-            @emotions: dictionary specifying the use of emotions in wasabi
-        '''
-        print 'WASABI enabled'
-        self.emo_module = EmoModule(self.marc)
-
+        if mary:
+            self.speech_module.enable_open_mary(ip_addr, voice, path)
 
     def introduce(self):
         ''' The agents reaction at the beginning of the training
