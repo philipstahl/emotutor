@@ -2,7 +2,7 @@
 '''
 from cogmodule import CogModule
 from emomodule import EmoModule
-from speechmodule import SpeechModule, Speech
+from speechmodule import SpeechModule
 from marc import Marc
 
 
@@ -27,9 +27,6 @@ class Agent:
 
         '''
         print 'MARC enabled'
-        #Marc.JOY = emotions[JOY]
-        #Marc.RELAX = emotions[RELAX]
-        #Marc.ANGER = emotions[ANGER]
         self.marc = Marc(ip_addr, port_in, port_out)
 
     def enable_open_mary(self, ip_addr, voice, path):
@@ -41,7 +38,7 @@ class Agent:
         print 'OPEN MARY enabled'
         self.speech_module.enable_open_mary(ip_addr, voice, path)
 
-    def enable_wasabi(self, ip_addr, port_in, port_out):
+    def enable_wasabi(self):
         ''' Enables the wasabi module.
 
             The agent uses wasabi to simulate its emotion status
@@ -59,12 +56,12 @@ class Agent:
 
         '''
         self.emo_module.start_hearing()
-        
-        emotion = Relax()
+
+        #emotion = Relax()
         speech = self.speech_module.introduce()
 
         if self.marc:
-            self.marc.show(emotion)
+            #self.marc.show(emotion)
             self.marc.speak(speech)
 
         return (emotion.name, speech.text)

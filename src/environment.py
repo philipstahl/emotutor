@@ -80,9 +80,7 @@ class Environment:
                                         Environment.MARY_VOICE,
                                         Environment.MARY_PATH)
         if Environment.WASABI:
-            self.agent.enable_wasabi(Environment.WASABI_IP,
-                                     Environment.WASABI_PORT_IN,
-                                     Environment.WASABI_PORT_OUT)
+            self.agent.enable_wasabi()
 
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time

@@ -3,14 +3,15 @@
 
 import sys
 import ConfigParser
+
 import PyQt4.QtGui
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QBoxLayout, QMainWindow, QAction, QIcon, \
-                        QApplication, QDesktopWidget, QMessageBox, QDoubleSpinBox, QSpinBox
+                        QApplication, QDesktopWidget, QMessageBox, \
+                        QDoubleSpinBox, QSpinBox
 import PyQt4.QtCore
 from PyQt4.QtCore import SIGNAL, Qt
 
-import ConfigParser
 from environment import Environment
 from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry
 
@@ -382,33 +383,6 @@ class Settings(QWidget):
         apply_emo(Annoyed, 'annoyed')
         apply_emo(Angry, 'angry')
 
-        '''
-        Happy.MARC = self.emo_settings['happy'][0].text()
-        Happy.IMPULSE = self.emo_settings['happy_imp'][1].value()
-        Happy.INTERPOLATE = self.emo_settings['happy_int'][2].value()
-        Happy.FREQUENCE = self.emo_settings['happy_freq'][3].value()
-
-        Concentrated.MARC = self.emo_settings['concentrated'][0].text()
-        Concentrated.IMPULSE = self.emo_settings['concentrated_imp'][1].value()
-        Concentrated.INTERPOLATE = emo.marc_settings['concentrated_int'][2].value()
-        Concentrated.FREQUENCE = emo.marc_settings['concentrated_freq'][3].value()
-
-        Bored.MARC = self.emo_settings['bored'].text()
-        Bored.IMPULSE = self.emo_settings['bored_imp'].value()
-        Bored.INTERPOLATE = self.emo_settings['bored_int'].value()
-        Bored.FREQUENCE = self.emo_settings['bored_freq'].value()
-
-        Annoyed.MARC = self.emo_settings['annoyed'].text()
-        Annoyed.IMPULSE = self.emo_settings['annoyed_imp'].value()
-        Annoyed.INTERPOLATE = self.emo_settings['annoyed_int'].value()
-        Annoyed.FREQUENCE = self.emo_settings['annoyed_freq'].value()
-
-        Angry.MARC = self.emo_settings['angry'].text()
-        Angry.IMPULSE = self.emo_settings['angry_imp'].value()
-        Angry.INTERPOLATE = self.emo_settings['angry_int'].value()
-        Angry.FREQUENCE = self.emo_settings['angry_freq'].value()
-        '''
-
         Environment.MARC = False
         Environment.WASABI = False
         self.e = Environment()
@@ -576,38 +550,6 @@ class MainWindow(QMainWindow):
         config = ConfigParser.SafeConfigParser()
         config.read('emotutor.cfg')
 
-        '''
-        config = {'marc_ip': 'localhost',
-                  'marc_port_in': 4014,
-                  'marc_port_out': 4013,
-                  'wasabi_ip': '192.168.0.46',
-                  'wasabi_port_in': 42425,
-                  'wasabi_port_out': 42424,
-                  'mary_ip': 'http://localhost:59125/',
-                  'mary_voice': 'dfki-obadiah',
-                  'mary_path': 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\',
-                  'happy_marc': 'Ekman-Joie',
-                  'happy_impulse': 0.66,
-                  'happy_interpolate': 1.0,
-                  'happy_frequence': 2,
-                  'concentrated_marc': 'AC-Mind Reading-interested vid8-fascinated',
-                  'concentrated_impulse': 0.25,
-                  'concentrated_interpolate': 1.0,
-                  'concentrated_frequence': 2,
-                  'bored_marc': 'MindReading - Interet',
-                  'bored_impulse': 0.33,
-                  'bored_interpolate': 1.0,
-                  'bored_frequence': 2,
-                  'annoyed_marc': 'Ekman-Colere',
-                  'annoyed_impulse': 0.5,
-                  'annoyed_interpolate': 1.0,
-                  'annoyed_frequence': 2,
-                  'angry_marc': 'Ekman-Colere',
-                  'angry_impulse': 0.66,
-                  'angry_interpolate': 1.0,
-                  'angry_frequence': 2}
-        '''
-
         Environment.MARC_IP = config.get('Marc', 'ip')
         Environment.MARC_PORT_IN = config.getint('Marc', 'port_in')
         Environment.MARC_PORT_OUT = config.getint('Marc', 'port_out')
@@ -619,33 +561,7 @@ class MainWindow(QMainWindow):
         Environment.MARY_IP = config.get('Mary', 'ip')
         Environment.MARY_VOICE = config.get('Mary', 'voice')
         Environment.MARY_PATH = config.get('Mary', 'path')
-        '''
-        Happy.MARC = config.get('Happy', 'marc')
-        Happy.IMPULSE = config.getfloat('Happy', 'impulse')
-        Happy.INTERPOLATE = config.getfloat('Happy', 'interpolate')
-        Happy.FREQUENCE = config.getint('Happy', 'frequence')
 
-        Concentrated.MARC = config.get('Concentrated', 'marc')
-        Concentrated.IMPULSE = config.getfloat('Concentrated', 'impulse')
-        Concentrated.INTERPOLATE = config.getfloat('Concentrated',
-                                                   'interpolate')
-        Concentrated.FREQUENCE = config.getint('Concentrated', 'frequence')
-
-        Bored.MARC = config.get('Bored', 'marc')
-        Bored.IMPULSE = config.getfloat('Bored', 'impulse')
-        Bored.INTERPOLATE = config.getfloat('Bored', 'interpolate')
-        Bored.FREQUENCE = config.getint('Bored', 'frequence')
-
-        Annoyed.MARC = config.get('Annoyed', 'marc')
-        Annoyed.IMPULSE = config.getfloat('Annoyed', 'impulse')
-        Annoyed.INTERPOLATE = config.getfloat('Annoyed', 'interpolate')
-        Annoyed.FREQUENCE = config.getint('Annoyed', 'frequence')
-
-        Angry.MARC = config.get('Angry', 'marc')
-        Angry.IMPULSE = config.getfloat('Angry', 'impulse')
-        Angry.INTERPOLATE = config.getfloat('Angry', 'interpolate')
-        Angry.FREQUENCE = config.getint('Angry', 'frequence')
-        '''
         def apply_emo(emo_class, emo_name):
             emo_class.MARC = config.get(emo_name, 'marc')
             emo_class.IMPULSE = config.getfloat(emo_name, 'impulse')

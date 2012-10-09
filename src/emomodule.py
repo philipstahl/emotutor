@@ -30,7 +30,6 @@ class Emotion:
         if self.intensity < 0:
             self.intensity = self.intensity * -1
         self.interpolate = interpolate
-        print 'Emoti created:', self.name, self.impulse, self.interpolate, self.frequence
 
     def get_bml_code(self):
         ''' Returns the BML Code of the emotion, for showing in MARC
@@ -62,8 +61,9 @@ class Happy(Emotion):
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, interpolate = 1.0):
-        print 'Happy created:', Happy.MARC, Happy.IMPULSE, Happy.INTERPOLATE, Happy.FREQUENCE
-        Emotion.__init__(self, Happy.MARC, impulse = Happy.IMPULSE*impulse, interpolate = Happy.INTERPOLATE*interpolate, frequence = Happy.FREQUENCE)
+        Emotion.__init__(self, Happy.MARC, impulse = Happy.IMPULSE*impulse,
+                         interpolate = Happy.INTERPOLATE*interpolate,
+                         frequence = Happy.FREQUENCE)
 
 
 class Concentrated(Emotion):
@@ -75,7 +75,10 @@ class Concentrated(Emotion):
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Concentrated.MARC, impulse = Concentrated.IMPULSE*impulse, interpolate = Concentrated.INTERPOLATE*interpolate,  frequence = Concentrated.FREQUENCE)
+        Emotion.__init__(self, Concentrated.MARC,
+                         impulse = Concentrated.IMPULSE*impulse,
+                         interpolate = Concentrated.INTERPOLATE*interpolate,
+                         frequence = Concentrated.FREQUENCE)
 
 
 class Bored(Emotion):
@@ -87,7 +90,9 @@ class Bored(Emotion):
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Bored.MARC, impulse = Bored.IMPULSE*impulse, interpolate = Bored.INTERPOLATE*interpolate,  frequence = Bored.FREQUENCE)
+        Emotion.__init__(self, Bored.MARC, impulse = Bored.IMPULSE*impulse,
+                         interpolate = Bored.INTERPOLATE*interpolate,
+                         frequence = Bored.FREQUENCE)
 
 
 class Annoyed(Emotion):
@@ -99,7 +104,9 @@ class Annoyed(Emotion):
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Annoyed.MARC, impulse = Annoyed.IMPULSE*impulse, interpolate = Annoyed.INTERPOLATE*interpolate,  frequence = Annoyed.FREQUENCE)
+        Emotion.__init__(self, Annoyed.MARC, impulse = Annoyed.IMPULSE*impulse,
+                         interpolate = Annoyed.INTERPOLATE*interpolate,
+                         frequence = Annoyed.FREQUENCE)
 
 
 class Angry(Emotion):
@@ -111,8 +118,9 @@ class Angry(Emotion):
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Angry.MARC, impulse = Angry.IMPULSE*impulse, interpolate = Angry.INTERPOLATE*interpolate,  frequence = Angry.FREQUENCE)
-
+        Emotion.__init__(self, Angry.MARC, impulse = Angry.IMPULSE*impulse,
+                         interpolate = Angry.INTERPOLATE*interpolate,
+                         frequence = Angry.FREQUENCE)
 
 
 class EmoModule:
@@ -129,7 +137,8 @@ class EmoModule:
 
     def __init__(self, marc = None):
         self.marc = marc
-        self.wasabi = WasabiListener(EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT, self.marc)
+        self.wasabi = WasabiListener(EmoModule.WASABI_IP,
+                                     EmoModule.WASABI_PORT_OUT, self.marc)
 
     def check(self, task):
         ''' Task evaluation according to the emotional reaction.
@@ -253,15 +262,16 @@ class WasabiListener(threading.Thread):
         if self.marc and not self.blocked:
             self.blocked = True
             if primary_emo == Emotion.WASABI_ANGER:
-                self.marc.perform('Ekman-Colere', Emotion('Ekman-Colere', impulse = highest_imp/3*2).get_bml_code())
+                self.marc.perform('Angry', Angry().get_bml_code())
             elif primary_emo == 'annoyed':
-                self.marc.perform('Ekman-Colere', Emotion('Ekman-Colere', impulse = highest_imp/2).get_bml_code())
+                self.marc.perform('Annoyed', Annoyed().get_bml_code())
             elif primary_emo == 'bored':
-                self.marc.perform('Ekman-Colere', Emotion('MindReading - Interet', impulse = highest_imp/3).get_bml_code())
+                self.marc.perform('Bored', Bored().get_bml_code())
             elif primary_emo == 'concentrated':
-                self.marc.perform('Ekman-Colere', Emotion('AC-Mind Reading-interested vid8-fascinated', impulse = highest_imp/4).get_bml_code())
+                self.marc.perform('Concentrated',
+                                  Concentrated()).get_bml_code())
             elif primary_emo == Emotion.WASABI_JOY:
-                self.marc.perform('Ekman-Joie', Emotion('Ekman-Joie', impulse = highest_imp/3*2).get_bml_code())
+                self.marc.perform('Ekman-Joie', Happy()).get_bml_code())
 
         elif self.marc and self.blocked:
             self.blocked = False
