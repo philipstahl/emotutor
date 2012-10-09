@@ -432,28 +432,27 @@ class Settings(QWidget):
         self.marc_settings['port_in'].setText('4014')
         self.marc_settings['port_out'].setText('4013')
 
-        self.emo_settings['happy'][0].setText('Ekman-Joie')
+        self.emo_settings['happy'][0].setText('CASA_Joy_01')
         self.emo_settings['happy'][1].setValue(0.66)
         self.emo_settings['happy'][2].setValue(1.0)
         self.emo_settings['happy'][3].setValue(2)
 
-        self.emo_settings['concentrated'][0].setText( \
-                                   'AC-Mind Reading-interested vid8-fascinated')
+        self.emo_settings['concentrated'][0].setText(CASA_Relax_01)
         self.emo_settings['concentrated'][1].setValue(0.25)
         self.emo_settings['concentrated'][2].setValue(1.0)
         self.emo_settings['concentrated'][3].setValue(2)
 
-        self.emo_settings['bored'][0].setText('MindReading - Interet')
+        self.emo_settings['bored'][0].setText('CASA_Relax_01')
         self.emo_settings['bored'][1].setValue(0.33)
         self.emo_settings['bored'][2].setValue(1.0)
         self.emo_settings['bored'][3].setValue(2)
 
-        self.emo_settings['annoyed'][0].setText('Ekman-Colere')
+        self.emo_settings['annoyed'][0].setText('CASA_Sadness_01')
         self.emo_settings['annoyed'][1].setValue(0.5)
         self.emo_settings['annoyed'][2].setValue(1.0)
         self.emo_settings['annoyed'][3].setValue(2)
 
-        self.emo_settings['angry'][0].setText('Ekman-Colere')
+        self.emo_settings['angry'][0].setText('CASA_Anger_01')
         self.emo_settings['angry'][1].setValue(0.66)
         self.emo_settings['angry'][2].setValue(1.0)
         self.emo_settings['angry'][3].setValue(2)
