@@ -255,6 +255,11 @@ class Settings(QWidget):
         net_layout.addWidget(self.marc_settings['port_out'], 4, 1)
         net_layout.addWidget(self.wasabi_settings['port_out'], 4, 2)
 
+        button_test_wasabi = QPushButton("&Test")
+        button_test_wasabi.clicked.connect(self.test_wasabi)
+
+        net_layout.addWidget(button_test_wasabi, 4, 3)
+
         net_values = QWidget()
         net_values.setLayout(net_layout)
 
@@ -399,6 +404,11 @@ class Settings(QWidget):
         apply_emo(Surprise, 'surprise')
 
         self.e = Environment(False, False, False)
+
+    def test_wasabi(self):
+        self.apply_settings()
+        self.e.test_wasabi()
+
 
     def test_happy(self):
         self.apply_settings()

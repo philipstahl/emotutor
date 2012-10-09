@@ -5,7 +5,7 @@
 '''
 
 import socket
-import threading
+from threading import Thread
 import math
 
 #from wasabi import Wasabi
@@ -199,13 +199,12 @@ class EmoModule:
         self.wasabi.end()
 
 
-class WasabiListener(threading.Thread):
+class WasabiListener():
     ''' Class for recieving input by WASABI
 
     '''
 
     def __init__(self, ip_addr, port, marc):
-        threading.Thread.__init__(self)
         self.ip_addr = ip_addr
         self.port = port
         self.marc = marc
@@ -214,15 +213,19 @@ class WasabiListener(threading.Thread):
         self.emotions = {'happy': 0, 'concentrated': 0, 'depressed': 0,
                          'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
 
-    def run(self):
-        ''' Starts the thread and waits for WASABI messages
-        '''
-        sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock_in.bind((self.ip_addr, self.port))
+    def start(self):
+        def run(self):
+            ''' Starts the thread and waits for WASABI messages
+            '''
+            sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock_in.bind((self.ip_addr, self.port))
 
-        while self.hearing:
-            data = sock_in.recvfrom(1024)[0]
-            self.update_emotions(data)
+            while self.hearing:
+                data = sock_in.recvfrom(1024)[0]
+                self.update_emotions(data)
+            
+        t = Thread(target=self.run, args=())
+        t.start()
 
     def extract(self, data):
         ''' Extract data received from wasabi and returns a dict containing
@@ -274,17 +277,19 @@ class WasabiListener(threading.Thread):
         # MARC:
         if self.marc and not self.blocked:
             self.blocked = True
-            if primary_emo == Emotion.WASABI_ANGER:
-                self.marc.perform('Angry', Angry().get_bml_code())
+            if primary_emo == 'angry':
+                self.marc.perform(primary_emo, Angry().get_bml_code())
             elif primary_emo == 'annoyed':
-                self.marc.perform('Annoyed', Annoyed().get_bml_code())
+                self.marc.perform(primary_emo, Annoyed().get_bml_code())
             elif primary_emo == 'bored':
-                self.marc.perform('Bored', Bored().get_bml_code())
+                self.marc.perform(primary_emo, Bored().get_bml_code())
             elif primary_emo == 'concentrated':
-                self.marc.perform('Concentrated',
+                self.marc.perform(primary_emo,
                                   Concentrated().get_bml_code())
-            elif primary_emo == Emotion.WASABI_JOY:
-                self.marc.perform('Ekman-Joie', Happy().get_bml_code())
+            elif primary_emo == 'happy':
+                self.marc.perform(primary_emo, Happy().get_bml_code())
+            elif primary_emo == 'surprise':
+                self.marc.perform(primary_emo, Surprise().get_bml_code())
 
         elif self.marc and self.blocked:
             self.blocked = False

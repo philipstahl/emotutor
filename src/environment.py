@@ -7,7 +7,7 @@ import datetime
 from agent import Agent
 from marc import Marc
 
-from emomodule import Happy, Concentrated, Bored, Annoyed, Angry
+from emomodule import Happy, Concentrated, Bored, Annoyed, Angry, WasabiListener
 
 
 class Task:
@@ -63,19 +63,6 @@ class Environment:
         self.time_start = 0
         self.agent = Agent(marc, wasabi, mary)
 
-        '''
-        if marc:
-            self.agent.enable_marc(Environment.MARC_IP,
-                                   Environment.MARC_PORT_IN,
-                                   Environment.MARC_PORT_OUT)
-        if mary:
-            self.agent.enable_open_mary(Environment.MARY_IP,
-                                        Environment.MARY_VOICE,
-                                        Environment.MARY_PATH)
-        if wasabi:
-            self.agent.enable_wasabi()
-        '''
-
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time
         '''
@@ -104,10 +91,21 @@ class Environment:
                 if blocked == emotion.frequence:
                     blocked = 0
 
-            print 'test finished'
-
-        t = Thread(target=my_function, args=(emotion, iterations,))
+        print 'test finished'
+        t = Thread(target=my_function, args=(emotion, iterations))
         t.start()
+
+    
+    def test_wasabi(self):
+        ''' Simulate a facial expression for a certain time
+        '''
+        marc = Marc(Environment.MARC_IP,
+                    Environment.MARC_PORT_IN,
+                    Environment.MARC_PORT_OUT)
+
+        listener = WasabiListener(Environment.WASABI_IP,
+                                  Environment.WASABI_PORT_OUT, marc)
+        listener.start()
 
 
 
