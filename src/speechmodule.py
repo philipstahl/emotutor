@@ -63,6 +63,29 @@ class TextToSpeech:
         wav.writeframes(data)
         wav.close()
 
+    def save_from_xml(self):
+        name = "emo_text"
+        text = "<maryxml%20version=\"0.5\"%20xmlns=\"http://mary.dfki.de/2002/MaryXML\"%20xml:lang=\"de\"><voice%20name=\"dfki-pavoque-styles\"><prosody%20style=\"angry\">Ist+das+nicht+eine+schlimme+Blume!</prosody></voice></maryxml>"
+        
+        #text = text.replace(' ', '+')
+        query = self.ip_addr + 'process?INPUT_TEXT=' \
+                + text \
+                + '&INPUT_TYPE=RAWMARYXML&OUTPUT_TYPE=AUDIO' \
+                + '&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + self.voice
+
+        print query
+        received = urllib2.urlopen(query)
+        data = received.read()
+        wav = wave.open("sounds\\" + name + ".wav", 'w')
+        wav.setnchannels(1)
+        wav.setsampwidth(2)
+        wav.setframerate(16000)
+        #wav.setframerate(48000)
+        wav.writeframes(data)
+        wav.close()
+
+        
+
 
 class SpeechModule:
     ''' The class to manage the verbal activity of the agent.
@@ -127,3 +150,17 @@ class SpeechModule:
         return Speech("end", "Test finished. \
                         You had {0} misses in total.".format(str(misses)),
                         self.tts)
+
+if __name__ == '__main__':
+    import sys
+    voice = 'dfki-pavoque-styles'
+    #voice = 'dfki-obadiah'
+    ip_addr = 'http://localhost:59125/'
+    path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+    
+    #if len(sys.argv) > 1:
+    tts = TextToSpeech(ip_addr, voice, path)
+    #tts.save('happy_voice', 'Your answer was wrong')
+    #tts.save('angry_voice', 'Your answer was wrong')
+    tts.save_from_xml()
+    print 'saved'

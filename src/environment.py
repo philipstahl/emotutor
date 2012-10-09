@@ -79,9 +79,6 @@ class Environment:
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time
         '''
-        if not Environment.MARC:
-            return
-
         marc = Marc(Environment.MARC_IP,
                     Environment.MARC_PORT_IN,
                     Environment.MARC_PORT_OUT)
