@@ -208,8 +208,7 @@ class WasabiListener():
         self.ip_addr = ip_addr
         self.port = port
         self.marc = marc
-        self.hearing = True
-        self.blocked = False
+        self.count = 0
         self.emotions = {'happy': 0, 'concentrated': 0, 'depressed': 0,
                          'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
 
@@ -223,7 +222,7 @@ class WasabiListener():
             while self.hearing:
                 data = sock_in.recvfrom(1024)[0]
                 self.update_emotions(data)
-            
+
         t = Thread(target=self.run, args=())
         t.start()
 
@@ -271,28 +270,21 @@ class WasabiListener():
             if math.fabs(self.emotions[emotion]) > math.fabs(highest_imp):
                 primary_emo = emotion
                 highest_imp = self.emotions[emotion]
-
         print 'domoinating is ', primary_emo, ' with ', highest_imp
 
-        # MARC:
-        if self.marc and not self.blocked:
-            self.blocked = True
-            if primary_emo == 'angry':
-                self.marc.perform(primary_emo, Angry().get_bml_code())
-            elif primary_emo == 'annoyed':
-                self.marc.perform(primary_emo, Annoyed().get_bml_code())
-            elif primary_emo == 'bored':
-                self.marc.perform(primary_emo, Bored().get_bml_code())
-            elif primary_emo == 'concentrated':
-                self.marc.perform(primary_emo,
-                                  Concentrated().get_bml_code())
-            elif primary_emo == 'happy':
-                self.marc.perform(primary_emo, Happy().get_bml_code())
-            elif primary_emo == 'surprise':
-                self.marc.perform(primary_emo, Surprise().get_bml_code())
 
-        elif self.marc and self.blocked:
-            self.blocked = False
+        emotion_names = {'angry': Angry, 'annoyed': Annoyed, 'bored': Bored,
+                         'concentrated': Concentrated, 'happy': Happy,
+                         'surprise': Surprise}
+        emotion = emotion_names[primary_emotion]()
+
+        # Send to MARC:
+        if self.marc:
+            if emotion.FREQUENCE <= self.count:
+                self.count = 0
+                self.marc.preform(emotion.name, emotion.get_bml_code())
+            else:
+                self.count += 1
 
     def print_emotions(self):
         ''' Prints the current emotion status
@@ -303,8 +295,3 @@ class WasabiListener():
             if intensity != 0:
                 output += emotion + '=' + str(intensity) + " "
         print output
-
-    def end(self):
-        ''' Ends the thread
-        '''
-        self.hearing = False
