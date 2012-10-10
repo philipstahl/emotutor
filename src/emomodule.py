@@ -8,20 +8,12 @@ import socket
 from threading import Thread
 import math
 
-#from wasabi import Wasabi
 
 class Emotion:
     ''' Class for representing a single Emotion
 
-        Emotion matching: Every emotion has a
-        - intern name
-        - a name in MARC
-        - a name in WASABI
-        The intern name is used in the source code.
-
     '''
-    def __init__(self, name, wait=0.0, impulse=100,
-                 interpolate=1.0, frequence=2):
+    def __init__(self, name, impulse=100, interpolate=1.0, frequence=2):
         self.name = name
         self.wait = wait
         self.impulse = impulse
@@ -34,7 +26,7 @@ class Emotion:
     def get_bml_code(self):
         ''' Returns the BML Code of the emotion, for showing in MARC
         '''
-        print 'send ' + self.name + ' (' + str(self.impulse) + ',' + str(self.intensity) + ') ' + str(self.interpolate) + ' ' + str(self.frequence)
+        print 'send', str(self)
         return "<bml id=\"Perform{0}\"> \
                 <marc:fork id=\"Show_{1}_fork_1\"> \
                 <wait duration=\"{2}\" /> \
@@ -49,7 +41,9 @@ class Emotion:
                                self.interpolate, self.intensity)
 
     def __repr__(self):
-        return self.name + ": " + str(self.impulse)
+        return self.name + ": " + self.name + ' (' + str(self.impulse) + ',' \
+                         + str(self.intensity) + ') ' + str(self.interpolate) \
+                         + ' ' + str(self.frequence)
 
 
 class Happy(Emotion):
@@ -143,15 +137,16 @@ class EmoModule:
         have an overduring emotional model.
     '''
 
-    WASABI = False
     WASABI_IP = 'localhost'
     WASABI_PORT_IN = 0
     WASABI_PORT_OUT = 0
 
-    def __init__(self, marc = None):
+    def __init__(self, marc=None, use_wasabi=False):
         self.marc = marc
-        self.wasabi = WasabiListener(EmoModule.WASABI_IP,
-                                     EmoModule.WASABI_PORT_OUT, self.marc)
+        self.wasabi = None
+        if use_wasabi:
+            self.wasabi = WasabiListener(EmoModule.WASABI_IP,
+                                         EmoModule.WASABI_PORT_OUT, self.marc)
 
     def check(self, task):
         ''' Task evaluation according to the emotional reaction.
@@ -169,7 +164,7 @@ class EmoModule:
         elif not correct and task.misses() < 2:
             emotion = Annoyed()
         else:
-            emotion = Angery()
+            emotion = Angry()
 
         if self.wasabi:
             self.send(emotion.name, emotion.impulse)
@@ -183,10 +178,12 @@ class EmoModule:
         sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         message = "JohnDoe&TRIGGER&1&" + emotion
-        sock_out.sendto(message, (self.ip_addr, self.port_out))
+        sock_out.sendto(message, (EmoModule.WASABI_IP,
+                                  EmoModule.WASABI_PORT_OUT))
 
         message = "JohnDoe&IMPULSE&1&" + str(impulse)
-        sock_out.sendto(message, (self.ip_addr, self.port_out))
+        sock_out.sendto(message, (EmoModule.WASABI_IP,
+                                  EmoModule.WASABI_PORT_OUT))
 
     def start_hearing(self):
         ''' Starts the connectivity to WASABI.
@@ -204,27 +201,36 @@ class WasabiListener():
 
     '''
 
-    def __init__(self, ip_addr, port, marc):
-        self.ip_addr = ip_addr
-        self.port = port
+    def __init__(self, marc):
         self.marc = marc
         self.count = 0
-        self.emotions = {'happy': 0, 'concentrated': 0, 'depressed': 0,
-                         'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
+        self.emo_status = {'happy': 0, 'concentrated': 0, 'depressed': 0,
+                           'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
+        self.hearing = False
+        self.thread = None
 
     def start(self):
+        ''' Starts the thread and waits for WASABI messages
+        '''
+        self.hearing = True
         def run(self):
-            ''' Starts the thread and waits for WASABI messages
+            ''' Wait for wasabi messages. Everytime one is received, update
+                current emotional status.
             '''
             sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock_in.bind((self.ip_addr, self.port))
+            sock_in.bind((EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT))
 
             while self.hearing:
                 data = sock_in.recvfrom(1024)[0]
-                self.update_emotions(data)
+                self.update_emo_status(data)
 
-        t = Thread(target=self.run, args=())
-        t.start()
+        self.thread = Thread(target=run, args=())
+        self.thread.start()
+
+    def end(self):
+        ''' Ends hearing for wasabi messages
+        '''
+        self.hearing = False
 
     def extract(self, data):
         ''' Extract data received from wasabi and returns a dict containing
@@ -249,7 +255,7 @@ class WasabiListener():
         return emotions
 
 
-    def update_emotions(self, data):
+    def update_emo_status(self, data):
         ''' Gets a string of emotion values received from wasabi
             and updates the internal emotion dictionary
 
@@ -257,26 +263,25 @@ class WasabiListener():
         '''
         # Update emotion status:
         current = self.extract(data)
-        for emo in self.emotions.keys():
+        for emo in self.emo_status.keys():
             if emo in current.keys():
-                self.emotions[emo] = current[emo]
+                self.emo_status[emo] = current[emo]
             else:
-                self.emotions[emo] = 0
+                self.emo_status[emo] = 0
 
         # Get dominating emotion:
         primary_emo = ''
         highest_imp = 0
-        for emotion in self.emotions.keys():
-            if math.fabs(self.emotions[emotion]) > math.fabs(highest_imp):
+        for emotion in self.emo_status.keys():
+            if math.fabs(self.emo_status[emotion]) > math.fabs(highest_imp):
                 primary_emo = emotion
-                highest_imp = self.emotions[emotion]
+                highest_imp = self.emo_status[emotion]
         print 'domoinating is ', primary_emo, ' with ', highest_imp
-
 
         emotion_names = {'angry': Angry, 'annoyed': Annoyed, 'bored': Bored,
                          'concentrated': Concentrated, 'happy': Happy,
                          'surprise': Surprise}
-        emotion = emotion_names[primary_emotion]()
+        emotion = emotion_names[primary_emo]()
 
         # Send to MARC:
         if self.marc:
@@ -290,8 +295,8 @@ class WasabiListener():
         ''' Prints the current emotion status
         '''
         output = ''
-        for emotion in self.emotions.keys():
-            intensity = self.emotions[emotion]
+        for emotion in self.emo_status.keys():
+            intensity = self.emo_status[emotion]
             if intensity != 0:
                 output += emotion + '=' + str(intensity) + " "
         print output

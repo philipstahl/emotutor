@@ -7,7 +7,7 @@ import datetime
 from agent import Agent
 from marc import Marc
 
-from emomodule import Happy, Concentrated, Bored, Annoyed, Angry, WasabiListener
+from emomodule import WasabiListener, EmoModule
 
 
 class Task:
@@ -43,15 +43,6 @@ class Task:
 class Environment:
     ''' The class for the experimental environment
     '''
-    MARC_IP = 'localhost'
-    MARC_PORT_OUT = 4013
-    MARC_PORT_IN = 4014
-    WASABI_IP = '192.168.0.46'
-    WASABI_PORT_OUT = 42424
-    WASABI_PORT_IN = 42425
-    MARY_VOICE = 'dfki-obadiah'
-    MARY_IP = 'http://localhost:59125/'
-    MARY_PATH = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
 
     def __init__(self, marc=False, wasabi=False, mary=False):
         ''' vars indicate the use of marc, wasabi and open mary
@@ -66,48 +57,37 @@ class Environment:
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time
         '''
-        marc = Marc(Environment.MARC_IP,
-                    Environment.MARC_PORT_IN,
-                    Environment.MARC_PORT_OUT)
-        print 'connect to marc with', Environment.MARC_IP, \
-              Environment.MARC_PORT_IN, Environment.MARC_PORT_OUT
+        marc = Marc()
 
         from threading import Thread
         import socket
+        sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock_in.bind((EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT))
 
-        def my_function(emotion, iterations):
-            sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock_in.bind((Environment.WASABI_IP, Environment.WASABI_PORT_OUT))
-            print 'connect to wasabi with', Environment.WASABI_IP, \
-                  Environment.WASABI_PORT_OUT
-            blocked = 0
+        def show(emotion, iterations):
+            ''' Shows iteration many times the emotion
+            '''
+            count = 0
             while iterations > 0:
-                if blocked == 0:
-                    data = sock_in.recvfrom(1024)[0]
+                sock_in.recvfrom(1024)[0]
+                if count >= emotion.FREQUENCE:
                     marc.perform(emotion.name, emotion.get_bml_code())
                     iterations -= 1
+                    count = 0
+                else:
+                    count += 1
 
-                blocked += 1
-                if blocked == emotion.frequence:
-                    blocked = 0
+        thread = Thread(target=show, args=(emotion, iterations))
+        thread.start()
 
-        print 'test finished'
-        t = Thread(target=my_function, args=(emotion, iterations))
-        t.start()
-
-    
     def test_wasabi(self):
         ''' Simulate a facial expression for a certain time
         '''
-        marc = Marc(Environment.MARC_IP,
-                    Environment.MARC_PORT_IN,
-                    Environment.MARC_PORT_OUT)
+        marc = Marc()
 
-        listener = WasabiListener(Environment.WASABI_IP,
-                                  Environment.WASABI_PORT_OUT, marc)
+        listener = WasabiListener(EmoModule.WASABI_IP,
+                                  EmoModule.WASABI_PORT_OUT, marc)
         listener.start()
-
-
 
     def start(self):
         ''' Show init text and wait for start button.

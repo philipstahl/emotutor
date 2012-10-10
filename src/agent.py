@@ -13,20 +13,13 @@ class Agent:
         that triggered the method.
     '''
 
-    def __init__(self, marc, wasabi, mary):
+    def __init__(self, use_marc, use_wasabi, use_mary):
         self.marc = None
+        if use_marc:
+            self.marc = Marc()
+        self.emo_module = EmoModule(self.marc, use_wasabi)
+        self.speech_module = SpeechModule(use_mary)
         self.cog_module = CogModule()
-        #self.emo_module = EmoModule()
-        self.speech_module = SpeechModule()
-
-        if marc:
-            self.marc = Marc(ip_addr, port_in, port_out)
-
-        if wasabi:
-            self.emo_module = EmoModule(self.marc)
-
-        if mary:
-            self.speech_module.enable_open_mary(ip_addr, voice, path)
 
     def introduce(self):
         ''' The agents reaction at the beginning of the training
@@ -37,11 +30,11 @@ class Agent:
         '''
         self.emo_module.start_hearing()
 
-        #emotion = Relax()
+        emotion = Concentrated()
         speech = self.speech_module.introduce()
 
         if self.marc:
-            #self.marc.show(emotion)
+            self.marc.show(emotion)
             self.marc.speak(speech)
 
         return (emotion.name, speech.text)

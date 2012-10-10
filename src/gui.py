@@ -13,8 +13,10 @@ import PyQt4.QtCore
 from PyQt4.QtCore import SIGNAL, Qt
 
 from environment import Environment
-from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, Surprise
-
+from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, \
+                      Surprise
+from marc import Marc
+from speechmodule import OpenMary
 
 class VocabTrainer(QWidget):
     ''' Gui for a simple vocabulary trainer
@@ -166,14 +168,14 @@ class Settings(QWidget):
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent)
         self.marc_settings = \
-            {'ip': QLineEdit(Environment.MARC_IP),
-             'port_in': QLineEdit(str(Environment.MARC_PORT_IN)),
-             'port_out': QLineEdit(str(Environment.MARC_PORT_OUT))}
+            {'ip': QLineEdit(Marc.IP),
+             'port_in': QLineEdit(str(Marc.PORT_IN)),
+             'port_out': QLineEdit(str(Marc.PORT_OUT))}
 
         self.wasabi_settings = \
-            {'ip': QLineEdit(Environment.WASABI_IP),
-             'port_in': QLineEdit(str(Environment.WASABI_PORT_IN)),
-             'port_out': QLineEdit(str(Environment.WASABI_PORT_OUT))}
+            {'ip': QLineEdit(EmoModule.WASABI_IP),
+             'port_in': QLineEdit(str(EmoModule.WASABI_PORT_IN)),
+             'port_out': QLineEdit(str(EmoModule.WASABI_PORT_OUT))}
 
         self.emo_settings = \
             {'happy': \
@@ -208,9 +210,9 @@ class Settings(QWidget):
                   self.int_widget(Surprise.FREQUENCE, 1, 20, 1)]}
 
         self.mary_settings = \
-            {'ip': QLineEdit(Environment.MARY_IP),
-             'voice': QLineEdit(Environment.MARY_VOICE),
-             'path': QLineEdit(Environment.MARY_PATH)}
+            {'ip': QLineEdit(OpenMary.IP),
+             'voice': QLineEdit(OpenMary.VOICE),
+             'path': QLineEdit(OpenMary.PATH)}
 
         self.setLayout(self.init_ui())
         self.resize(600, 100)
@@ -306,7 +308,7 @@ class Settings(QWidget):
         emo_layout.addWidget(self.emo_settings['angry'][2], 6, 3)
         emo_layout.addWidget(self.emo_settings['angry'][3], 6, 4)
 
-        
+
         emo_layout.addWidget(QLabel('Surprise:'), 7, 0)
         emo_layout.addWidget(self.emo_settings['surprise'][0], 7, 1)
         emo_layout.addWidget(self.emo_settings['surprise'][1], 7, 2)
@@ -378,17 +380,17 @@ class Settings(QWidget):
     def apply_settings(self):
         ''' apply settings loaded from the gui
         '''
-        Environment.MARC_IP = self.marc_settings['ip'].text()
-        Environment.MARC_PORT_OUT = int(self.marc_settings['port_out'].text())
-        Environment.MARC_PORT_IN = int(self.marc_settings['port_in'].text())
+        Marc.IP = self.marc_settings['ip'].text()
+        Marc.PORT_IN = int(self.marc_settings['port_in'].text())
+        Marc.PORT_OUT = int(self.marc_settings['port_out'].text())
 
         EmoModule.WASABI_IP = self.wasabi_settings['ip'].text()
         EmoModule.WASABI_PORT_IN = int(self.wasabi_settings['port_in'].text())
         EmoModule.WASABI_PORT_OUT = int(self.wasabi_settings['port_out'].text())
 
-        Environment.MARY_VOICE = self.mary_settings['voice'].text()
-        Environment.MARY_IP = self.mary_settings['ip'].text()
-        Environment.MARY_PATH = self.mary_settings['path'].text()
+        OpenMary.VOICE = self.mary_settings['voice'].text()
+        OpenMary.IP = self.mary_settings['ip'].text()
+        OpenMary.PATH = self.mary_settings['path'].text()
 
         def apply_emo(emo_class, emo_key):
             emo_class.MARC = self.emo_settings[emo_key][0].text()
@@ -572,8 +574,8 @@ class MainWindow(QMainWindow):
 
         self.setMenuBar(menubar)
         self.show_welcome()
-        self.center()
         self.load_config()
+        self.move(0, 0)
 
     def load_config(self):
         ''' loads the init values from the config file
@@ -581,17 +583,17 @@ class MainWindow(QMainWindow):
         config = ConfigParser.SafeConfigParser()
         config.read('emotutor.cfg')
         # TODO(path is relative to the path gui.py is called.)
-        Environment.MARC_IP = config.get('Marc', 'ip')
-        Environment.MARC_PORT_IN = config.getint('Marc', 'port_in')
-        Environment.MARC_PORT_OUT = config.getint('Marc', 'port_out')
+        Marc.IP = config.get('Marc', 'ip')
+        Marc.PORT_IN = config.getint('Marc', 'port_in')
+        Marc.PORT_OUT = config.getint('Marc', 'port_out')
 
         EmoModule.WASABI_IP = config.get('Wasabi', 'ip')
         EmoModule.WASABI_PORT_IN = config.getint('Wasabi', 'port_in')
         EmoModule.WASABI_PORT_OUT = config.getint('Wasabi', 'port_out')
 
-        Environment.MARY_IP = config.get('Mary', 'ip')
-        Environment.MARY_VOICE = config.get('Mary', 'voice')
-        Environment.MARY_PATH = config.get('Mary', 'path')
+        OpenMary.IP = config.get('Mary', 'ip')
+        OpenMary.VOICE = config.get('Mary', 'voice')
+        OpenMary.PATH = config.get('Mary', 'path')
 
         def apply_emo(emo_class, emo_name):
             emo_class.MARC = config.get(emo_name, 'marc')

@@ -5,28 +5,23 @@ import socket
 class Marc:
     ''' An interface to interact with an agent represented by MARC
     '''
-    def __init__(self, ip_addr, port_in, port_out):
-        self.ip_addr = ip_addr
-        self.port_in = port_in
-        self.port_out = port_out
 
+    IP = 'localhost'
+    PORT_OUT = 4013
+    PORT_IN = 4014
+
+    def __init__(self):
         self.sock_out = socket.socket(socket.AF_INET,
                                       socket.SOCK_DGRAM)
         self.sock_in = socket.socket(socket.AF_INET,
                               socket.SOCK_DGRAM)
-        self.sock_in.bind((self.ip_addr, self.port_in))
+        self.sock_in.bind((Marc.IP, Marc.PORT_IN))
 
     def perform(self, name, bml_code):
         ''' Performs the action specified in the bml code
         '''
-        self.sock_out.sendto(bml_code, (self.ip_addr, self.port_out))
-        # TODO: Wait via Thread for End of Emotion?
-        # while True:
-        #     data, address = self.sock_in.recvfrom(4096)
-        #     print data
-        #     # data is <event id=\"Perform_{expression}:end\"/>
-        #     if data.split("\"")[1] == "Perform" + name + ":end":
-        #         break
+        print 'Marc performs', name
+        self.sock_out.sendto(bml_code, (Marc.IP, Marc.PORT_OUT))
 
     def show(self, emotion):
         ''' Sends the BML Code of the given facial expression to MARC.
@@ -35,7 +30,6 @@ class Marc:
             of the selected agent.
 
         '''
-        print 'Showing', emotion.name
         self.perform(emotion.name, emotion.get_bml_code())
 
     def speak(self, speech):
