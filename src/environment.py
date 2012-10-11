@@ -85,8 +85,7 @@ class Environment:
         '''
         marc = Marc()
 
-        listener = WasabiListener(EmoModule.WASABI_IP,
-                                  EmoModule.WASABI_PORT_OUT, marc)
+        listener = WasabiListener(marc)
         listener.start()
 
     def start(self):

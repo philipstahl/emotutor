@@ -15,7 +15,6 @@ class Emotion:
     '''
     def __init__(self, name, impulse=100, interpolate=1.0, frequence=2):
         self.name = name
-        self.wait = wait
         self.impulse = impulse
         self.intensity = float(impulse) / 100
         self.frequence = frequence
@@ -26,7 +25,7 @@ class Emotion:
     def get_bml_code(self):
         ''' Returns the BML Code of the emotion, for showing in MARC
         '''
-        print 'send', str(self)
+        print 'send', self.__repr__()
         return "<bml id=\"Perform{0}\"> \
                 <marc:fork id=\"Show_{1}_fork_1\"> \
                 <wait duration=\"{2}\" /> \
@@ -37,7 +36,7 @@ class Emotion:
                     loop=\"false\"  \
                     intensity=\"{5}\" /> \
                 </description> </face> </marc:fork> \
-                </bml>".format(self.name, self.name, self.wait, self.name,
+                </bml>".format(self.name, self.name, 0, self.name,
                                self.interpolate, self.intensity)
 
     def __repr__(self):
@@ -213,7 +212,7 @@ class WasabiListener():
         ''' Starts the thread and waits for WASABI messages
         '''
         self.hearing = True
-        def run(self):
+        def run():
             ''' Wait for wasabi messages. Everytime one is received, update
                 current emotional status.
             '''
@@ -287,7 +286,7 @@ class WasabiListener():
         if self.marc:
             if emotion.FREQUENCE <= self.count:
                 self.count = 0
-                self.marc.preform(emotion.name, emotion.get_bml_code())
+                self.marc.perform(emotion.name, emotion.get_bml_code())
             else:
                 self.count += 1
 
