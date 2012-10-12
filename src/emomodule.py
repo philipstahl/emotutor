@@ -144,8 +144,17 @@ class EmoModule:
         self.marc = marc
         self.wasabi = None
         if use_wasabi:
-            self.wasabi = WasabiListener(EmoModule.WASABI_IP,
-                                         EmoModule.WASABI_PORT_OUT, self.marc)
+            self.wasabi = WasabiListener(self.marc)
+        self.last_emotion = Concentrated()
+
+    def get_primary_emotion(self):
+        ''' Returns the currently dominating emotion
+        '''
+        emotion = self.last_emotion
+        if self.wasabi:
+            emotion = self.wasabi.get_primary_emotion()[0]
+            self.wasabi.emotion_names[emotion]()
+        return emotion
 
     def check(self, task):
         ''' Task evaluation according to the emotional reaction.
@@ -165,10 +174,9 @@ class EmoModule:
         else:
             emotion = Angry()
 
+        self.last_emotion = emotion
         if self.wasabi:
             self.send(emotion.name, emotion.impulse)
-
-        return emotion
 
     def send(self, emotion, impulse):
         ''' Possible emotions are:
@@ -187,12 +195,14 @@ class EmoModule:
     def start_hearing(self):
         ''' Starts the connectivity to WASABI.
         '''
-        self.wasabi.start()
+        if self.wasabi:
+            self.wasabi.start()
 
     def end_hearing(self):
         ''' Ends the connectivity to WASABI
         '''
-        self.wasabi.end()
+        if self.wasabi:
+            self.wasabi.end()
 
 
 class WasabiListener():
@@ -205,6 +215,9 @@ class WasabiListener():
         self.count = 0
         self.emo_status = {'happy': 0, 'concentrated': 0, 'depressed': 0,
                            'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
+        self.emotion_names = {'angry': Angry, 'annoyed': Annoyed, 'bored': Bored,
+                              'concentrated': Concentrated, 'happy': Happy,
+                              'surprise': Surprise}
         self.hearing = False
         self.thread = None
 
@@ -253,6 +266,20 @@ class WasabiListener():
 
         return emotions
 
+    def get_primary_emotion(self):
+        ''' Get dominating emotion:
+
+        '''
+        primary_emo = ''
+        highest_imp = 0
+        for emotion in self.emo_status.keys():
+            if math.fabs(self.emo_status[emotion]) >= math.fabs(highest_imp):
+                primary_emo = emotion
+                highest_imp = self.emo_status[emotion]
+        if highest_imp == 0:
+            primary_emotion = 'concentrated'
+        print 'domoinating is ', primary_emo, ' with ', highest_imp
+        return (primary_emo, highest_imp)
 
     def update_emo_status(self, data):
         ''' Gets a string of emotion values received from wasabi
@@ -269,18 +296,8 @@ class WasabiListener():
                 self.emo_status[emo] = 0
 
         # Get dominating emotion:
-        primary_emo = ''
-        highest_imp = 0
-        for emotion in self.emo_status.keys():
-            if math.fabs(self.emo_status[emotion]) > math.fabs(highest_imp):
-                primary_emo = emotion
-                highest_imp = self.emo_status[emotion]
-        print 'domoinating is ', primary_emo, ' with ', highest_imp
-
-        emotion_names = {'angry': Angry, 'annoyed': Annoyed, 'bored': Bored,
-                         'concentrated': Concentrated, 'happy': Happy,
-                         'surprise': Surprise}
-        emotion = emotion_names[primary_emo]()
+        primary_emo, highest_imp = self.get_primary_emotion()
+        emotion = self.emotion_names[primary_emo]()
 
         # Send to MARC:
         if self.marc:

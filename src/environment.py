@@ -47,8 +47,8 @@ class Environment:
     def __init__(self, marc=False, wasabi=False, mary=False):
         ''' vars indicate the use of marc, wasabi and open mary
         '''
-        self.tasks = [Task("Car", "Auto"), Task("House", "Haus"),
-                      Task("Chair", "Stuhl"), Task("Knife", "Messer")]
+        self.tasks = [Task("Auto", "Car"), Task("Haus", "House"),
+                      Task("Stuhl", "Chair"), Task("Messer", "Knife")]
         self.solved_tasks = []
         self.task = None
         self.time_start = 0

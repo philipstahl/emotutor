@@ -1,5 +1,9 @@
 ''' The class for the agent
 '''
+
+from threading import Thread
+import winsound, sys
+
 from cogmodule import CogModule
 from emomodule import EmoModule
 from speechmodule import SpeechModule
@@ -21,6 +25,18 @@ class Agent:
         self.speech_module = SpeechModule(use_mary)
         self.cog_module = CogModule()
 
+    def play_wave(self, sound):
+        ''' Plays a wave sound
+        '''
+        print 'play sound', sound
+        def play():
+            path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+            winsound.PlaySound(path + '%s.wav' % sound, winsound.SND_FILENAME)
+            
+        self.thread = Thread(target=play, args=())
+        self.thread.start()
+
+
     def introduce(self):
         ''' The agents reaction at the beginning of the training
 
@@ -29,13 +45,13 @@ class Agent:
 
         '''
         self.emo_module.start_hearing()
-
-        emotion = Concentrated()
-        speech = self.speech_module.introduce()
+        emotion = self.emo_module.get_primary_emotion()
+        speech = self.speech_module.introduce(emotion)
 
         if self.marc:
-            self.marc.show(emotion)
             self.marc.speak(speech)
+        else:
+            self.play_wave(speech.name)
 
         return (emotion.name, speech.text)
 
@@ -43,10 +59,13 @@ class Agent:
         ''' The agent presents a single task.
 
         '''
-        speech = self.speech_module.present(task)
+        emotion = self.emo_module.get_primary_emotion()
+        speech = self.speech_module.present(task, emotion)
 
         if self.marc:
             self.marc.speak(speech)
+        else:
+            self.play_wave(speech.name)
 
         return ('None', speech.text)
 
@@ -60,11 +79,14 @@ class Agent:
         '''
         correct = task.last_trial()[0]
         surprise = self.cog_module.check(task)
-        emotion = self.emo_module.check(task)
+        self.emo_module.check(task)
+        emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.evaluate(correct, surprise, emotion)
 
         if self.marc:
             self.marc.speak(speech)
+        else:
+            self.play_wave(speech.name)
 
         return (emotion.name + " " + str(emotion.impulse), speech.text)
 
@@ -79,8 +101,11 @@ class Agent:
         for task in tasks:
             total_misses += task.misses()
 
-        speech = self.speech_module.end(total_misses)
+        emotion = self.emo_module.get_primary_emotion()
+        speech = self.speech_module.end(total_misses, emotion)
 
         if self.marc:
             self.marc.speak(speech)
+        else:
+            self.play_wave(speech.name)
         return ("None", speech.text)

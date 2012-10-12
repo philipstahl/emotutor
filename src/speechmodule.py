@@ -2,17 +2,22 @@
 '''
 import urllib2
 import wave
-from emomodule import Happy, Angry
+from emomodule import Happy, Angry, Annoyed, Concentrated, Bored
+
 
 class Speech:
     ''' A class for some spoken text. Generates the spoken text via Open Mary
     '''
-    def __init__(self, name, text, tts=None):
+    def __init__(self, name, text, emotion):
         self.name = name
         self.text = text
-        self.tts = tts
-        if tts:
-            tts.save(name, text)
+        self.emotion = 'neutral'
+        if type(emotion) == Happy:
+            self.emotion = 'happy'
+        if type(emotion) == Annoyed:
+            self.emotion = 'sad'
+        if type(emotion) == Angry:
+            self.emotion = 'angry'
 
     def get_bml_code(self):
         ''' Return the bml code of the text
@@ -21,16 +26,17 @@ class Speech:
                <marc:fork id=\"Track_0_fork_2\"> \
                <wait duration=\"0.00\" /> \
                <speech id=\"bml_item_2\" \
-                marc:file=\"" + self.tts.path \
+                marc:file=\"" + OpenMary.PATH \
                 + "{1}.wav\" marc:articulate=\"0.4\" /> \
                </marc:fork></bml>".format(self.name, self.name)
+
 
 class OpenMary:
     ''' Class for text to speech support via Open Mary
     '''
 
     IP = 'http://localhost:59125/'
-    VOICE = 'dfki-obadiah'
+    VOICE = 'dfki-pavoque-styles'
     PATH = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
 
     def __init__(self):
@@ -47,49 +53,45 @@ class OpenMary:
             Example: Hello+world
 
         '''
-        text = text.replace(' ', '+')
         query = OpenMary.IP + 'process?INPUT_TEXT=' \
                 + text \
                 + '&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO' \
                 + '&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + OpenMary.VOICE
-        print "REQUEST OPEN MARY: ", query
         received = urllib2.urlopen(query)
         data = received.read()
         wav = wave.open("sounds\\" + name + ".wav", 'w')
         wav.setnchannels(1)
         wav.setsampwidth(2)
         wav.setframerate(16000)
-        #wav.setframerate(48000)
         wav.writeframes(data)
         wav.close()
 
-    def save_from_xml(self, name, text, emotion):
+    def save_from_xml(self, speech):
         ''' Sends a request in RAWMARYXML.
 
             emotions can be:
             neutral, poker, happy, angry, sad
 
         '''
-        name = "emo_text"
-        text = "<maryxml%20version=\"0.5\"%20xmlns=\"http:" \
-             + "//mary.dfki.de/2002/MaryXML\"%20xml:lang=\"de\">" \
-             + "<voice%20name=\"dfki-pavoque-styles\">" \
-             + "<prosody%20style=\"" + emotion + "\">" + text \
-             + "</prosody></voice></maryxml>"
+        text = speech.text.replace(' ', '+')
+        request = "<maryxml%20version=\"0.5\"%20xmlns=\"http:" \
+                + "//mary.dfki.de/2002/MaryXML\"%20xml:lang=\"de\">" \
+                + "<voice%20name=\"dfki-pavoque-styles\">" \
+                + "<prosody%20style=\"" + speech.emotion + "\">" + text \
+                + "</prosody></voice></maryxml>"
 
         query = OpenMary.IP + 'process?INPUT_TEXT=' \
-                + text \
+                + request \
                 + '&INPUT_TYPE=RAWMARYXML&OUTPUT_TYPE=AUDIO' \
                 + '&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + OpenMary.VOICE
-
         received = urllib2.urlopen(query)
         data = received.read()
-        wav = wave.open("sounds\\" + name + ".wav", 'w')
+        wav = wave.open("sounds\\" + speech.name + ".wav", 'w')
         wav.setnchannels(1)
         wav.setsampwidth(2)
         wav.setframerate(16000)
-        #wav.setframerate(48000)
-        wav.writeframes(data)
+        wav.setnframes(40000)
+        wav.writeframesraw(data)
         wav.close()
 
 
@@ -104,54 +106,70 @@ class SpeechModule:
         if use_mary:
             self.tts = OpenMary()
 
-    def introduce(self):
+    def introduce(self, emotion):
         ''' The agents reaction at the beginning of the training
 
             The agent introduces the human solver to the experiment, explaining
             the rules of the task.
 
         '''
-        return Speech("introduction", "Welcome to your vocabulary session.",
-                      self.tts)
+       
+        speech = Speech("introduction", "Willkommen+zum+Vokabel+Test", emotion)
+        if self.tts:
+            self.tts.save_from_xml(speech)
+        return speech
 
-    def present(self, task):
+    def present(self, task, emotion):
         ''' The agent present a task
         '''
-        speech = Speech("task", "What is the german word for " + task.question
-                                + "?", self.tts)
+        speech = Speech("task", "Was ist das englische Wort fuer " + task.question
+                                + "?", emotion)
+        if self.tts:
+            self.tts.save_from_xml(speech)
+        
         return speech
 
     def evaluate(self, correct, surprise, emotion):
         ''' Returns the verbal reaction of the answer given by the user
         '''
         reaction = ""
-        if surprise == "[very surprised]":
-            reaction += "Unbelievable! "
-        elif surprise == "[surprised]":
-            reaction += "Oh! "
-        if correct and type(emotion) == Happy and emotion.impulse > 50:
-            reaction += "Absolutely correct! You are doing a fantastic job!"
-        elif correct and type(emotion) == Happy and emotion.impulse > 10:
-            reaction += "Well done my friend, your answer is correct."
-        elif correct and type(emotion) == Happy:
-            reaction += "Allright, your answer is correct."
+        print 'evaluate:', correct, surprise
+        
+        if correct and type(emotion) == Happy:
+            reaction += "Super gemacht! Deine Antwort ist richtig."
+        elif correct and type(emotion) == Concentrated:
+            reaction += "Genau. Deine Antwort ist richtig."
+        elif correct and type(emotion) == Bored:
+            reaction += "Deine Antwork ist richtig."
+        elif correct and type(emotion) == Annoyed:
+            reaction += "Deine Antwork ist richtig."
+        elif correct and type(emotion) == Angry:
+            reaction += "Ja deine Antwort ist richtig."
         elif not correct and type(emotion) == Happy:
-            reaction += "Your answer is wrong."
-        elif not correct and type(emotion) == Angry \
-                 and emotion.impulse > -50:
-            reaction += "No, that's definitely not the right answer."
+            reaction += "Halb so schlimm. Kann ja mal passieren."
+        elif not correct and type(emotion) == Concentrated:
+            reaction += "Deine Antwort ist leider falsch."
+        elif not correct and type(emotion) == Bored:
+            reaction += "Deine Antwork ist falsch"
+        elif not correct and type(emotion) == Annoyed:
+            reaction += "Scahde. Deine Antwork ist falsch."
         elif not correct and type(emotion) == Angry:
-            reaction += "What are you doing? Your answer is really annoying!"
+            reaction += "Unfassbar. Wie kannst Du das nicht wissen?"
         else:
             reaction += "Wrong emotion or surprise" + emotion.name
-        return Speech('reaction', reaction, self.tts)
 
-    def end(self, misses):
+        speech = Speech('reaction', reaction, emotion)
+        if self.tts:
+            self.tts.save_from_xml(speech)
+
+        return speech
+
+    def end(self, misses, emotion):
         ''' Returns the agents verbalk output at the end of the training
         '''
         return Speech("end", "Test finished. \
                         You had {0} misses in total.".format(str(misses)),
-                        self.tts)
+                        emotion)
 
 if __name__ == '__main__':
     import sys
@@ -160,7 +178,15 @@ if __name__ == '__main__':
     ip_addr = 'http://localhost:59125/'
     path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
 
+
+    OpenMary.VOICE = voice
+    OpenMary.PATH = path
     #if len(sys.argv) > 1:
     mary = OpenMary()
-    mary.save_from_xml('emo_test', 'Das ist eine schoene Blume', 'happy')
+    speech = Speech('emo_happy', 'Willkommen zum Vokabel Test', Concentrated())
+    #mary.save_from_xml('emo_neutral', 'Willkommen+zum+Vokabel+Test', 'neutral')
+    mary.save_from_xml(speech)
+    #mary.save_from_xml('emo_angry', 'Willkommen+zum+Vokabel+Test', 'angry')
+    #mary.save_from_xml('emo_sad', 'Willkommen+zum+Vokabel+Test', 'sad')
+    #mary.save_from_xml('emo_poker', 'Willkommen+zum+Vokabel+Test', 'poker')
     print 'saved'
