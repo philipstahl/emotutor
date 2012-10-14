@@ -20,7 +20,6 @@ class Marc:
     def perform(self, name, bml_code):
         ''' Performs the action specified in the bml code
         '''
-        print 'Marc performs', name
         self.sock_out.sendto(bml_code, (Marc.IP, Marc.PORT_OUT))
 
     def show(self, emotion):
@@ -30,18 +29,25 @@ class Marc:
             of the selected agent.
 
         '''
-        self.perform(emotion.name, emotion.get_bml_code())
+        print 'MARC SHOWS', emotion.NAME        
+        self.perform(emotion.NAME, emotion.get_bml_code())
 
     def speak(self, speech):
         ''' Sends the BML Code for speacking the given wave file to MARC.
         '''
-        print 'Saying', speech.name
+        print 'MARC SAYS', speech.name
         self.perform(speech.name, speech.get_bml_code())
 
 
 if __name__ == '__main__':
     import sys
-    from emomodule import Emotion
-    if len(sys.argv) > 1:
-        marc = Marc('localhost', 4014, 4013)
-        marc.perform(sys.argv[1], Emotion(sys.argv[1]).get_bml_code())
+    from emomodule import Emotion, Happy
+    from speechmodule import Speech
+    #if len(sys.argv) > 1:
+    #    marc = Marc('localhost', 4014, 4013)
+    #    marc.perform(sys.argv[1], Emotion(sys.argv[1]).get_bml_code())
+    marc = Marc()
+    speech = Speech('introduction', 'Das ist ein Test. Test Test Check.', Happy())
+    marc.show(Happy())
+    marc.speak(speech)
+    marc.show(Happy())

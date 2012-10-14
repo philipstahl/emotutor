@@ -9,15 +9,16 @@ class Speech:
     ''' A class for some spoken text. Generates the spoken text via Open Mary
     '''
     def __init__(self, name, text, emotion):
-        self.name = name
         self.text = text
         self.emotion = 'neutral'
-        if type(emotion) == Happy:
+        if emotion.NAME == Happy.NAME:
             self.emotion = 'happy'
-        if type(emotion) == Annoyed:
+        if emotion.NAME == Annoyed.NAME:
             self.emotion = 'sad'
-        if type(emotion) == Angry:
+        if emotion.NAME == Angry.NAME:
             self.emotion = 'angry'
+        self.name = name + '_' + self.emotion
+        
 
     def get_bml_code(self):
         ''' Return the bml code of the text
@@ -73,6 +74,7 @@ class OpenMary:
             neutral, poker, happy, angry, sad
 
         '''
+        print 'save', speech.name, speech.emotion
         text = speech.text.replace(' ', '+')
         request = "<maryxml%20version=\"0.5\"%20xmlns=\"http:" \
                 + "//mary.dfki.de/2002/MaryXML\"%20xml:lang=\"de\">" \
@@ -101,6 +103,7 @@ class SpeechModule:
         This is the only class / section in code where the verbal output of the
         agent is defined.
     '''
+    
     def __init__(self, use_mary=False):
         self.tts = None
         if use_mary:
@@ -133,27 +136,27 @@ class SpeechModule:
         ''' Returns the verbal reaction of the answer given by the user
         '''
         reaction = ""
-        print 'evaluate:', correct, surprise
+        print 'SPEECHMODULE: EVALUATE:', correct, surprise, emotion.NAME
         
-        if correct and type(emotion) == Happy:
+        if correct and emotion.NAME == Happy.NAME:
             reaction += "Super gemacht! Deine Antwort ist richtig."
-        elif correct and type(emotion) == Concentrated:
+        elif correct and emotion.NAME == Concentrated.NAME:
             reaction += "Genau. Deine Antwort ist richtig."
-        elif correct and type(emotion) == Bored:
+        elif correct and emotion.NAME == Bored.NAME:
             reaction += "Deine Antwork ist richtig."
-        elif correct and type(emotion) == Annoyed:
+        elif correct and emotion.NAME == Annoyed.NAME:
             reaction += "Deine Antwork ist richtig."
-        elif correct and type(emotion) == Angry:
+        elif correct and emotion.NAME == Angry.NAME:
             reaction += "Ja deine Antwort ist richtig."
-        elif not correct and type(emotion) == Happy:
+        elif not correct and emotion.NAME == Happy.NAME:
             reaction += "Halb so schlimm. Kann ja mal passieren."
-        elif not correct and type(emotion) == Concentrated:
+        elif not correct and emotion.NAME == Concentrated.NAME:
             reaction += "Deine Antwort ist leider falsch."
-        elif not correct and type(emotion) == Bored:
+        elif not correct and emotion.NAME == Bored.NAME:
             reaction += "Deine Antwork ist falsch"
-        elif not correct and type(emotion) == Annoyed:
-            reaction += "Scahde. Deine Antwork ist falsch."
-        elif not correct and type(emotion) == Angry:
+        elif not correct and emotion.NAME == Annoyed.NAME:
+            reaction += "Schade. Deine Antwort ist falsch."
+        elif not correct and emotion.NAME == Angry.NAME:
             reaction += "Unfassbar. Wie kannst Du das nicht wissen?"
         else:
             reaction += "Wrong emotion or surprise" + emotion.name

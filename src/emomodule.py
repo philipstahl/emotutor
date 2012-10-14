@@ -13,8 +13,8 @@ class Emotion:
     ''' Class for representing a single Emotion
 
     '''
-    def __init__(self, name, impulse=100, interpolate=1.0, frequence=2):
-        self.name = name
+    def __init__(self, marc, impulse=100, interpolate=1.0, frequence=2):
+        self.name = marc
         self.impulse = impulse
         self.intensity = float(impulse) / 100
         self.frequence = frequence
@@ -48,6 +48,7 @@ class Emotion:
 class Happy(Emotion):
     ''' Class for an happy emotion
     '''
+    NAME = 'happy'
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
@@ -62,6 +63,7 @@ class Happy(Emotion):
 class Concentrated(Emotion):
     ''' Class for a concentrated emotion
     '''
+    NAME = 'concentrated'
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
@@ -77,6 +79,7 @@ class Concentrated(Emotion):
 class Bored(Emotion):
     ''' Class for a bored emotion
     '''
+    NAME = 'bored'
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
@@ -91,13 +94,14 @@ class Bored(Emotion):
 class Annoyed(Emotion):
     ''' Class for an annoyed emotion
     '''
+    NAME = 'annoyed'
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Annoyed.MARC, impulse = Annoyed.IMPULSE*impulse,
+        Emotion.__init__(self, Annoyed.MARC, impulse = -Annoyed.IMPULSE*impulse,
                          interpolate = Annoyed.INTERPOLATE*interpolate,
                          frequence = Annoyed.FREQUENCE)
 
@@ -105,19 +109,21 @@ class Annoyed(Emotion):
 class Angry(Emotion):
     ''' Class for an angry emotion
     '''
+    NAME = 'angry'
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Angry.MARC, impulse = Angry.IMPULSE*impulse,
+        Emotion.__init__(self, Angry.MARC, impulse = -Angry.IMPULSE*impulse,
                          interpolate = Angry.INTERPOLATE*interpolate,
                          frequence = Angry.FREQUENCE)
 
 class Surprise(Emotion):
     ''' Class for an angry emotion
     '''
+    NAME = 'surprise'
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
@@ -153,7 +159,7 @@ class EmoModule:
         emotion = self.last_emotion
         if self.wasabi:
             emotion = self.wasabi.get_primary_emotion()[0]
-            self.wasabi.emotion_names[emotion]()
+            emotion = self.wasabi.emotion_names[emotion]()
         return emotion
 
     def check(self, task):
@@ -176,7 +182,7 @@ class EmoModule:
 
         self.last_emotion = emotion
         if self.wasabi:
-            self.send(emotion.name, emotion.impulse)
+            self.send(emotion.NAME, int(emotion.impulse))
 
     def send(self, emotion, impulse):
         ''' Possible emotions are:
@@ -184,13 +190,15 @@ class EmoModule:
         '''
         sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+        print 'Send to wasabi', emotion, impulse
+
         message = "JohnDoe&TRIGGER&1&" + emotion
         sock_out.sendto(message, (EmoModule.WASABI_IP,
-                                  EmoModule.WASABI_PORT_OUT))
+                                  EmoModule.WASABI_PORT_IN))
 
         message = "JohnDoe&IMPULSE&1&" + str(impulse)
         sock_out.sendto(message, (EmoModule.WASABI_IP,
-                                  EmoModule.WASABI_PORT_OUT))
+                                  EmoModule.WASABI_PORT_IN))
 
     def start_hearing(self):
         ''' Starts the connectivity to WASABI.
@@ -278,7 +286,6 @@ class WasabiListener():
                 highest_imp = self.emo_status[emotion]
         if highest_imp == 0:
             primary_emotion = 'concentrated'
-        print 'domoinating is ', primary_emo, ' with ', highest_imp
         return (primary_emo, highest_imp)
 
     def update_emo_status(self, data):
