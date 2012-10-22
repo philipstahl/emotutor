@@ -2,7 +2,11 @@
 '''
 
 from threading import Thread
-import winsound, sys
+#import winsound                         # sound for windows
+import pygame
+import time # sound for ubuntu
+
+import sys
 
 from cogmodule import CogModule
 from emomodule import EmoModule
@@ -25,17 +29,21 @@ class Agent:
         self.speech_module = SpeechModule(use_mary)
         self.cog_module = CogModule()
 
-    def play_wave(self, sound):
+    def play_wave(self, soundfile):
         ''' Plays a wave sound
         '''
-        print 'play sound', sound
+        print 'play sound', soundfile
         def play():
-            path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
-            winsound.PlaySound(path + '%s.wav' % sound, winsound.SND_FILENAME)
-            
+            # Windows:
+            # path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+            # winsound.PlaySound(path + '%s.wav' % soundfile, winsound.SND_FILENAME)
+            pygame.init()
+            pygame.mixer.set_num_channels(1)
+            pygame.mixer.music.load('sounds/' + soundfile + '.wav')
+            pygame.mixer.music.play()
+
         self.thread = Thread(target=play, args=())
         self.thread.start()
-
 
     def introduce(self):
         ''' The agents reaction at the beginning of the training

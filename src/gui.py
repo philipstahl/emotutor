@@ -76,7 +76,7 @@ class VocabTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = Environment(True, False, True)
+        self.exp = Environment(False, False, True)
 
         emotion, speech = self.exp.start()
         self.emo_output.setText(emotion)

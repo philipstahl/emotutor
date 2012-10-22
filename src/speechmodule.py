@@ -18,7 +18,7 @@ class Speech:
         if emotion.NAME == Angry.NAME:
             self.emotion = 'angry'
         self.name = name + '_' + self.emotion
-        
+
 
     def get_bml_code(self):
         ''' Return the bml code of the text
@@ -88,13 +88,15 @@ class OpenMary:
                 + '&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + OpenMary.VOICE
         received = urllib2.urlopen(query)
         data = received.read()
-        wav = wave.open("sounds\\" + speech.name + ".wav", 'w')
+        #wav = wave.open("sounds\\" + speech.name + ".wav", 'w')  # Windows
+        wav = wave.open("sounds/" + speech.name + ".wav", 'w')  # Linux
         wav.setnchannels(1)
         wav.setsampwidth(2)
         wav.setframerate(16000)
         wav.setnframes(40000)
         wav.writeframesraw(data)
         wav.close()
+        print 'wav file written'
 
 
 class SpeechModule:
@@ -103,7 +105,7 @@ class SpeechModule:
         This is the only class / section in code where the verbal output of the
         agent is defined.
     '''
-    
+
     def __init__(self, use_mary=False):
         self.tts = None
         if use_mary:
@@ -116,7 +118,7 @@ class SpeechModule:
             the rules of the task.
 
         '''
-       
+
         speech = Speech("introduction", "Willkommen+zum+Vokabel+Test", emotion)
         if self.tts:
             self.tts.save_from_xml(speech)
@@ -129,7 +131,7 @@ class SpeechModule:
                                 + "?", emotion)
         if self.tts:
             self.tts.save_from_xml(speech)
-        
+
         return speech
 
     def evaluate(self, correct, surprise, emotion):
@@ -137,7 +139,7 @@ class SpeechModule:
         '''
         reaction = ""
         print 'SPEECHMODULE: EVALUATE:', correct, surprise, emotion.NAME
-        
+
         if correct and emotion.NAME == Happy.NAME:
             reaction += "Super gemacht! Deine Antwort ist richtig."
         elif correct and emotion.NAME == Concentrated.NAME:
