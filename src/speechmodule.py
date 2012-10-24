@@ -1,3 +1,5 @@
+# -*- coding: iso-8859-1 -*-
+
 ''' The module to manage the verbal action of the agent.
 '''
 import urllib2
@@ -77,6 +79,10 @@ class OpenMary:
         '''
         print 'save', speech.name, speech.emotion
         text = speech.text.replace(' ', '+')
+        text = text.replace('ä', '%C3%A4')
+        text = text.replace('ö', '%C3%B6')
+        text = text.replace('ü', '%C3%BC')
+        
         request = "<maryxml%20version=\"0.5\"%20xmlns=\"http:" \
                 + "//mary.dfki.de/2002/MaryXML\"%20xml:lang=\"de\">" \
                 + "<voice%20name=\"dfki-pavoque-styles\">" \
@@ -89,8 +95,8 @@ class OpenMary:
                 + '&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + OpenMary.VOICE
         received = urllib2.urlopen(query)
         data = received.read()
-        #wav = wave.open("sounds\\" + speech.name + ".wav", 'w')  # Windows
-        wav = wave.open("sounds/" + speech.name + ".wav", 'w')  # Linux
+        wav = wave.open("sounds\\" + speech.name + ".wav", 'w')  # Windows
+        #wav = wave.open("sounds/" + speech.name + ".wav", 'w')  # Linux
         wav.setnchannels(1)
         wav.setsampwidth(2)
         wav.setframerate(16000)
@@ -181,7 +187,7 @@ class SpeechModule:
         ''' The agents reaction at the beginning of the training
         '''
 
-        speech = Speech("introduction", "Willkommen zum Lernen von Woertern.",
+        speech = Speech("introduction", "Willkommen zum Lernen von Wörtern.",
                         emotion)
         if self.tts:
             self.tts.save_from_xml(speech)
@@ -191,9 +197,13 @@ class SpeechModule:
     def present_list(self, emotion):
         ''' Formulates the task of memorizing a list of words.
         '''
-        return Speech('present_list', 'Bitte merken Sie sich die folgenden '
-                                    + 'Woerter, in der Reihenfolge in der ich '
+        speech = Speech('present_list', 'Bitte merken Sie sich die folgenden '
+                                    + 'Wörter, in der Reihenfolge in der ich '
                                     + 'sie vorlese.', emotion)
+        if self.tts:
+            self.tts.save_from_xml(speech)
+        
+        return speech
 
     def present_word(self, word, emotion):
         speech = Speech('word', word.word, emotion)
@@ -205,11 +215,11 @@ class SpeechModule:
 
         reaction = ''
         if emotion.NAME == Happy.NAME:
-            reaction += 'Leider nein. Kann jedem passieren. Richtig waere ' + word
+            reaction += 'Leider nein. Kann jedem passieren. Richtig wäre ' + word
         elif emotion.NAME == Concentrated.NAME or emotion.NAME == Bored.NAME or emotion.NAME == Annoyed.NAME:
-            reaction += 'Nein. Richtig waere ' + word
+            reaction += 'Nein. Richtig wäre ' + word
         elif emotion.NAME == Angry.NAME:
-            reaction += 'Nein natuerlich nicht! An die Stelle kommt ' + word
+            reaction += 'Nein natürlich nicht! An die Stelle kommt ' + word
 
         speech = Speech('reaction', reaction, emotion)
         if self.tts:

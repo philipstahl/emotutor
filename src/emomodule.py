@@ -172,6 +172,8 @@ class EmoModule:
         '''
         emotion = None
 
+        print 'CHECK', surp_intense, emo_intense
+
         if correct:
             emotion = Happy(impulse = emo_intense)
         else:

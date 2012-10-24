@@ -217,7 +217,7 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(False, False, False)
+        self.exp = ListEnvironment(True, True, True)
 
         emotion, speech = self.exp.start()
         self.emo_output.setText(emotion)
@@ -262,7 +262,7 @@ class ListTrainer(QWidget):
             # present word list
             timer = QTimer();
 
-            QTimer.singleShot(2000, self.present);
+            QTimer.singleShot(6000, self.present);
         else:
             if self.user_input.isHidden():
                 self.next_button.setText("Next")

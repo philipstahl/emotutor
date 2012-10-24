@@ -80,41 +80,41 @@ class CogModule:
 
         if activation > 0.5 and correct:
             # expected result happes. no surprise. low intensity
-            surprise = 0.0
-            emotion = 0.3
+            surprise = 0
+            emotion = 30
 
         elif activation > 0 and correct:
             # expected result happens. no surprise. mid intensity
-            surprise = 0.0
-            emotion = 0.6
+            surprise = 0
+            emotion = 60
 
         elif activation > -0.5 and correct:
             # result was not expected. low surprise. mid intensity
-            surprise = 0.5
-            emotion = 0.6
+            surprise = 50
+            emotion = 60
 
         elif correct:
             # result was not expected. high surprise. high intensity
-            surprise = 1.0
-            emotion = 1.0
+            surprise = 100
+            emotion = 100
 
         if activation > 0.5 and not correct:
             # result was not expected. high surprise. high intensity
-            surprise = 1.0
-            emotion = 1.0
+            surprise = 100
+            emotion = 100
 
         elif activation > 0 and not correct:
             # result was not expected. low surprise. mid intensity
-            surprise = 0.5
-            emotion = 0.6
+            surprise = 50
+            emotion = 60
 
         elif activation > -0.5 and not correct:
             # result was expected. no surprise. mid intensity
-            surprise = 0.0
-            emotion = 0.6
+            surprise = 0
+            emotion = 60
         else:
             # result was expected. no surprise. low intensity
-            surprise = 0.0
-            emotion = 0.3
+            surprise = 0
+            emotion = 30
 
         return (surprise, emotion)
