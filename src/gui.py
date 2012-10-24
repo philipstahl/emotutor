@@ -166,9 +166,11 @@ class ListTrainer(QWidget):
         super(ListTrainer, self).__init__(parent)
         # Create widgets:
         label_emo_output = QLabel('Emotional Output:')
+        label_cog_output = QLabel('Cognition Output:')
         label_speech_output = QLabel('Speech Output:')
 
         self.emo_output = QLabel('')
+        self.cog_output = QLabel('')
         self.speech_output = QLabel('')
 
         self.user_input = QLineEdit()
@@ -191,8 +193,10 @@ class ListTrainer(QWidget):
         agent_layout = QGridLayout()
         agent_layout.addWidget(label_emo_output, 0, 0)
         agent_layout.addWidget(self.emo_output, 0, 1)
-        agent_layout.addWidget(label_speech_output, 1, 0)
-        agent_layout.addWidget(self.speech_output, 1, 1)
+        agent_layout.addWidget(label_cog_output, 1, 0)
+        agent_layout.addWidget(self.cog_output, 1, 1)
+        agent_layout.addWidget(label_speech_output, 2, 0)
+        agent_layout.addWidget(self.speech_output, 2, 1)
 
         agent_layout.setColumnMinimumWidth(0, 100)
         agent_layout.setColumnMinimumWidth(1, 500)
@@ -217,11 +221,12 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(True, True, True)
+        self.exp = ListEnvironment(False, True, True)
 
-        emotion, speech = self.exp.start()
-        self.emo_output.setText(emotion)
-        self.speech_output.setText(speech)
+        print 'RIGHT GUI!'
+
+        emotion, cog, speech = self.exp.start()
+        self.update_output(emotion, cog, speech)
         self.phase = 0
 
         # test: throw a signal that will change the display in 2 seconds.
@@ -232,19 +237,19 @@ class ListTrainer(QWidget):
     def update(self):
         print 'TIME FOR AN UPDARTE!'
 
-    def update_output(self, emotion, speech):
+    def update_output(self, emotion, cog, speech):
         self.emo_output.setText(emotion)
+        self.cog_output.setText(cog)
         self.speech_output.setText(speech)
 
     def present(self):
         if self.exp.has_next():
-            emotion, speech = self.exp.present_next()
-            self.update_output(emotion, speech)
+            emotion, cog, speech = self.exp.present_next()
+            self.update_output(emotion, cog, speech)
             QTimer.singleShot(1000, self.present)
         else:
             self.speech_output.setText('')
             self.next_button.show()
-            print 'RESET CALLED'
             self.exp.reset()
 
     def next(self):
@@ -253,11 +258,9 @@ class ListTrainer(QWidget):
         if self.phase == 0:
             self.phase += 1
             self.next_button.hide()
-            print 'no button visible'
-            emotion, speech = self.exp.introduce()
+            emotion, cog, speech = self.exp.introduce()
 
-            self.emo_output.setText(emotion)
-            self.speech_output.setText(speech)
+            self.update_output(emotion, cog, speech)
 
             # present word list
             timer = QTimer();
@@ -272,13 +275,11 @@ class ListTrainer(QWidget):
                 self.end()
             else:
                 # wait for user input
-                print 'CURRENT INDEX IS', self.exp.index
+                # show cognitive expecation here
+                emotion, cog, speech = self.exp.wait()
 
-                emotion, speech = self.exp.wait()
-
-                self.emo_output.setText(emotion)
-                self.speech_output.setText(speech)
-
+                self.update_output(emotion, cog, speech)
+                
                 self.label_solution.setText('')
                 self.next_button.hide()
                 self.user_input.setStyleSheet('QLineEdit {color: black}')
@@ -299,7 +300,7 @@ class ListTrainer(QWidget):
         correct = self.exp.check(word)
 
 
-        emotion, speech = self.exp.evaluate(correct)
+        emotion, cog, speech = self.exp.evaluate(correct)
 
         if correct:
             self.user_input.setStyleSheet('QLineEdit {color: green}')
@@ -307,8 +308,7 @@ class ListTrainer(QWidget):
             self.user_input.setStyleSheet('QLineEdit {color: red}')
             #self.label_solution.setText(self.exp.words[self.exp.index].word)
 
-        self.emo_output.setText(emotion)
-        self.speech_output.setText(speech)
+        self.update_output(emotion, cog, speech)
 
         self.submit_button.hide()
         self.next_button.show()

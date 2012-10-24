@@ -41,6 +41,7 @@ class CogModule:
         summed = 0
         now = datetime.datetime.now()
         for j in range(n):
+            print 'ERROR?', self.seconds(now), '-', self.seconds(times[j]), '^', d
             single = math.pow(self.seconds(now) - self.seconds(times[j]), -d)
             log += str(single)
             if j < n-1:
@@ -118,3 +119,18 @@ class CogModule:
             emotion = 30
 
         return (surprise, emotion)
+
+    def expectation(self, word):
+        activation = self.baselevel_activation(word.times, 0.5)
+        expectation = str(activation) + ': '
+        if activation > 0.5:
+            expectation += 'Highly expecting'
+        elif activation > 0:
+            expectation += 'Expecting'
+        elif activation > -0.5:
+            expectation += 'Not expecting'
+        else:
+            expectation += 'Highly not expecting'
+
+        return expectation + ' ' + word.word
+        

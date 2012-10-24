@@ -164,7 +164,7 @@ class ListAgent:
 
         self.speak(speech)
 
-        return (str(emotion), speech.text)
+        return (str(emotion), '-', speech.text)
 
     def introduce(self):
         ''' The agent speaks the introduction text to present the list of words.
@@ -175,7 +175,7 @@ class ListAgent:
         print 'start to speak'
         self.speak(speech)
         print 'spoken done'
-        return (str(emotion), speech.text)
+        return (str(emotion), '-', speech.text)
 
     def present(self, word):
         ''' The Agent present the given word
@@ -183,7 +183,7 @@ class ListAgent:
         emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_word(word, emotion)
         self.speak(speech)
-        return (str(emotion), speech.text)
+        return (str(emotion), '-', speech.text)
 
 
     def speak(self, speech):
@@ -194,13 +194,13 @@ class ListAgent:
         elif self.speech_module.tts:
             self.play_wave(speech.name)
 
-    def evaluate(self, word, correct, times):
+    def evaluate(self, word, correct):
         ''' Evalutes the given words regarding to its correctness and time.
             Return emotional and verbal output, based on the cognitve,
             emotional and verbal evaluation
         '''
         # cognitive evaluation: Determines surprise and intensity of emotion
-        surp_intense, emo_intense = self.cog_module.react(correct, times)
+        surp_intense, emo_intense = self.cog_module.react(correct, word.times)
 
         # emotional evaluation:
         self.emo_module.check(correct, surp_intense, emo_intense)
@@ -213,10 +213,12 @@ class ListAgent:
             self.speak(speech)
             verbal_output = speech.text
 
-        return (str(emotion), verbal_output)
+        return (str(emotion), '-', verbal_output)
 
-    def wait(self):
+    def wait(self, word):
         ''' Wait for user input and return the current emotion
         '''
+        print 'EXPECTING ', word.word
         emotion = self.emo_module.get_primary_emotion()
-        return (str(emotion.name), '...')
+        expectation = self.cog_module.expectation(word)
+        return (str(emotion.name), expectation, '...')

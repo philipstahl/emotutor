@@ -40,6 +40,12 @@ class Word:
         self.word = word
         self.times = []
 
+    def add(self, time):
+        self.times.append(time)
+
+    def time(i):
+        return self.times[i]
+
 class Environment:
     ''' The class for the experimental environment
     '''
@@ -52,9 +58,6 @@ class Environment:
         self.solved_tasks = []
         self.task = None
         self.time_start = 0
-
-        self.words = ['Haus', 'Baum', 'Auto', 'Kuchen', 'Hund']
-        self.times = [[], [], [], [], []]
 
         self.agent = Agent(marc, wasabi, mary)
 
@@ -133,10 +136,8 @@ class ListEnvironment:
     def __init__(self, marc=False, wasabi=False, mary=False):
         ''' vars indicate the use of marc, wasabi and open mary
         '''
-        self.words = [Word('Haus'), Word('Baum'), Word('Auto'), Word('Kuchen'),
-                      Word('Hund')]
-        self.times = [[], [], [], [], []]
-        self.index = -1
+        self.words = [Word('Haus'), Word('Baum'), Word('Auto')]
+        self.index = 0
 
         self.agent = ListAgent(marc, wasabi, mary)
 
@@ -154,60 +155,64 @@ class ListEnvironment:
     def present_next(self):
         ''' Present next task. The one with index + 1
         '''
-        self.index += 1
         return self.present_current()
 
     def present_current(self):
         ''' Presents the current task.
         '''
-        if 0 <= self.index and self.index <= len(self.words) - 1:
-            self.times[self.index].append(datetime.datetime.now())
-            return self.agent.present(self.words[self.index])
+        # TODO: check is this line could be in one unequality
+        if 0 <= self.index and self.index <= len(self.words):
+            word = self.words[self.index]
+            word.add(datetime.datetime.now())
+            self.index += 1
+            return self.agent.present(word)
         else:
             print 'Index Error'
 
     def wait(self):
         ''' Waits for user input and returns current emotional status
         '''
-        return self.agent.wait()
+        print 'WAIT CALLED WITH INDEX', self.index
+        return self.agent.wait(self.words[self.index])
 
-    def check(self, word):
+    def check(self, received):
         ''' Checks if the given word matches the current word in the list
         '''
-        self.index += 1
-        #time = datetime.datetime.now()
-        correct = False
-        word = word.replace('\n', '')
+        received = received.replace('\n', '')
 
-        print 'COMPARE [', word, ']to[', self.words[self.index].word, ']'
-        if word == self.words[self.index].word:
+        correct = False
+        if received == self.words[self.index].word:
             correct = True
-            #self.times[self.index].append(time)
+
         return correct
 
     def evaluate(self, correct):
         ''' Show feedback of task and wait for next button
         '''
-        emotion, speech = self.agent.evaluate(self.words[self.index], correct,
-                                              self.times[self.index])
 
-        self.times[self.index].append(datetime.datetime.now())
+        word = self.words[self.index]
+        emotion, cog, speech = self.agent.evaluate(word, correct)
 
-        if not correct:
+        word.add(datetime.datetime.now())
+
+        if correct:
+            self.index += 1
+        else:
             self.reset()
 
-        return (emotion, speech)
+        return (emotion, cog, speech)
 
 
     def reset(self):
         ''' Reset the current word index to start
         '''
-        self.index = -1
+        print 'INDEX RESET'
+        self.index = 0
 
     def has_next(self):
         ''' Checks if words remains to present
         '''
-        if self.index <= len(self.words) - 2:
+        if self.index <= len(self.words) - 1:
             return True
         return False
 
