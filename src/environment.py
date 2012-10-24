@@ -4,7 +4,7 @@
 
 '''
 import datetime
-from agent import Agent
+from agent import Agent, ListAgent
 from marc import Marc
 
 from emomodule import WasabiListener, EmoModule
@@ -17,13 +17,6 @@ class Task:
         self.question = question
         self.answer = answer
         self.trials = []
-
-    def check(self, answer, time):
-        ''' checks if the given answer is correct
-        '''
-        correct = self.answer == answer
-        self.trials.append((correct, time))
-        return correct
 
     def last_trial(self):
         ''' Return the values of the last trial of the task
@@ -39,6 +32,13 @@ class Task:
                 misses += 1
         return misses
 
+class Word:
+    ''' Class representing a single word from a list of words the user has to
+        memorize.
+    '''
+    def __init__(self, word):
+        self.word = word
+        self.times = []
 
 class Environment:
     ''' The class for the experimental environment
@@ -52,6 +52,10 @@ class Environment:
         self.solved_tasks = []
         self.task = None
         self.time_start = 0
+
+        self.words = ['Haus', 'Baum', 'Auto', 'Kuchen', 'Hund']
+        self.times = [[], [], [], [], []]
+
         self.agent = Agent(marc, wasabi, mary)
 
     def test(self, emotion, iterations):
@@ -93,7 +97,7 @@ class Environment:
         '''
         return self.agent.introduce()
 
-    def present_task(self):
+    def present(self):
         ''' Show next task and wait for answer.
         '''
         self.task = self.tasks.pop()
@@ -120,3 +124,94 @@ class Environment:
         ''' Show final text
         '''
         return self.agent.end(self.solved_tasks)
+
+
+class ListEnvironment:
+    ''' The class for the experimental environment
+    '''
+
+    def __init__(self, marc=False, wasabi=False, mary=False):
+        ''' vars indicate the use of marc, wasabi and open mary
+        '''
+        self.words = [Word('Haus'), Word('Baum'), Word('Auto'), Word('Kuchen'),
+                      Word('Hund')]
+        self.times = [[], [], [], [], []]
+        self.index = -1
+
+        self.agent = ListAgent(marc, wasabi, mary)
+
+    def start(self):
+        ''' Show init text and wait for start button.
+        '''
+        return self.agent.start()
+
+    def introduce(self):
+        ''' Returns the introduction text for the presentation of the list of
+            words.
+        '''
+        return self.agent.introduce()
+
+    def present_next(self):
+        ''' Present next task. The one with index + 1
+        '''
+        self.index += 1
+        return self.present_current()
+
+    def present_current(self):
+        ''' Presents the current task.
+        '''
+        if 0 <= self.index and self.index <= len(self.words) - 1:
+            self.times[self.index].append(datetime.datetime.now())
+            return self.agent.present(self.words[self.index])
+        else:
+            print 'Index Error'
+
+    def wait(self):
+        ''' Waits for user input and returns current emotional status
+        '''
+        return self.agent.wait()
+
+    def check(self, word):
+        ''' Checks if the given word matches the current word in the list
+        '''
+        self.index += 1
+        #time = datetime.datetime.now()
+        correct = False
+        word = word.replace('\n', '')
+
+        print 'COMPARE [', word, ']to[', self.words[self.index].word, ']'
+        if word == self.words[self.index].word:
+            correct = True
+            #self.times[self.index].append(time)
+        return correct
+
+    def evaluate(self, correct):
+        ''' Show feedback of task and wait for next button
+        '''
+        emotion, speech = self.agent.evaluate(self.words[self.index], correct,
+                                              self.times[self.index])
+
+        self.times[self.index].append(datetime.datetime.now())
+
+        if not correct:
+            self.reset()
+
+        return (emotion, speech)
+
+
+    def reset(self):
+        ''' Reset the current word index to start
+        '''
+        self.index = -1
+
+    def has_next(self):
+        ''' Checks if words remains to present
+        '''
+        if self.index <= len(self.words) - 2:
+            return True
+        return False
+
+    def end(self):
+        ''' Ends the trainig
+        '''
+        return ('.', 'Experiment finished')

@@ -18,6 +18,7 @@ class Speech:
         if emotion.NAME == Angry.NAME:
             self.emotion = 'angry'
         self.name = name + '_' + self.emotion
+        print 'saved', name
 
 
     def get_bml_code(self):
@@ -175,6 +176,49 @@ class SpeechModule:
         return Speech("end", "Test finished. \
                         You had {0} misses in total.".format(str(misses)),
                         emotion)
+
+    def start_list(self, emotion):
+        ''' The agents reaction at the beginning of the training
+        '''
+
+        speech = Speech("introduction", "Willkommen zum Lernen von Woertern.",
+                        emotion)
+        if self.tts:
+            self.tts.save_from_xml(speech)
+        return speech
+
+
+    def present_list(self, emotion):
+        ''' Formulates the task of memorizing a list of words.
+        '''
+        return Speech('present_list', 'Bitte merken Sie sich die folgenden '
+                                    + 'Woerter, in der Reihenfolge in der ich '
+                                    + 'sie vorlese.', emotion)
+
+    def present_word(self, word, emotion):
+        speech = Speech('word', word.word, emotion)
+        if self.tts:
+            self.tts.save_from_xml(speech)
+        return speech
+
+    def react(self, surprise, emotion, word):
+
+        reaction = ''
+        if emotion.NAME == Happy.NAME:
+            reaction += 'Leider nein. Kann jedem passieren. Richtig waere ' + word
+        elif emotion.NAME == Concentrated.NAME or emotion.NAME == Bored.NAME or emotion.NAME == Annoyed.NAME:
+            reaction += 'Nein. Richtig waere ' + word
+        elif emotion.NAME == Angry.NAME:
+            reaction += 'Nein natuerlich nicht! An die Stelle kommt ' + word
+
+        speech = Speech('reaction', reaction, emotion)
+        if self.tts:
+            self.tts.save_from_xml(speech)
+
+        return speech
+
+
+
 
 if __name__ == '__main__':
     import sys

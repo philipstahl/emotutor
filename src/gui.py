@@ -3,6 +3,7 @@
 
 import sys
 import ConfigParser
+import time # sound for ubuntu
 
 import PyQt4.QtGui
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
@@ -10,9 +11,9 @@ from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QApplication, QDesktopWidget, QMessageBox, \
                         QDoubleSpinBox, QSpinBox
 import PyQt4.QtCore
-from PyQt4.QtCore import SIGNAL, Qt
+from PyQt4.QtCore import SIGNAL, Qt, QTimer
 
-from environment import Environment
+from environment import Environment, ListEnvironment
 from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, \
                       Surprise
 from marc import Marc
@@ -128,6 +129,189 @@ class VocabTrainer(QWidget):
             self.user_input.setText('')
             self.user_input.setReadOnly(False)
             self.submit_button.show()
+
+    def end(self):
+        ''' End vocabulary test
+        '''
+        emotion, speech = self.exp.end()
+        self.emo_output.setText(emotion)
+        self.speech_output.setText(speech)
+
+        self.next_button.hide()
+        self.user_input.setText('')
+        self.user_input.hide()
+
+    def keyPressEvent(self, event):
+        ''' Handles key events
+        '''
+        if event.key() == Qt.Key_Return:
+            if ((self.user_input.isHidden()
+                 and not self.next_button.isHidden()) or
+               (not self.user_input.isHidden()
+                and self.user_input.isReadOnly())):
+                self.next()
+            elif (not self.user_input.isHidden() and
+                  not self.user_input.isReadOnly()):
+                self.submit()
+
+import signal
+
+class TimeoutException(Exception):
+    pass
+
+class ListTrainer(QWidget):
+    ''' Gui for a simple vocabulary trainer
+    '''
+    def __init__(self, parent=None):
+        super(ListTrainer, self).__init__(parent)
+        # Create widgets:
+        label_emo_output = QLabel('Emotional Output:')
+        label_speech_output = QLabel('Speech Output:')
+
+        self.emo_output = QLabel('')
+        self.speech_output = QLabel('')
+
+        self.user_input = QLineEdit()
+        self.user_input.hide()
+
+        self.label_solution = QLabel('')
+        self.label_solution.show()
+
+        self.submit_button = QPushButton("&Submit")
+        self.submit_button.hide()
+
+        self.next_button = QPushButton("&Start")
+        self.next_button.show()
+
+        # Define button functionality:QtCore
+        self.submit_button.clicked.connect(self.submit)
+        self.next_button.clicked.connect(self.next)
+
+        # Design layout:
+        agent_layout = QGridLayout()
+        agent_layout.addWidget(label_emo_output, 0, 0)
+        agent_layout.addWidget(self.emo_output, 0, 1)
+        agent_layout.addWidget(label_speech_output, 1, 0)
+        agent_layout.addWidget(self.speech_output, 1, 1)
+
+        agent_layout.setColumnMinimumWidth(0, 100)
+        agent_layout.setColumnMinimumWidth(1, 500)
+
+        agent = QWidget()
+        agent.setLayout(agent_layout)
+
+        user_layout = QGridLayout()
+        user_layout.addWidget(self.user_input, 0, 0)
+        user_layout.addWidget(self.submit_button, 0, 1)
+        user_layout.addWidget(self.next_button, 0, 1)
+        user_layout.addWidget(self.label_solution, 1, 0)
+        user_layout.setColumnMinimumWidth(0, 500)
+        user_layout.setColumnMinimumWidth(1, 100)
+
+        user = QWidget()
+        user.setLayout(user_layout)
+
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(agent)
+        main_layout.addWidget(user)
+
+        self.setLayout(main_layout)
+        self.resize(600, 200)
+        self.exp = ListEnvironment(False, False, False)
+
+        emotion, speech = self.exp.start()
+        self.emo_output.setText(emotion)
+        self.speech_output.setText(speech)
+        self.phase = 0
+
+        # test: throw a signal that will change the display in 2 seconds.
+
+        print 'start timer'
+
+
+    def update(self):
+        print 'TIME FOR AN UPDARTE!'
+
+    def update_output(self, emotion, speech):
+        self.emo_output.setText(emotion)
+        self.speech_output.setText(speech)
+
+    def present(self):
+        if self.exp.has_next():
+            emotion, speech = self.exp.present_next()
+            self.update_output(emotion, speech)
+            QTimer.singleShot(1000, self.present)
+        else:
+            self.speech_output.setText('')
+            self.next_button.show()
+            print 'RESET CALLED'
+            self.exp.reset()
+
+    def next(self):
+        ''' Show next task
+        '''
+        if self.phase == 0:
+            self.phase += 1
+            self.next_button.hide()
+            print 'no button visible'
+            emotion, speech = self.exp.introduce()
+
+            self.emo_output.setText(emotion)
+            self.speech_output.setText(speech)
+
+            # present word list
+            timer = QTimer();
+
+            QTimer.singleShot(2000, self.present);
+        else:
+            if self.user_input.isHidden():
+                self.next_button.setText("Next")
+                self.user_input.show()
+
+            if not self.exp.has_next():
+                self.end()
+            else:
+                # wait for user input
+                print 'CURRENT INDEX IS', self.exp.index
+
+                emotion, speech = self.exp.wait()
+
+                self.emo_output.setText(emotion)
+                self.speech_output.setText(speech)
+
+                self.label_solution.setText('')
+                self.next_button.hide()
+                self.user_input.setStyleSheet('QLineEdit {color: black}')
+                self.user_input.setText('')
+                self.user_input.setReadOnly(False)
+                self.submit_button.show()
+
+    def submit(self):
+        ''' Submit an answer by the user
+        '''
+        word = self.user_input.text()
+
+        if word == "":
+            QMessageBox.information(self, "Empty Field", "Please enter a word")
+            return
+
+        self.user_input.setReadOnly(True)
+        correct = self.exp.check(word)
+
+
+        emotion, speech = self.exp.evaluate(correct)
+
+        if correct:
+            self.user_input.setStyleSheet('QLineEdit {color: green}')
+        else:
+            self.user_input.setStyleSheet('QLineEdit {color: red}')
+            #self.label_solution.setText(self.exp.words[self.exp.index].word)
+
+        self.emo_output.setText(emotion)
+        self.speech_output.setText(speech)
+
+        self.submit_button.hide()
+        self.next_button.show()
 
     def end(self):
         ''' End vocabulary test
@@ -511,15 +695,18 @@ class Welcome(QWidget):
 
         button_settings = QPushButton("&Edit settings")
         button_start = QPushButton('&Start training')
+        button_list = QPushButton('&Start list training')
 
         # Define button funcionalty:
         button_settings.clicked.connect(self.options)
         button_start.clicked.connect(self.start)
+        button_list.clicked.connect(self.list_test)
 
         # Design Layout:
         option_layout = QBoxLayout(0)
         option_layout.addWidget(button_settings)
         option_layout.addWidget(button_start)
+        option_layout.addWidget(button_list)
         options = QWidget()
         options.setLayout(option_layout)
 
@@ -538,6 +725,11 @@ class Welcome(QWidget):
         ''' Start test
         '''
         self.emit(SIGNAL('training'))
+
+    def list_test(self):
+        ''' Start list test
+        '''
+        self.emit(SIGNAL('list_test'))
 
 
 class MainWindow(QMainWindow):
@@ -614,6 +806,7 @@ class MainWindow(QMainWindow):
         welcome = Welcome()
         self.connect(welcome, SIGNAL('settings'), self.show_options)
         self.connect(welcome, SIGNAL('training'), self.show_training)
+        self.connect(welcome, SIGNAL('list_test'), self.show_list_training)
         welcome.show()
         self.setCentralWidget(welcome)
 
@@ -633,6 +826,15 @@ class MainWindow(QMainWindow):
         trainer = VocabTrainer()
         trainer.show()
         self.setCentralWidget(trainer)
+
+    def show_list_training(self):
+        ''' Starts the list training
+
+        '''
+        trainer = ListTrainer()
+        trainer.show()
+        self.setCentralWidget(trainer)
+
 
     def center(self):
         ''' Centers the current window

@@ -130,7 +130,8 @@ class Surprise(Emotion):
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Surprise.MARC, impulse = Surprise.IMPULSE*impulse,
+        Emotion.__init__(self, Surprise.MARC,
+                         impulse = Surprise.IMPULSE*impulse,
                          interpolate = Surprise.INTERPOLATE*interpolate,
                          frequence = Surprise.FREQUENCE)
 
@@ -162,7 +163,30 @@ class EmoModule:
             emotion = self.wasabi.emotion_names[emotion]()
         return emotion
 
-    def check(self, task):
+
+
+    def check(self, correct, surp_intense, emo_intense):
+        ''' Task evaluation according to the emotional reaction.
+
+            Sends an emotional input to wasabi and text back to the agent
+        '''
+        emotion = None
+
+        if correct:
+            emotion = Happy(impulse = emo_intense)
+        else:
+            emotion = Angry(impulse = emo_intense)
+
+        print 'EMOMODULE: RETURN', emotion.NAME
+
+        self.last_emotion = emotion
+        if self.wasabi:
+            self.send(emotion.NAME, int(emotion.impulse))
+
+        # TODO(How to send surprise to wasabi)
+
+
+    def check2(self, task):
         ''' Task evaluation according to the emotional reaction.
 
             Sends an emotional input to wasabi and text back to the agent
@@ -223,7 +247,8 @@ class WasabiListener():
         self.count = 0
         self.emo_status = {'happy': 0, 'concentrated': 0, 'depressed': 0,
                            'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
-        self.emotion_names = {'angry': Angry, 'annoyed': Annoyed, 'bored': Bored,
+        self.emotion_names = {'angry': Angry, 'annoyed': Annoyed,
+                              'bored': Bored,
                               'concentrated': Concentrated, 'happy': Happy,
                               'surprise': Surprise}
         self.hearing = False
