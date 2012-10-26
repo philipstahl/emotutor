@@ -141,6 +141,11 @@ class ListEnvironment:
 
         self.agent = ListAgent(marc, wasabi, mary)
 
+    def seconds(self, time):
+        ''' Returns the given time in seconds
+        '''
+        return time.second + 60 * time.minute + 60 * 60 * time.hour
+
     def start(self):
         ''' Show init text and wait for start button.
         '''
@@ -163,7 +168,7 @@ class ListEnvironment:
         # TODO: check is this line could be in one unequality
         if 0 <= self.index and self.index <= len(self.words):
             word = self.words[self.index]
-            word.add(datetime.datetime.now())
+            word.add(self.seconds(datetime.datetime.now()))
             self.index += 1
             return self.agent.present(word)
         else:
@@ -193,7 +198,7 @@ class ListEnvironment:
         word = self.words[self.index]
         emotion, cog, speech = self.agent.evaluate(word, correct)
 
-        word.add(datetime.datetime.now())
+        word.add(self.seconds(datetime.datetime.now()))
 
         if correct:
             self.index += 1

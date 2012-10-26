@@ -170,22 +170,26 @@ class EmoModule:
 
             Sends an emotional input to wasabi and text back to the agent
         '''
+        surprise = None
         emotion = None
 
-        print 'CHECK', surp_intense, emo_intense
+        if surp_intese > 0:
+            surprise = Surprise(impulse = surp_intense)
 
         if correct:
             emotion = Happy(impulse = emo_intense)
         else:
             emotion = Angry(impulse = emo_intense)
 
-        print 'EMOMODULE: RETURN', emotion.NAME
-
         self.last_emotion = emotion
         if self.wasabi:
+            self.send(surprise.NAME, int(surprise.impulse))
             self.send(emotion.NAME, int(emotion.impulse))
 
-        # TODO(How to send surprise to wasabi)
+        # TODO(How to send surprise to wasabi / marc)
+
+        # TODO(How to wait here until first wasabi message is received?)
+        return self.get_primaty_emotion()
 
 
     def check2(self, task):
@@ -254,6 +258,7 @@ class WasabiListener():
                               'concentrated': Concentrated, 'happy': Happy,
                               'surprise': Surprise}
         self.hearing = False
+        self.wait_for_message = False
         self.thread = None
 
     def start(self):
@@ -270,6 +275,7 @@ class WasabiListener():
             while self.hearing:
                 data = sock_in.recvfrom(1024)[0]
                 self.update_emo_status(data)
+                self.wait_for_message = False
 
         self.thread = Thread(target=run, args=())
         self.thread.start()
@@ -305,6 +311,11 @@ class WasabiListener():
         ''' Get dominating emotion:
 
         '''
+        # TODO(wait here for next received message)
+        self.wait_for_message = True
+        while wait_for_message:
+            pass
+
         primary_emo = ''
         highest_imp = 0
         for emotion in self.emo_status.keys():

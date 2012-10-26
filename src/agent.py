@@ -2,7 +2,7 @@
 '''
 
 from threading import Thread
-import winsound                         # sound for windows
+#import winsound                         # sound for windows
 #import pygame
 from PyQt4.QtGui import QSound
 
@@ -136,19 +136,20 @@ class ListAgent:
     def play_wave(self, soundfile):
         ''' Plays a wave sound
         '''
-        def play():
-             #Windows:
-             path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
-             winsound.PlaySound(path + '%s.wav' % soundfile,
-                                 winsound.SND_FILENAME)
-
-        self.thread = Thread(target=play, args=())
-        self.thread.start()
+#        def play():
+#             #Windows:
+#             path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+#             winsound.PlaySound(path + '%s.wav' % soundfile,
+#                                 winsound.SND_FILENAME)
+#
+#        self.thread = Thread(target=play, args=())
+#        self.thread.start()
 #        QSound.play('sounds/' + soundfile + '.wav')
 #        pygame.init()
 #        pygame.mixer.set_num_channels(1)
 #        pygame.mixer.music.load('sounds/' + soundfile + '.wav')
 #        pygame.mixer.music.play()
+    pass
 
 
     def start(self):
@@ -164,7 +165,7 @@ class ListAgent:
 
         self.speak(speech)
 
-        return (str(emotion), '-', speech.text)
+        return (str(emotion), '...', speech.text)
 
     def introduce(self):
         ''' The agent speaks the introduction text to present the list of words.
@@ -175,7 +176,7 @@ class ListAgent:
         print 'start to speak'
         self.speak(speech)
         print 'spoken done'
-        return (str(emotion), '-', speech.text)
+        return (str(emotion), '...', speech.text)
 
     def present(self, word):
         ''' The Agent present the given word
@@ -183,7 +184,7 @@ class ListAgent:
         emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_word(word, emotion)
         self.speak(speech)
-        return (str(emotion), '-', speech.text)
+        return (str(emotion), '...', speech.text)
 
 
     def speak(self, speech):
@@ -203,9 +204,7 @@ class ListAgent:
         surp_intense, emo_intense = self.cog_module.react(correct, word.times)
 
         # emotional evaluation:
-        self.emo_module.check(correct, surp_intense, emo_intense)
-
-        emotion = self.emo_module.get_primary_emotion()
+        emotion = self.emo_module.check(correct, surp_intense, emo_intense)
 
         verbal_output = '...'
         if not correct:
@@ -213,12 +212,11 @@ class ListAgent:
             self.speak(speech)
             verbal_output = speech.text
 
-        return (str(emotion), '-', verbal_output)
+        return (str(emotion), '...', verbal_output)
 
     def wait(self, word):
         ''' Wait for user input and return the current emotion
         '''
-        print 'EXPECTING ', word.word
         emotion = self.emo_module.get_primary_emotion()
         expectation = self.cog_module.expectation(word)
         return (str(emotion.name), expectation, '...')

@@ -221,7 +221,7 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(False, True, True)
+        self.exp = ListEnvironment(False, False, False)
 
         print 'RIGHT GUI!'
 
@@ -279,7 +279,7 @@ class ListTrainer(QWidget):
                 emotion, cog, speech = self.exp.wait()
 
                 self.update_output(emotion, cog, speech)
-                
+
                 self.label_solution.setText('')
                 self.next_button.hide()
                 self.user_input.setStyleSheet('QLineEdit {color: black}')
@@ -336,6 +336,73 @@ class ListTrainer(QWidget):
             elif (not self.user_input.isHidden() and
                   not self.user_input.isReadOnly()):
                 self.submit()
+
+
+class Variables(QWidget):
+    ''' Frame showing all program variables
+
+        Matching: Baselevel activation  -> surprise & emotion intense
+
+        High surprise
+        Surprise
+        No Surprise
+        Expected
+
+
+    '''
+
+    def __init__(self, parent=None):
+        super(Settings, self).__init__(parent)
+        self.marc_settings = \
+            {'ip': QLineEdit(Marc.IP),
+             'port_in': QLineEdit(str(Marc.PORT_IN)),
+             'port_out': QLineEdit(str(Marc.PORT_OUT))}
+
+        self.wasabi_settings = \
+            {'ip': QLineEdit(EmoModule.WASABI_IP),
+             'port_in': QLineEdit(str(EmoModule.WASABI_PORT_IN)),
+             'port_out': QLineEdit(str(EmoModule.WASABI_PORT_OUT))}
+
+        self.emo_settings = \
+            {'happy': \
+                [QLineEdit(Happy.MARC),
+                 self.float_widget(Happy.IMPULSE, 0.01, 2.00, 0.01),
+                 self.float_widget(Happy.INTERPOLATE, 0.01, 2.00, 0.01),
+                 self.int_widget(Happy.FREQUENCE, 1, 20, 1)],
+             'concentrated': \
+                [QLineEdit(Concentrated.MARC),
+                 self.float_widget(Concentrated.IMPULSE, 0.01, 2.00, 0.01),
+                 self.float_widget(Concentrated.INTERPOLATE, 0.01, 2.00, 0.01),
+                 self.int_widget(Concentrated.FREQUENCE, 1, 20, 1)],
+             'bored': \
+                [QLineEdit(Bored.MARC),
+                 self.float_widget(Bored.IMPULSE, 0.01, 2.00, 0.01),
+                 self.float_widget(Bored.INTERPOLATE, 0.01, 2.00, 0.01),
+                 self.int_widget(Bored.FREQUENCE, 1, 20, 1)],
+             'annoyed': \
+                [QLineEdit(Annoyed.MARC),
+                 self.float_widget(Annoyed.IMPULSE, 0.01, 2.00, 0.01),
+                 self.float_widget(Annoyed.INTERPOLATE, 0.01, 2.00, 0.01),
+                 self.int_widget(Annoyed.FREQUENCE, 1, 20, 1)],
+             'angry': \
+                [QLineEdit(Angry.MARC),
+                 self.float_widget(Angry.IMPULSE, 0.01, 2.00, 0.01),
+                 self.float_widget(Angry.INTERPOLATE, 0.01, 2.00, 0.01),
+                 self.int_widget(Angry.FREQUENCE, 1, 20, 1)],
+             'surprise': \
+                 [QLineEdit(Surprise.MARC),
+                  self.float_widget(Surprise.IMPULSE, 0.01, 2.00, 0.01),
+                  self.float_widget(Surprise.INTERPOLATE, 0.01, 2.00, 0.01),
+                  self.int_widget(Surprise.FREQUENCE, 1, 20, 1)]}
+
+        self.mary_settings = \
+            {'ip': QLineEdit(OpenMary.IP),
+             'voice': QLineEdit(OpenMary.VOICE),
+             'path': QLineEdit(OpenMary.PATH)}
+
+        self.setLayout(self.init_ui())
+        self.resize(600, 100)
+        self.e = None
 
 
 class Settings(QWidget):
