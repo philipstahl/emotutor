@@ -123,7 +123,7 @@ class Angry(Emotion):
 class Surprise(Emotion):
     ''' Class for an angry emotion
     '''
-    NAME = 'surprise'
+    NAME = 'surprised'
     MARC = ''
     IMPULSE = 1.0
     INTERPOLATE = 1.0
@@ -173,7 +173,8 @@ class EmoModule:
         surprise = None
         emotion = None
 
-        if surp_intese > 0:
+        print 'SURPRISE INTENSE', surp_intense
+        if surp_intense > 0:
             surprise = Surprise(impulse = surp_intense)
 
         if correct:
@@ -183,13 +184,16 @@ class EmoModule:
 
         self.last_emotion = emotion
         if self.wasabi:
-            self.send(surprise.NAME, int(surprise.impulse))
+            if surprise:
+                if self.marc:
+                    self.marc.show(surprise)
+                self.send(surprise.NAME, int(surprise.impulse))
             self.send(emotion.NAME, int(emotion.impulse))
 
         # TODO(How to send surprise to wasabi / marc)
 
         # TODO(How to wait here until first wasabi message is received?)
-        return self.get_primaty_emotion()
+        return self.get_primary_emotion()
 
 
     def check2(self, task):
@@ -275,7 +279,7 @@ class WasabiListener():
             while self.hearing:
                 data = sock_in.recvfrom(1024)[0]
                 self.update_emo_status(data)
-                self.wait_for_message = False
+                #self.wait_for_message = False
 
         self.thread = Thread(target=run, args=())
         self.thread.start()
@@ -312,9 +316,9 @@ class WasabiListener():
 
         '''
         # TODO(wait here for next received message)
-        self.wait_for_message = True
-        while wait_for_message:
-            pass
+        #self.wait_for_message = True
+        #while wait_for_message:
+        #    pass
 
         primary_emo = ''
         highest_imp = 0

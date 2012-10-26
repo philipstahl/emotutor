@@ -111,6 +111,13 @@ class CogModule:
         surprise = 0         # surprise intensity: 0.0, 0.5 or 1.0
         emotion = 0          # emotion intensity: 0.3, 0.6, 1.0
 
+        print 'cor=', correct
+        print 'act=', activation
+        if activation < -1.0:
+            print 'WOW!'
+        else:
+            print 'eazy..'
+
         if activation > 0 and correct:
             # expected result happes. no surprise. low intensity
             surprise = 0
@@ -131,7 +138,7 @@ class CogModule:
             surprise = 100
             emotion = 100
 
-        if activation > 0 and not correct:
+        elif activation > 0 and not correct:
             # result was not expected. high surprise. high intensity
             surprise = 100
             emotion = 100
@@ -150,6 +157,7 @@ class CogModule:
             surprise = 0
             emotion = 30
 
+        print 'COG EVALUATION RETURNS. sur=', surprise, 'emo=', emotion, 'act=', activation
         return (surprise, emotion)
 
     def expectation(self, word):

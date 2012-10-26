@@ -221,9 +221,7 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(False, False, False)
-
-        print 'RIGHT GUI!'
+        self.exp = ListEnvironment(True, True, True)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
