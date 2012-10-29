@@ -494,16 +494,19 @@ class Parameters(QWidget):
 
         values1 = [QLabel('Correct')] + [QLabel('High')] + self.expectations[1][0]
         add_line(map_layout, values1, 2)
-        add_line(map_layout, [QLabel('Correct')] + [QLabel('Low')] + self.expectations[1][1], 3)
-        add_line(map_layout, [QLabel('Correct')] + [QLabel('None')] + self.expectations[1][2], 4)
-
-        add_line(map_layout, [QLabel('Not correct')] + [QLabel('High')] + self.expectations[0][0], 5)
-        add_line(map_layout, [QLabel('Not correct')] + [QLabel('Low')] + self.expectations[0][1], 6)
-        add_line(map_layout, [QLabel('Not correct')] + [QLabel('None')] + self.expectations[0][2], 7)
+        add_line(map_layout, [QLabel('Correct')] + [QLabel('Low')]
+                             + self.expectations[1][1], 3)
+        add_line(map_layout, [QLabel('Correct')] + [QLabel('None')]
+                             + self.expectations[1][2], 4)
+        add_line(map_layout, [QLabel('Not correct')] + [QLabel('High')]
+                             + self.expectations[0][0], 5)
+        add_line(map_layout, [QLabel('Not correct')] + [QLabel('Low')]
+                             + self.expectations[0][1], 6)
+        add_line(map_layout, [QLabel('Not correct')] + [QLabel('None')]
+                             + self.expectations[0][2], 7)
 
         map_widget = QWidget()
         map_widget.setLayout(map_layout)
-
 
         # Define button functionality:
         button_save = QPushButton("&Save")
@@ -597,6 +600,35 @@ class Parameters(QWidget):
     def reset(self):
         '''
         '''
+        self.emo_settings['happy'][0].setText('CASA_Joy_01')
+        self.emo_settings['happy'][1].setValue(0.66)
+        self.emo_settings['happy'][2].setValue(1.0)
+        self.emo_settings['happy'][3].setValue(2)
+
+        self.emo_settings['concentrated'][0].setText(CASA_Relax_01)
+        self.emo_settings['concentrated'][1].setValue(0.25)
+        self.emo_settings['concentrated'][2].setValue(1.0)
+        self.emo_settings['concentrated'][3].setValue(2)
+
+        self.emo_settings['bored'][0].setText('CASA_Relax_01')
+        self.emo_settings['bored'][1].setValue(0.33)
+        self.emo_settings['bored'][2].setValue(1.0)
+        self.emo_settings['bored'][3].setValue(2)
+
+        self.emo_settings['annoyed'][0].setText('CASA_Sadness_01')
+        self.emo_settings['annoyed'][1].setValue(0.5)
+        self.emo_settings['annoyed'][2].setValue(1.0)
+        self.emo_settings['annoyed'][3].setValue(2)
+
+        self.emo_settings['angry'][0].setText('CASA_Anger_01')
+        self.emo_settings['angry'][1].setValue(0.66)
+        self.emo_settings['angry'][2].setValue(1.0)
+        self.emo_settings['angry'][3].setValue(2)
+
+        self.emo_settings['surprise'][0].setText('Surprise - CubeEmotion')
+        self.emo_settings['surprise'][1].setValue(0.66)
+        self.emo_settings['surprise'][2].setValue(1.0)
+        self.emo_settings['surprise'][3].setValue(2)
         pass
 
     def test_wasabi(self):
@@ -657,38 +689,6 @@ class Settings(QWidget):
              'port_in': QLineEdit(str(EmoModule.WASABI_PORT_IN)),
              'port_out': QLineEdit(str(EmoModule.WASABI_PORT_OUT))}
 
-        self.emo_settings = \
-            {'happy': \
-                [QLineEdit(Happy.MARC),
-                 self.float_widget(Happy.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Happy.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Happy.FREQUENCE, 1, 20, 1)],
-             'concentrated': \
-                [QLineEdit(Concentrated.MARC),
-                 self.float_widget(Concentrated.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Concentrated.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Concentrated.FREQUENCE, 1, 20, 1)],
-             'bored': \
-                [QLineEdit(Bored.MARC),
-                 self.float_widget(Bored.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Bored.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Bored.FREQUENCE, 1, 20, 1)],
-             'annoyed': \
-                [QLineEdit(Annoyed.MARC),
-                 self.float_widget(Annoyed.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Annoyed.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Annoyed.FREQUENCE, 1, 20, 1)],
-             'angry': \
-                [QLineEdit(Angry.MARC),
-                 self.float_widget(Angry.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Angry.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Angry.FREQUENCE, 1, 20, 1)],
-             'surprise': \
-                 [QLineEdit(Surprise.MARC),
-                  self.float_widget(Surprise.IMPULSE, 0.01, 2.00, 0.01),
-                  self.float_widget(Surprise.INTERPOLATE, 0.01, 2.00, 0.01),
-                  self.int_widget(Surprise.FREQUENCE, 1, 20, 1)]}
-
         self.mary_settings = \
             {'ip': QLineEdit(OpenMary.IP),
              'voice': QLineEdit(OpenMary.VOICE),
@@ -697,20 +697,6 @@ class Settings(QWidget):
         self.setLayout(self.init_ui())
         self.resize(600, 100)
         self.e = None
-
-    def float_widget(self, start_val, min_val, max_val, step):
-        box = QDoubleSpinBox()
-        box.setRange(min_val, max_val)
-        box.setValue(start_val)
-        box.setSingleStep(step)
-        return box
-
-    def int_widget(self, start_val, min_val, max_val, step):
-        box = QSpinBox()
-        box.setRange(min_val, max_val)
-        box.setValue(start_val)
-        box.setSingleStep(step)
-        return box
 
     def init_ui(self):
         ''' Creates the layout of the settings screen
@@ -744,79 +730,6 @@ class Settings(QWidget):
 
         net_values = QWidget()
         net_values.setLayout(net_layout)
-
-        # Emotion settings
-        emo_layout = QGridLayout()
-
-        label_emotions = QLabel('Emotions:')
-        label_emotions.setStyleSheet('QLabel {font-weight:bold}')
-        emo_layout.addWidget(label_emotions, 0, 0)
-
-        emo_layout.addWidget(QLabel('Wasabi:'), 1, 0)
-        emo_layout.addWidget(QLabel('Marc:'), 1, 1)
-        emo_layout.addWidget(QLabel('Impulse:'), 1, 2)
-        emo_layout.addWidget(QLabel('Interpolate:'), 1, 3)
-        emo_layout.addWidget(QLabel('Frequence:'), 1, 4)
-
-        emo_layout.addWidget(QLabel('Happy:'), 2, 0)
-        emo_layout.addWidget(self.emo_settings['happy'][0], 2, 1)
-        emo_layout.addWidget(self.emo_settings['happy'][1], 2, 2)
-        emo_layout.addWidget(self.emo_settings['happy'][2], 2, 3)
-        emo_layout.addWidget(self.emo_settings['happy'][3], 2, 4)
-
-        emo_layout.addWidget(QLabel('Concentrated:'), 3, 0)
-        emo_layout.addWidget(self.emo_settings['concentrated'][0], 3, 1)
-        emo_layout.addWidget(self.emo_settings['concentrated'][1], 3, 2)
-        emo_layout.addWidget(self.emo_settings['concentrated'][2], 3, 3)
-        emo_layout.addWidget(self.emo_settings['concentrated'][3], 3, 4)
-
-        emo_layout.addWidget(QLabel('Bored:'), 4, 0)
-        emo_layout.addWidget(self.emo_settings['bored'][0], 4, 1)
-        emo_layout.addWidget(self.emo_settings['bored'][1], 4, 2)
-        emo_layout.addWidget(self.emo_settings['bored'][2], 4, 3)
-        emo_layout.addWidget(self.emo_settings['bored'][3], 4, 4)
-
-        emo_layout.addWidget(QLabel('Annoyed:'), 5, 0)
-        emo_layout.addWidget(self.emo_settings['annoyed'][0], 5, 1)
-        emo_layout.addWidget(self.emo_settings['annoyed'][1], 5, 2)
-        emo_layout.addWidget(self.emo_settings['annoyed'][2], 5, 3)
-        emo_layout.addWidget(self.emo_settings['annoyed'][3], 5, 4)
-
-        emo_layout.addWidget(QLabel('Angry:'), 6, 0)
-        emo_layout.addWidget(self.emo_settings['angry'][0], 6, 1)
-        emo_layout.addWidget(self.emo_settings['angry'][1], 6, 2)
-        emo_layout.addWidget(self.emo_settings['angry'][2], 6, 3)
-        emo_layout.addWidget(self.emo_settings['angry'][3], 6, 4)
-
-
-        emo_layout.addWidget(QLabel('Surprise:'), 7, 0)
-        emo_layout.addWidget(self.emo_settings['surprise'][0], 7, 1)
-        emo_layout.addWidget(self.emo_settings['surprise'][1], 7, 2)
-        emo_layout.addWidget(self.emo_settings['surprise'][2], 7, 3)
-        emo_layout.addWidget(self.emo_settings['surprise'][3], 7, 4)
-
-        button_test_happy = QPushButton("&Test")
-        button_test_happy.clicked.connect(self.test_happy)
-        button_test_concentrated = QPushButton("&Test")
-        button_test_concentrated.clicked.connect(self.test_concentrated)
-        button_test_bored = QPushButton("&Test")
-        button_test_bored.clicked.connect(self.test_bored)
-        button_test_annoyed = QPushButton("&Test")
-        button_test_annoyed.clicked.connect(self.test_annoyed)
-        button_test_angry = QPushButton("&Test")
-        button_test_angry.clicked.connect(self.test_angry)
-        button_test_surprise = QPushButton("&Test")
-        button_test_surprise.clicked.connect(self.test_surprise)
-
-        emo_layout.addWidget(button_test_happy, 2, 5)
-        emo_layout.addWidget(button_test_concentrated, 3, 5)
-        emo_layout.addWidget(button_test_bored, 4, 5)
-        emo_layout.addWidget(button_test_annoyed, 5, 5)
-        emo_layout.addWidget(button_test_angry, 6, 5)
-        emo_layout.addWidget(button_test_surprise, 7, 5)
-
-        emo_values = QWidget()
-        emo_values.setLayout(emo_layout)
 
         # Open Mary:
         label_mary = QLabel('Open Mary:')
@@ -852,7 +765,6 @@ class Settings(QWidget):
 
         main_layout = QBoxLayout(2)
         main_layout.addWidget(net_values)
-        main_layout.addWidget(emo_values)
         main_layout.addWidget(widget_mary)
         main_layout.addWidget(buttons)
         return main_layout
@@ -872,54 +784,11 @@ class Settings(QWidget):
         OpenMary.IP = self.mary_settings['ip'].text()
         OpenMary.PATH = self.mary_settings['path'].text()
 
-        def apply_emo(emo_class, emo_key):
-            emo_class.MARC = self.emo_settings[emo_key][0].text()
-            emo_class.IMPULSE = self.emo_settings[emo_key][1].value()
-            emo_class.INTERPOLATE = self.emo_settings[emo_key][2].value()
-            emo_class.FREQUENCE = self.emo_settings[emo_key][3].value()
-
-        apply_emo(Happy, 'happy')
-        apply_emo(Concentrated, 'concentrated')
-        apply_emo(Bored, 'bored')
-        apply_emo(Annoyed, 'annoyed')
-        apply_emo(Angry, 'angry')
-        apply_emo(Surprise, 'surprise')
-
         self.e = Environment(False, False, False)
 
     def test_wasabi(self):
         self.apply_settings()
         self.e.test_wasabi()
-
-
-    def test_happy(self):
-        self.apply_settings()
-        self.test(Happy())
-
-    def test_concentrated(self):
-        self.apply_settings()
-        self.test(Concentrated())
-
-    def test_bored(self):
-        self.apply_settings()
-        self.test(Bored())
-
-    def test_annoyed(self):
-        self.apply_settings()
-        self.test(Annoyed())
-
-    def test_angry(self):
-        self.apply_settings()
-        self.test(Angry())
-
-    def test_surprise(self):
-        self.apply_settings()
-        self.test(Surprise())
-
-    def test(self, emotion):
-        ''' Test current settings
-        '''
-        self.e.test(emotion, 10)
 
     def save(self):
         ''' Save changed settings
@@ -943,36 +812,6 @@ class Settings(QWidget):
         self.marc_settings['ip'].setText('localhost')
         self.marc_settings['port_in'].setText('4014')
         self.marc_settings['port_out'].setText('4013')
-
-        self.emo_settings['happy'][0].setText('CASA_Joy_01')
-        self.emo_settings['happy'][1].setValue(0.66)
-        self.emo_settings['happy'][2].setValue(1.0)
-        self.emo_settings['happy'][3].setValue(2)
-
-        self.emo_settings['concentrated'][0].setText(CASA_Relax_01)
-        self.emo_settings['concentrated'][1].setValue(0.25)
-        self.emo_settings['concentrated'][2].setValue(1.0)
-        self.emo_settings['concentrated'][3].setValue(2)
-
-        self.emo_settings['bored'][0].setText('CASA_Relax_01')
-        self.emo_settings['bored'][1].setValue(0.33)
-        self.emo_settings['bored'][2].setValue(1.0)
-        self.emo_settings['bored'][3].setValue(2)
-
-        self.emo_settings['annoyed'][0].setText('CASA_Sadness_01')
-        self.emo_settings['annoyed'][1].setValue(0.5)
-        self.emo_settings['annoyed'][2].setValue(1.0)
-        self.emo_settings['annoyed'][3].setValue(2)
-
-        self.emo_settings['angry'][0].setText('CASA_Anger_01')
-        self.emo_settings['angry'][1].setValue(0.66)
-        self.emo_settings['angry'][2].setValue(1.0)
-        self.emo_settings['angry'][3].setValue(2)
-
-        self.emo_settings['surprise'][0].setText('Surprise - CubeEmotion')
-        self.emo_settings['surprise'][1].setValue(0.66)
-        self.emo_settings['surprise'][2].setValue(1.0)
-        self.emo_settings['surprise'][3].setValue(2)
 
         self.mary_settings['ip'].setText('http://localhost:59125/')
         self.mary_settings['voice'].setText('dfki-obadiah')
