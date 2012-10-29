@@ -9,7 +9,7 @@ import PyQt4.QtGui
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QBoxLayout, QMainWindow, QAction, QIcon, \
                         QApplication, QDesktopWidget, QMessageBox, \
-                        QDoubleSpinBox, QSpinBox
+                        QDoubleSpinBox, QSpinBox, QComboBox
 import PyQt4.QtCore
 from PyQt4.QtCore import SIGNAL, Qt, QTimer
 
@@ -17,6 +17,7 @@ from environment import Environment, ListEnvironment
 from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, \
                       Surprise
 from marc import Marc
+from cogmodule import CogModule
 from speechmodule import OpenMary
 
 class VocabTrainer(QWidget):
@@ -336,71 +337,301 @@ class ListTrainer(QWidget):
                 self.submit()
 
 
-class Variables(QWidget):
+class Parameters(QWidget):
     ''' Frame showing all program variables
 
-        Matching: Baselevel activation  -> surprise & emotion intense
+        Matching: Baselevel activation  -> surprise, emotion, intense
 
-        High surprise
-        Surprise
-        No Surprise
-        Expected
-
-
+        Expectations:
+            - high
+            - low
+            - none
+            - negative
     '''
 
     def __init__(self, parent=None):
-        super(Settings, self).__init__(parent)
-        self.marc_settings = \
-            {'ip': QLineEdit(Marc.IP),
-             'port_in': QLineEdit(str(Marc.PORT_IN)),
-             'port_out': QLineEdit(str(Marc.PORT_OUT))}
+        super(Parameters, self).__init__(parent)
 
-        self.wasabi_settings = \
-            {'ip': QLineEdit(EmoModule.WASABI_IP),
-             'port_in': QLineEdit(str(EmoModule.WASABI_PORT_IN)),
-             'port_out': QLineEdit(str(EmoModule.WASABI_PORT_OUT))}
+        def init(Emotion):
+            return [QLineEdit(Emotion.MARC),
+                    self.float_widget(Emotion.IMPULSE, 0.01, 2.00, 0.01),
+                    self.float_widget(Emotion.INTERPOLATE, 0.01, 2.00, 0.01),
+                    self.int_widget(Emotion.FREQUENCE, 1, 20, 1)]
 
         self.emo_settings = \
-            {'happy': \
-                [QLineEdit(Happy.MARC),
-                 self.float_widget(Happy.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Happy.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Happy.FREQUENCE, 1, 20, 1)],
-             'concentrated': \
-                [QLineEdit(Concentrated.MARC),
-                 self.float_widget(Concentrated.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Concentrated.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Concentrated.FREQUENCE, 1, 20, 1)],
-             'bored': \
-                [QLineEdit(Bored.MARC),
-                 self.float_widget(Bored.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Bored.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Bored.FREQUENCE, 1, 20, 1)],
-             'annoyed': \
-                [QLineEdit(Annoyed.MARC),
-                 self.float_widget(Annoyed.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Annoyed.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Annoyed.FREQUENCE, 1, 20, 1)],
-             'angry': \
-                [QLineEdit(Angry.MARC),
-                 self.float_widget(Angry.IMPULSE, 0.01, 2.00, 0.01),
-                 self.float_widget(Angry.INTERPOLATE, 0.01, 2.00, 0.01),
-                 self.int_widget(Angry.FREQUENCE, 1, 20, 1)],
-             'surprise': \
-                 [QLineEdit(Surprise.MARC),
-                  self.float_widget(Surprise.IMPULSE, 0.01, 2.00, 0.01),
-                  self.float_widget(Surprise.INTERPOLATE, 0.01, 2.00, 0.01),
-                  self.int_widget(Surprise.FREQUENCE, 1, 20, 1)]}
+            {'happy': init(Happy),
+             'concentrated': init(Concentrated),
+             'bored': init(Bored),
+             'annoyed': init(Annoyed),
+             'angry': init(Angry),
+             'surprise': init(Surprise)}
 
-        self.mary_settings = \
-            {'ip': QLineEdit(OpenMary.IP),
-             'voice': QLineEdit(OpenMary.VOICE),
-             'path': QLineEdit(OpenMary.PATH)}
+        self.activations = \
+            [self.float_widget(CogModule.ACT_HIGH, -10.0, 10.0, 0.1),
+             self.float_widget(CogModule.ACT_LOW, -10.0, 10.0, 0.1)]
+             #self.float_widget(CogModule.ACT_NONE, -10.0, 10.0, 0.1)]
+
+        self.expectations = [\
+            [[self.int_widget(CogModule.SURPRISE_NEG_HIGH, 0, 100, 1),
+              self.combo_box(CogModule.EMOTION_NEG_HIGH),
+              self.int_widget(CogModule.INTENSE_NEG_HIGH, 0, 100, 1)],
+             [self.int_widget(CogModule.SURPRISE_NEG_LOW, 0, 100, 1),
+              self.combo_box(CogModule.EMOTION_NEG_LOW),
+              self.int_widget(CogModule.INTENSE_NEG_LOW, 0, 100, 1)],
+             [self.int_widget(CogModule.SURPRISE_NEG_NONE, 0, 100, 1),
+              self.combo_box(CogModule.EMOTION_NEG_NONE),
+              self.int_widget(CogModule.INTENSE_NEG_NONE, 0, 100, 1)]],
+            [[self.int_widget(CogModule.SURPRISE_POS_HIGH, 0, 100, 1),
+              self.combo_box(CogModule.EMOTION_POS_HIGH),
+              self.int_widget(CogModule.INTENSE_POS_HIGH, 0, 100, 1)],
+             [self.int_widget(CogModule.SURPRISE_POS_LOW, 0, 100, 1),
+              self.combo_box(CogModule.EMOTION_POS_LOW),
+              self.int_widget(CogModule.INTENSE_POS_LOW, 0, 100, 1)],
+             [self.int_widget(CogModule.SURPRISE_POS_NONE, 0, 100, 1),
+              self.combo_box(CogModule.EMOTION_POS_NONE),
+              self.int_widget(CogModule.INTENSE_POS_NONE, 0, 100, 1)]]]
+
+
 
         self.setLayout(self.init_ui())
         self.resize(600, 100)
         self.e = None
+
+    def get_emo_values(self):
+        # Emotion settings
+        layout = QGridLayout()
+
+        label_emotions = QLabel('Emotions:')
+        label_emotions.setStyleSheet('QLabel {font-weight:bold}')
+        layout.addWidget(label_emotions, 0, 0)
+
+        def add_line(layout, values, line):
+            for i in range(len(values)):
+                layout.addWidget(values[i], line, i)
+        add_line(layout, [QLabel('Wasabi:'), QLabel('Marc:'), QLabel('Impulse'),
+                          QLabel('Interpolate'), QLabel('Frequence')], 1)
+        add_line(layout, [QLabel('Happy')] + self.emo_settings['happy'], 2)
+        add_line(layout, [QLabel('Concentrated')] + self.emo_settings['concentrated'], 3)
+        add_line(layout, [QLabel('Bored')] + self.emo_settings['bored'], 4)
+        add_line(layout, [QLabel('Annoyed')] + self.emo_settings['annoyed'], 5)
+        add_line(layout, [QLabel('Angry')] + self.emo_settings['angry'], 6)
+        add_line(layout, [QLabel('Surprise')] + self.emo_settings['surprise'], 7)
+
+        def add_test_button(layout, line, function):
+            button = QPushButton('&Test')
+            button.clicked.connect(function)
+            layout.addWidget(button, line, 5)
+
+        add_test_button(layout, 2, self.test_happy)
+        add_test_button(layout, 3, self.test_concentrated)
+        add_test_button(layout, 4, self.test_bored)
+        add_test_button(layout, 5, self.test_annoyed)
+        add_test_button(layout, 6, self.test_angry)
+        add_test_button(layout, 7, self.test_surprise)
+
+        emo_values = QWidget()
+        emo_values.setLayout(layout)
+        return emo_values
+
+    def combo_box(self, selected):
+        items = ['Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']
+        combo = QComboBox()
+
+        combo.setStyleSheet("QComboBox { combobox-popup: 0; }")
+
+        combo.addItems(items)
+
+        if selected in items:
+            combo.setCurrentIndex(items.index(selected))
+
+        combo.resize(300, 30)
+        return combo
+
+    def float_widget(self, start_val, min_val, max_val, step):
+        box = QDoubleSpinBox()
+        box.setRange(min_val, max_val)
+        box.setValue(start_val)
+        box.setSingleStep(step)
+        return box
+
+    def int_widget(self, start_val, min_val, max_val, step):
+        box = QSpinBox()
+        box.setRange(min_val, max_val)
+        box.setValue(start_val)
+        box.setSingleStep(step)
+        return box
+
+    def init_ui(self):
+        ''' Creates the layout of the settings screen
+        '''
+        act_layout = QGridLayout()
+
+        def add_line(layout, values, line):
+            for i in range(len(values)):
+                layout.addWidget(values[i], line, i)
+
+        label_head = QLabel('Activations:')
+        label_head.setStyleSheet('QLabel {font-weight:bold}')
+        act_layout.addWidget(label_head, 0, 0)
+
+        add_line(act_layout, [QLabel('Highly expected > '),
+                              self.activations[0],
+                              QLabel(' > Expected > '),
+                              self.activations[1],
+                              QLabel(' > Not expected')], 1)
+
+        act_widget = QWidget()
+        act_widget.setLayout(act_layout)
+
+        map_layout = QGridLayout()
+        label_head = QLabel('Mapping:')
+        label_head.setStyleSheet('QLabel {font-weight:bold}')
+        map_layout.addWidget(label_head, 0, 0)
+
+        add_line(map_layout, [QLabel('Answer:'), QLabel('Expectation:'),
+                              QLabel('Surprise intense:'),
+                              QLabel('Emotion:'), QLabel('Emotion intense:')], 1)
+
+        values1 = [QLabel('Correct')] + [QLabel('High')] + self.expectations[1][0]
+        add_line(map_layout, values1, 2)
+        add_line(map_layout, [QLabel('Correct')] + [QLabel('Low')] + self.expectations[1][1], 3)
+        add_line(map_layout, [QLabel('Correct')] + [QLabel('None')] + self.expectations[1][2], 4)
+
+        add_line(map_layout, [QLabel('Not correct')] + [QLabel('High')] + self.expectations[0][0], 5)
+        add_line(map_layout, [QLabel('Not correct')] + [QLabel('Low')] + self.expectations[0][1], 6)
+        add_line(map_layout, [QLabel('Not correct')] + [QLabel('None')] + self.expectations[0][2], 7)
+
+        map_widget = QWidget()
+        map_widget.setLayout(map_layout)
+
+
+        # Define button functionality:
+        button_save = QPushButton("&Save")
+        button_reset = QPushButton("&Reset")
+        button_cancel = QPushButton("&Cancel")
+
+        button_save.clicked.connect(self.save)
+        button_reset.clicked.connect(self.reset)
+        button_cancel.clicked.connect(self.cancel)
+
+        button_layout = QBoxLayout(0)
+        button_layout.addWidget(button_cancel)
+        button_layout.addWidget(button_reset)
+        button_layout.addWidget(button_save)
+
+        buttons = QWidget()
+        buttons.setLayout(button_layout)
+
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(self.get_emo_values())
+        main_layout.addWidget(act_widget)
+        main_layout.addWidget(map_widget)
+        main_layout.addWidget(buttons)
+        return main_layout
+
+
+
+    def apply_settings(self):
+        ''' apply settings loaded from the gui
+        '''
+        def apply_emo(emo_class, emo_key):
+            emo_class.MARC = self.emo_settings[emo_key][0].text()
+            emo_class.IMPULSE = self.emo_settings[emo_key][1].value()
+            emo_class.INTERPOLATE = self.emo_settings[emo_key][2].value()
+            emo_class.FREQUENCE = self.emo_settings[emo_key][3].value()
+
+        apply_emo(Happy, 'happy')
+        apply_emo(Concentrated, 'concentrated')
+        apply_emo(Bored, 'bored')
+        apply_emo(Annoyed, 'annoyed')
+        apply_emo(Angry, 'angry')
+        apply_emo(Surprise, 'surprise')
+
+        CogModule.ACT_HIGH = self.activations[0].value()
+        CogModule.ACT_LOW = self.activations[0].value()
+
+        CogModule.SURPRISE_NEG_HIGH = self.expectations[0][0][0].value()
+        CogModule.EMOTION_NEG_HIGH = self.get_class(self.expectations[0][0][1])
+        CogModule.INTENSE_NEG_HIGH = self.expectations[0][0][2].value()
+
+        CogModule.SURPRISE_NEG_LOW = self.expectations[0][1][0].value()
+        CogModule.EMOTION_NEG_LOW = self.get_class(self.expectations[0][1][1])
+        CogModule.INTENSE_NEG_LOW = self.expectations[0][1][2].value()
+
+        CogModule.SURPRISE_NEG_NONE = self.expectations[0][2][0].value()
+        CogModule.EMOTION_NEG_NONE = self.get_class(self.expectations[0][2][1])
+        CogModule.INTENSE_NEG_NONE = self.expectations[0][2][2].value()
+
+        CogModule.SURPRISE_POS_HIGH = self.expectations[1][0][0].value()
+        CogModule.EMOTION_POS_HIGH = self.get_class(self.expectations[1][0][1])
+        CogModule.INTENSE_POS_HIGH = self.expectations[1][0][2].value()
+
+        CogModule.SURPRISE_POS_LOW = self.expectations[1][1][0].value()
+        CogModule.EMOTION_POS_LOW = self.get_class(self.expectations[1][1][1])
+        CogModule.INTENSE_POS_LOW = self.expectations[1][1][2].value()
+
+        CogModule.SURPRISE_POS_NONE = self.expectations[1][2][0].value()
+        CogModule.EMOTION_POS_NONE = self.get_class(self.expectations[1][2][1])
+        CogModule.INTENSE_POS_NONE = self.expectations[1][2][2].value()
+
+        self.e = Environment(False, False, False)
+
+    def get_class(self, combo_box):
+        classes = ['Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']
+        if combo_box.currentIndex() >= len(classes):
+            print 'COMBOBOX: INDEX ERROR'
+        else:
+            return classes[combo_box.currentIndex()]
+
+    def save(self):
+        ''' Save changed settings
+        '''
+        self.apply_settings()
+        self.emit(SIGNAL('quit'))
+
+    def cancel(self):
+        ''' Exit settings without saving
+        '''
+        self.emit(SIGNAL("quit"))
+
+    def reset(self):
+        '''
+        '''
+        pass
+
+    def test_wasabi(self):
+        self.apply_settings()
+        self.e.test_wasabi()
+
+
+    def test_happy(self):
+        self.apply_settings()
+        self.test(Happy())
+
+    def test_concentrated(self):
+        self.apply_settings()
+        self.test(Concentrated())
+
+    def test_bored(self):
+        self.apply_settings()
+        self.test(Bored())
+
+    def test_annoyed(self):
+        self.apply_settings()
+        self.test(Annoyed())
+
+    def test_angry(self):
+        self.apply_settings()
+        self.test(Angry())
+
+    def test_surprise(self):
+        self.apply_settings()
+        self.test(Surprise())
+
+    def test(self, emotion):
+        ''' Test current settings
+        '''
+        self.e.test(emotion, 10)
 
 
 class Settings(QWidget):
@@ -759,17 +990,20 @@ class Welcome(QWidget):
         desc = QLabel('Welcome to the vocabulary trainer.')
 
         button_settings = QPushButton("&Edit settings")
+        button_mapping = QPushButton('&Edit mapping')
         button_start = QPushButton('&Start training')
         button_list = QPushButton('&Start list training')
 
         # Define button funcionalty:
         button_settings.clicked.connect(self.options)
+        button_mapping.clicked.connect(self.mapping)
         button_start.clicked.connect(self.start)
         button_list.clicked.connect(self.list_test)
 
         # Design Layout:
         option_layout = QBoxLayout(0)
         option_layout.addWidget(button_settings)
+        option_layout.addWidget(button_mapping)
         option_layout.addWidget(button_start)
         option_layout.addWidget(button_list)
         options = QWidget()
@@ -785,6 +1019,11 @@ class Welcome(QWidget):
         ''' Show options
         '''
         self.emit(SIGNAL('settings'))
+
+    def mapping(self):
+        ''' Show mapping
+        '''
+        self.emit(SIGNAL('mapping'))
 
     def start(self):
         ''' Start test
@@ -865,11 +1104,40 @@ class MainWindow(QMainWindow):
         apply_emo(Angry, 'Angry')
         apply_emo(Surprise, 'Surprise')
 
+        CogModule.ACT_HIGH = config.getfloat('Activation', 'high')
+        CogModule.ACT_LOW = config.getfloat('Activation', 'low')
+
+        CogModule.SURPRISE_NEG_HIGH = config.getint('Map_Neg_High', 'surprise')
+        CogModule.EMOTION_NEG_HIGH = config.get('Map_Neg_High', 'emotion')
+        CogModule.INTENSE_NEG_HIGH = config.getint('Map_Neg_High', 'intense')
+
+        CogModule.SURPRISE_NEG_LOW = config.getint('Map_Neg_Low', 'surprise')
+        CogModule.EMOTION_NEG_LOW = config.get('Map_Neg_Low', 'emotion')
+        CogModule.INTENSE_NEG_LOW = config.getint('Map_Neg_Low', 'intense')
+
+        CogModule.SURPRISE_NEG_NONE = config.getint('Map_Neg_None', 'surprise')
+        CogModule.EMOTION_NEG_NONE = config.get('Map_Neg_None', 'emotion')
+        CogModule.INTENSE_NEG_NONE = config.getint('Map_Neg_None', 'intense')
+
+        CogModule.SURPRISE_POS_HIGH = config.getint('Map_Pos_High', 'surprise')
+        CogModule.EMOTION_POS_HIGH = config.get('Map_Pos_High', 'emotion')
+        CogModule.INTENSE_POS_HIGH = config.getint('Map_Pos_High', 'intense')
+
+        CogModule.SURPRISE_POS_LOW = config.getint('Map_Pos_Low', 'surprise')
+        CogModule.EMOTION_POS_LOW = config.get('Map_Pos_Low', 'emotion')
+        CogModule.INTENSE_POS_LOW = config.getint('Map_Pos_Low', 'intense')
+
+        CogModule.SURPRISE_POS_NONE = config.getint('Map_Pos_None', 'surprise')
+        CogModule.EMOTION_POS_NONE = config.get('Map_Pos_None', 'emotion')
+        CogModule.INTENSE_POS_NONE = config.getint('Map_Pos_None', 'intense')
+
+
     def show_welcome(self):
         ''' Shows the welcome screen
         '''
         welcome = Welcome()
         self.connect(welcome, SIGNAL('settings'), self.show_options)
+        self.connect(welcome, SIGNAL('mapping'), self.show_mapping)
         self.connect(welcome, SIGNAL('training'), self.show_training)
         self.connect(welcome, SIGNAL('list_test'), self.show_list_training)
         welcome.show()
@@ -882,6 +1150,14 @@ class MainWindow(QMainWindow):
         self.connect(settings, SIGNAL("quit"), self.show_welcome)
         settings.show()
         self.setCentralWidget(settings)
+
+    def show_mapping(self):
+        ''' Shows the option screen
+        '''
+        mapping = Parameters()
+        self.connect(mapping, SIGNAL("quit"), self.show_welcome)
+        mapping.show()
+        self.setCentralWidget(mapping)
 
     def show_training(self):
         ''' Starts the training

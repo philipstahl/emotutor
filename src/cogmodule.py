@@ -6,12 +6,38 @@ import math
 import datetime
 
 
-
 class CogModule:
     ''' This class handles all cognitive activity of the agent
     '''
-    tasks = []
-    times = []
+    ACT_HIGH = 0.0
+    ACT_LOW = -0.5
+    ACT_NONE = -1.0
+    ACT_NEGATIVE = 0.0
+
+
+    SURPRISE_NEG_HIGH = 100             # Higly expected correct, got false
+    SURPRISE_NEG_LOW = 50               # Expected correct, got false
+    SURPRISE_NEG_NONE = 0               # Expected nothing, got false
+
+    EMOTION_NEG_HIGH = 'Angry'             # Higly expected correct, got false
+    EMOTION_NEG_LOW = 'Annoyed'              # Expected correct, got false
+    EMOTION_NEG_NONE = 'Bored'             # Expected nothing, got false
+
+    INTENSE_NEG_HIGH = 100              # Higly expected correct, got false
+    INTENSE_NEG_LOW = 60                # Expected correct, got false
+    INTENSE_NEG_NONE = 30               # Expected nothing, got false
+
+    SURPRISE_POS_HIGH = 0              # Higly expected correct, got correct
+    SURPRISE_POS_LOW = 50               # Expected correct, got correct
+    SURPRISE_POS_NONE = 100             # Expected nothing, got correct
+
+    EMOTION_POS_HIGH = 'Concentrated'             # Higly expected correct, got correct
+    EMOTION_POS_LOW = 'Happy'              # Expected correct, got correct
+    EMOTION_POS_NONE = 'Happy'             # Expected nothing, got correct
+
+    INTENSE_POS_HIGH = 30               # Higly expected correct, got correct
+    INTENSE_POS_LOW = 60                # Expected correct, got correct
+    INTENSE_POS_NONE = 100              # Expected nothing, got correct
 
     def __init__(self):
         pass
@@ -111,44 +137,34 @@ class CogModule:
         surprise = 0         # surprise intensity: 0.0, 0.5 or 1.0
         emotion = 0          # emotion intensity: 0.3, 0.6, 1.0
 
-        if activation > 0 and correct:
+        if activation > CogModule.ACT_HIGH and correct:
             # expected result happes. no surprise. low intensity
-            surprise = 0
-            emotion = 30
+            surprise = CogModule.SURPRISE_POS_HIGH
+            emotion = CogModule.INTENSE_POS_HIGH
 
-        elif activation > -0.5 and correct:
+        elif activation > CogModule.ACT_LOW and correct:
             # expected result happens. no surprise. mid intensity
-            surprise = 0
-            emotion = 60
-
-        elif activation > -1.0 and correct:
-            # result was not expected. low surprise. mid intensity
-            surprise = 50
-            emotion = 60
+            surprise = CogModule.SURPRISE_POS_LOW
+            emotion = CogModule.INTENSE_POS_LOW
 
         elif correct:
             # result was not expected. high surprise. high intensity
-            surprise = 100
-            emotion = 100
+            surprise = CogModule.SURPRISE_POS_NONE
+            emotion = CogModule.INTENSE_POS_NONE
 
-        elif activation > 0 and not correct:
+        elif activation > CogModule.ACT_HIGH and not correct:
             # result was not expected. high surprise. high intensity
-            surprise = 100
-            emotion = 100
+            surprise = CogModule.SURPRISE_NEG_HIGH
+            emotion = CogModule.INTENSE_NEG_HIGH
 
-        elif activation > -0.5 and not correct:
+        elif activation > CogModule.ACT_LOW and not correct:
             # result was not expected. low surprise. mid intensity
-            surprise = 50
-            emotion = 60
-
-        elif activation > -1.0 and not correct:
-            # result was expected. no surprise. mid intensity
-            surprise = 0
-            emotion = 60
+            surprise = CogModule.SURPRISE_NEG_LOW
+            emotion = CogModule.INTENSE_NEG_LOW
         else:
             # result was expected. no surprise. low intensity
-            surprise = 0
-            emotion = 30
+            surprise = CogModule.SURPRISE_NEG_NONE
+            emotion = CogModule.INTENSE_NEG_NONE
 
         return (surprise, emotion)
 

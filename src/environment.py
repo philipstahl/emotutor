@@ -141,7 +141,7 @@ class ListEnvironment:
                       Word('Vogel'), Word('Professor'), Word('Regen')]
         import random
         random.shuffle(self.words)
-        
+
         self.index = 0
 
         self.agent = ListAgent(marc, wasabi, mary)
