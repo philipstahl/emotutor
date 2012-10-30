@@ -5,6 +5,8 @@ import random
 import math
 import datetime
 
+from emomodule import Surprise, EmoModule
+
 
 class CogModule:
     ''' This class handles all cognitive activity of the agent
@@ -14,30 +16,8 @@ class CogModule:
     ACT_NONE = -1.0
     ACT_NEGATIVE = 0.0
 
+    FUNCTION = 'baselevel'   # or 'optimized'
 
-    SURPRISE_NEG_HIGH = 100             # Higly expected correct, got false
-    SURPRISE_NEG_LOW = 50               # Expected correct, got false
-    SURPRISE_NEG_NONE = 0               # Expected nothing, got false
-
-    EMOTION_NEG_HIGH = 'Angry'             # Higly expected correct, got false
-    EMOTION_NEG_LOW = 'Annoyed'              # Expected correct, got false
-    EMOTION_NEG_NONE = 'Bored'             # Expected nothing, got false
-
-    INTENSE_NEG_HIGH = 100              # Higly expected correct, got false
-    INTENSE_NEG_LOW = 60                # Expected correct, got false
-    INTENSE_NEG_NONE = 30               # Expected nothing, got false
-
-    SURPRISE_POS_HIGH = 0              # Higly expected correct, got correct
-    SURPRISE_POS_LOW = 50               # Expected correct, got correct
-    SURPRISE_POS_NONE = 100             # Expected nothing, got correct
-
-    EMOTION_POS_HIGH = 'Concentrated'             # Higly expected correct, got correct
-    EMOTION_POS_LOW = 'Happy'              # Expected correct, got correct
-    EMOTION_POS_NONE = 'Happy'             # Expected nothing, got correct
-
-    INTENSE_POS_HIGH = 30               # Higly expected correct, got correct
-    INTENSE_POS_LOW = 60                # Expected correct, got correct
-    INTENSE_POS_NONE = 100              # Expected nothing, got correct
 
     def __init__(self):
         pass
@@ -66,11 +46,8 @@ class CogModule:
 
         for i in range(len(times)-1):
             t = times[0:i+1]
-            activation = self.baselevel_activation2(t, 0.5)
+            activation = self.activation2(t, 0.5)
             print i, activation
-
-
-
 
     def baselevel_activation(self, times, d):
         ''' Base level activation for a chunk i is:
@@ -97,7 +74,6 @@ class CogModule:
         B = math.log(summed)
         return B
 
-
     def optimized_learning(self, times, d):
         ''' Formula for base level learning. Optimizes computation time.
 
@@ -114,6 +90,12 @@ class CogModule:
 
         return B
 
+    def activation(self, times, d):
+        if CogModule.FUNCTION == 'optimized':
+            return self.optimized_learning(times, d)
+        return self.baselevel_activation(times, d)
+
+
     def check(self, task, times):
         ''' A cognitive analysis of the task.
 
@@ -123,53 +105,43 @@ class CogModule:
             reaction of surprise.
 
         '''
-        activation = self.baselevel_activation(times, 0.5)
+        activation = self.activation(times, 0.5)
         question = task.question
         return "[not surprised]"
 
 
     def react(self, correct, times):
         ''' Cognitive reaction to correctness and times of a given word.
-            Returns emotional and surprise intense.
+            Returns surprise emotion.
         '''
-        activation = self.baselevel_activation(times, 0.5)
+        activation = self.activation(times, 0.5)
+        impulse = 0
 
-        surprise = 0         # surprise intensity: 0.0, 0.5 or 1.0
-        emotion = 0          # emotion intensity: 0.3, 0.6, 1.0
-
-        if activation > CogModule.ACT_HIGH and correct:
-            # expected result happes. no surprise. low intensity
-            surprise = CogModule.SURPRISE_POS_HIGH
-            emotion = CogModule.INTENSE_POS_HIGH
-
-        elif activation > CogModule.ACT_LOW and correct:
-            # expected result happens. no surprise. mid intensity
-            surprise = CogModule.SURPRISE_POS_LOW
-            emotion = CogModule.INTENSE_POS_LOW
-
-        elif correct:
-            # result was not expected. high surprise. high intensity
-            surprise = CogModule.SURPRISE_POS_NONE
-            emotion = CogModule.INTENSE_POS_NONE
-
-        elif activation > CogModule.ACT_HIGH and not correct:
-            # result was not expected. high surprise. high intensity
-            surprise = CogModule.SURPRISE_NEG_HIGH
-            emotion = CogModule.INTENSE_NEG_HIGH
-
-        elif activation > CogModule.ACT_LOW and not correct:
-            # result was not expected. low surprise. mid intensity
-            surprise = CogModule.SURPRISE_NEG_LOW
-            emotion = CogModule.INTENSE_NEG_LOW
+        if correct:
+            if activation > CogModule.ACT_HIGH:
+                # Highly expected result happes.
+                impulse = EmoModule.SURPRISE_POS_HIGH
+            elif activation > CogModule.ACT_LOW:
+                # Expected result happens.
+                impulse = EmoModule.SURPRISE_POS_LOW
+            else:
+                # Result was not expected.
+                impulse = EmoModule.SURPRISE_POS_NONE
         else:
-            # result was expected. no surprise. low intensity
-            surprise = CogModule.SURPRISE_NEG_NONE
-            emotion = CogModule.INTENSE_NEG_NONE
+            if activation > CogModule.ACT_HIGH:
+                # Result was highly not expected.
+                impulse = EmoModule.SURPRISE_NEG_HIGH
+            elif activation > CogModule.ACT_LOW:
+                # Result was not expected.
+                impulse = EmoModule.SURPRISE_NEG_LOW
+            else:
+                # result was expected.
+                impulse = EmoModule.SURPRISE_NEG_NONE
 
-        return (surprise, emotion)
+        return Surprise(impulse = impulse)
 
     def expectation(self, word):
-        activation = self.baselevel_activation(word.times, 0.5)
+        activation = self.activation(word.times, 0.5)
         expectation = str(activation) + ': '
         if activation > 0:
             expectation += 'Highly expecting'

@@ -136,9 +136,7 @@ class ListEnvironment:
     def __init__(self, marc=False, wasabi=False, mary=False):
         ''' vars indicate the use of marc, wasabi and open mary
         '''
-        self.words = [Word('Haus'), Word('Baum'), Word('Auto'),
-                      Word('Schule'), Word('Apfel'), Word('Mann'),
-                      Word('Vogel'), Word('Professor'), Word('Regen')]
+        self.words = [Word('Haus'), Word('Baum'), Word('Auto')]
         import random
         random.shuffle(self.words)
 

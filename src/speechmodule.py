@@ -82,7 +82,7 @@ class OpenMary:
         text = text.replace('ä', '%C3%A4')
         text = text.replace('ö', '%C3%B6')
         text = text.replace('ü', '%C3%BC')
-        
+
         request = "<maryxml%20version=\"0.5\"%20xmlns=\"http:" \
                 + "//mary.dfki.de/2002/MaryXML\"%20xml:lang=\"de\">" \
                 + "<voice%20name=\"dfki-pavoque-styles\">" \
@@ -202,7 +202,7 @@ class SpeechModule:
                                     + 'sie vorlese.', emotion)
         if self.tts:
             self.tts.save_from_xml(speech)
-        
+
         return speech
 
     def present_word(self, word, emotion):

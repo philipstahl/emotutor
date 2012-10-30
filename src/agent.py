@@ -172,10 +172,7 @@ class ListAgent:
         '''
         emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_list(emotion)
-
-        print 'start to speak'
         self.speak(speech)
-        print 'spoken done'
         return (str(emotion), '...', speech.text)
 
     def present(self, word):
@@ -201,14 +198,14 @@ class ListAgent:
             emotional and verbal evaluation
         '''
         # cognitive evaluation: Determines surprise and intensity of emotion
-        surp_intense, emo_intense = self.cog_module.react(correct, word.times)
+        surprise = self.cog_module.react(correct, word.times)
 
         # emotional evaluation:
-        emotion = self.emo_module.check(correct, surp_intense, emo_intense)
+        emotion = self.emo_module.check(correct, surprise)
 
         verbal_output = '...'
         if not correct:
-            speech = self.speech_module.react(surp_intense, emotion, word.word)
+            speech = self.speech_module.react(surprise, emotion, word.word)
             self.speak(speech)
             verbal_output = speech.text
 
