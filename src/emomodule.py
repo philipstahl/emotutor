@@ -362,7 +362,7 @@ class WasabiListener():
                 highest_imp = self.emo_status[emotion]
         if highest_imp == 0:
             primary_emotion = 'concentrated'
-        return name_to_emo[primary_emo](impulse = highest_imp)
+        return self.name_to_emo[primary_emo](impulse = highest_imp)
 
     def update_emo_status(self, data):
         ''' Gets a string of emotion values received from wasabi
@@ -379,8 +379,8 @@ class WasabiListener():
                 self.emo_status[emo] = 0
 
         # Get dominating emotion:
-        primary_emo, highest_imp = self.get_primary_emotion()
-        emotion = self.name_to_emo[primary_emo]()
+        primary_emo = self.get_primary_emotion()
+        emotion = self.name_to_emo[primary_emo.NAME]()
 
         # Send to MARC:
         if self.marc:

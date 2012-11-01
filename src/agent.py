@@ -2,7 +2,7 @@
 '''
 
 from threading import Thread
-#import winsound                         # sound for windows
+import winsound                         # sound for windows
 #import pygame
 from PyQt4.QtGui import QSound
 
@@ -136,20 +136,19 @@ class ListAgent:
     def play_wave(self, soundfile):
         ''' Plays a wave sound
         '''
-#        def play():
-#             #Windows:
-#             path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
-#             winsound.PlaySound(path + '%s.wav' % soundfile,
-#                                 winsound.SND_FILENAME)
-#
-#        self.thread = Thread(target=play, args=())
-#        self.thread.start()
+        def play():
+             #Windows:
+             path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+             winsound.PlaySound(path + '%s.wav' % soundfile,
+                                 winsound.SND_FILENAME)
+
+        self.thread = Thread(target=play, args=())
+        self.thread.start()
 #        QSound.play('sounds/' + soundfile + '.wav')
 #        pygame.init()
 #        pygame.mixer.set_num_channels(1)
 #        pygame.mixer.music.load('sounds/' + soundfile + '.wav')
 #        pygame.mixer.music.play()
-    pass
 
 
     def start(self):

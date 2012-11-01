@@ -93,6 +93,7 @@ class OpenMary:
                 + request \
                 + '&INPUT_TYPE=RAWMARYXML&OUTPUT_TYPE=AUDIO' \
                 + '&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + OpenMary.VOICE
+        print 'query:', query
         received = urllib2.urlopen(query)
         data = received.read()
         wav = wave.open("sounds\\" + speech.name + ".wav", 'w')  # Windows

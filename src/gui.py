@@ -222,7 +222,7 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(False, False, False)
+        self.exp = ListEnvironment(True, True, True)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
@@ -373,11 +373,11 @@ class Parameters(QWidget):
              self.float_widget(CogModule.ACT_LOW, -10.0, 10.0, 0.1)]
              #self.float_widget(CogModule.ACT_NONE, -10.0, 10.0, 0.1)]
 
-        self.emotion = {'Happy': [self.combo_box('Happy'), self.combo_box('Happy')],
-                   'Concentrated': [self.combo_box('Happy'), self.combo_box('Happy')],
-                   'Bored': [self.combo_box('Happy'), self.combo_box('Happy')],
-                   'Annoyed': [self.combo_box('Happy'), self.combo_box('Happy')],
-                   'Angry': [self.combo_box('Happy'), self.combo_box('Happy')]}
+        self.emotion = {'Happy': [self.combo_box(EmoModule.REACT_NEG_HAPPY[0]), self.combo_box(EmoModule.REACT_POS_HAPPY[0])],
+                   'Concentrated': [self.combo_box(EmoModule.REACT_NEG_CONCENTRATED[0]), self.combo_box(EmoModule.REACT_POS_CONCENTRATED[0])],
+                   'Bored': [self.combo_box(EmoModule.REACT_NEG_BORED[0]), self.combo_box(EmoModule.REACT_POS_BORED[0])],
+                   'Annoyed': [self.combo_box(EmoModule.REACT_NEG_ANNOYED[0]), self.combo_box(EmoModule.REACT_POS_ANNOYED[0])],
+                   'Angry': [self.combo_box(EmoModule.REACT_NEG_ANGRY[0]), self.combo_box(EmoModule.REACT_POS_ANGRY[0])]}
 
         self.intense = {\
             'Happy': [[self.wIntense(100), self.wIntense(100), self.wIntense(100)],
@@ -441,6 +441,8 @@ class Parameters(QWidget):
 
         if selected in items:
             combo.setCurrentIndex(items.index(selected))
+        print 'init combo box with ', selected
+
 
         combo.resize(300, 30)
         return combo
@@ -599,13 +601,6 @@ class Parameters(QWidget):
             emo_class.IMPULSE = self.emo_settings[emo_key][1].value()
             emo_class.INTERPOLATE = self.emo_settings[emo_key][2].value()
             emo_class.FREQUENCE = self.emo_settings[emo_key][3].value()
-
-        #apply_emo(Happy, 'happy')
-        #apply_emo(Concentrated, 'concentrated')
-        #apply_emo(Bored, 'bored')
-        #apply_emo(Annoyed, 'annoyed')
-        #apply_emo(Angry, 'angry')
-        #apply_emo(Surprise, 'surprise')
 
         CogModule.ACT_HIGH = self.activations[0].value()
         CogModule.ACT_LOW = self.activations[0].value()
@@ -1013,29 +1008,25 @@ class MainWindow(QMainWindow):
         CogModule.ACT_HIGH = config.getfloat('Activation', 'high')
         CogModule.ACT_LOW = config.getfloat('Activation', 'low')
 
-        CogModule.SURPRISE_NEG_HIGH = config.getint('Map_Neg_High', 'surprise')
-        CogModule.EMOTION_NEG_HIGH = config.get('Map_Neg_High', 'emotion')
-        CogModule.INTENSE_NEG_HIGH = config.getint('Map_Neg_High', 'intense')
+        def apply_react(VAR, name):
+            print 'APPLY:', VAR, name
+            VAR = (config.get(name, 'emotion'),
+                             config.getint(name, 'none'),
+                             config.getint(name, 'low'),
+                             config.getint(name, 'high'))
+            print '  - var now:', VAR
+        
+        apply_react(EmoModule.REACT_NEG_HAPPY, 'Map_Happy_Neg')
+        apply_react(EmoModule.REACT_NEG_CONCENTRATED, 'Map_Concentrated_Neg')
+        apply_react(EmoModule.REACT_NEG_BORED, 'Map_Bored_Neg')
+        apply_react(EmoModule.REACT_NEG_ANNOYED, 'Map_Annoyed_Neg')
+        apply_react(EmoModule.REACT_NEG_ANGRY, 'Map_Angry_Neg')
 
-        CogModule.SURPRISE_NEG_LOW = config.getint('Map_Neg_Low', 'surprise')
-        CogModule.EMOTION_NEG_LOW = config.get('Map_Neg_Low', 'emotion')
-        CogModule.INTENSE_NEG_LOW = config.getint('Map_Neg_Low', 'intense')
-
-        CogModule.SURPRISE_NEG_NONE = config.getint('Map_Neg_None', 'surprise')
-        CogModule.EMOTION_NEG_NONE = config.get('Map_Neg_None', 'emotion')
-        CogModule.INTENSE_NEG_NONE = config.getint('Map_Neg_None', 'intense')
-
-        CogModule.SURPRISE_POS_HIGH = config.getint('Map_Pos_High', 'surprise')
-        CogModule.EMOTION_POS_HIGH = config.get('Map_Pos_High', 'emotion')
-        CogModule.INTENSE_POS_HIGH = config.getint('Map_Pos_High', 'intense')
-
-        CogModule.SURPRISE_POS_LOW = config.getint('Map_Pos_Low', 'surprise')
-        CogModule.EMOTION_POS_LOW = config.get('Map_Pos_Low', 'emotion')
-        CogModule.INTENSE_POS_LOW = config.getint('Map_Pos_Low', 'intense')
-
-        CogModule.SURPRISE_POS_NONE = config.getint('Map_Pos_None', 'surprise')
-        CogModule.EMOTION_POS_NONE = config.get('Map_Pos_None', 'emotion')
-        CogModule.INTENSE_POS_NONE = config.getint('Map_Pos_None', 'intense')
+        apply_react(EmoModule.REACT_POS_HAPPY, 'Map_Happy_Neg')
+        apply_react(EmoModule.REACT_POS_CONCENTRATED, 'Map_Concentrated_Neg')
+        apply_react(EmoModule.REACT_POS_BORED, 'Map_Bored_Neg')
+        apply_react(EmoModule.REACT_POS_ANNOYED, 'Map_Annoyed_Neg')
+        apply_react(EmoModule.REACT_POS_ANGRY, 'Map_Angry_Neg')
 
 
     def show_welcome(self):
