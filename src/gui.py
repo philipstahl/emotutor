@@ -222,7 +222,7 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(True, True, True)
+        self.exp = ListEnvironment(False, False, False)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
@@ -442,7 +442,6 @@ class Parameters(QWidget):
         if selected in items:
             combo.setCurrentIndex(items.index(selected))
         print 'init combo box with ', selected
-
 
         combo.resize(300, 30)
         return combo
@@ -693,10 +692,206 @@ class Parameters(QWidget):
         self.emo_settings['surprise'][3].setValue(2)
         pass
 
+
+class Emotions(QWidget):
+    ''' Frame showing all program variables
+
+        Matching: Baselevel activation  -> surprise, emotion, intense
+
+        Expectations:
+            - high
+            - low
+            - none
+            - negative
+    '''
+
+    def __init__(self, parent=None):
+        super(Emotions, self).__init__(parent)
+
+        def init(Emotion):
+            return [QLineEdit(Emotion.MARC),
+                    self.float_widget(Emotion.IMPULSE, 0.01, 2.00, 0.01),
+                    self.float_widget(Emotion.INTERPOLATE, 0.01, 2.00, 0.01),
+                    self.int_widget(Emotion.FREQUENCE, 1, 20, 1)]
+
+        self.emo_settings = \
+            {'happy': init(Happy),
+             'concentrated': init(Concentrated),
+             'bored': init(Bored),
+             'annoyed': init(Annoyed),
+             'angry': init(Angry),
+             'surprise': init(Surprise)}
+
+        self.setLayout(self.init_ui())
+        self.resize(600, 100)
+        self.e = None
+
+    def get_emo_values(self):
+        # Emotion settings
+        layout = QGridLayout()
+
+        label_emotions = QLabel('Emotions:')
+        label_emotions.setStyleSheet('QLabel {font-weight:bold}')
+        layout.addWidget(label_emotions, 0, 0)
+
+        def add_line(layout, values, line):
+            for i in range(len(values)):
+                layout.addWidget(values[i], line, i)
+        add_line(layout, [QLabel('Wasabi:'), QLabel('Marc:'), QLabel('Impulse'),
+                          QLabel('Interpolate'), QLabel('Frequence')], 1)
+        add_line(layout, [QLabel('Happy')] + self.emo_settings['happy'], 2)
+        add_line(layout, [QLabel('Concentrated')] + self.emo_settings['concentrated'], 3)
+        add_line(layout, [QLabel('Bored')] + self.emo_settings['bored'], 4)
+        add_line(layout, [QLabel('Annoyed')] + self.emo_settings['annoyed'], 5)
+        add_line(layout, [QLabel('Angry')] + self.emo_settings['angry'], 6)
+        add_line(layout, [QLabel('Surprise')] + self.emo_settings['surprise'], 7)
+
+        def add_test_button(layout, line, function):
+            button = QPushButton('&Test')
+            button.clicked.connect(function)
+            layout.addWidget(button, line, 5)
+
+        add_test_button(layout, 2, self.test_happy)
+        add_test_button(layout, 3, self.test_concentrated)
+        add_test_button(layout, 4, self.test_bored)
+        add_test_button(layout, 5, self.test_annoyed)
+        add_test_button(layout, 6, self.test_angry)
+        add_test_button(layout, 7, self.test_surprise)
+
+        emo_values = QWidget()
+        emo_values.setLayout(layout)
+        return emo_values
+
+    def combo_box(self, selected):
+        items = ['Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']
+        combo = QComboBox()
+        combo.setStyleSheet("QComboBox { combobox-popup: 0; }")
+        combo.addItems(items)
+
+        if selected in items:
+            combo.setCurrentIndex(items.index(selected))
+        print 'init combo box with ', selected
+
+        combo.resize(300, 30)
+        return combo
+
+    def float_widget(self, start_val, min_val, max_val, step):
+        box = QDoubleSpinBox()
+        box.setRange(min_val, max_val)
+        box.setValue(start_val)
+        box.setSingleStep(step)
+        return box
+
+    def int_widget(self, start_val, min_val, max_val, step):
+        box = QSpinBox()
+        box.setRange(min_val, max_val)
+        box.setValue(start_val)
+        box.setSingleStep(step)
+        return box
+
+    def wIntense(self, start_val):
+        box = QSpinBox()
+        box.setRange(0, 100)
+        box.setValue(start_val)
+        box.setSingleStep(1)
+        return box
+
+
+    def init_ui(self):
+        ''' Creates the layout of the settings screen
+        '''
+        # Define button functionality:
+        button_save = QPushButton("&Save")
+        button_reset = QPushButton("&Reset")
+        button_cancel = QPushButton("&Cancel")
+
+        button_save.clicked.connect(self.save)
+        button_reset.clicked.connect(self.reset)
+        button_cancel.clicked.connect(self.cancel)
+
+        button_layout = QBoxLayout(0)
+        button_layout.addWidget(button_cancel)
+        button_layout.addWidget(button_reset)
+        button_layout.addWidget(button_save)
+
+        buttons = QWidget()
+        buttons.setLayout(button_layout)
+
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(self.get_emo_values())
+        main_layout.addWidget(buttons)
+        return main_layout
+
+
+
+    def apply_settings(self):
+        ''' apply settings loaded from the gui
+        '''
+        def apply_emo(emo_class, emo_key):
+            emo_class.MARC = self.emo_settings[emo_key][0].text()
+            emo_class.IMPULSE = self.emo_settings[emo_key][1].value()
+            emo_class.INTERPOLATE = self.emo_settings[emo_key][2].value()
+            emo_class.FREQUENCE = self.emo_settings[emo_key][3].value()
+
+        apply_emo(Happy, 'happy')
+        self.e = Environment(False, False, False)
+
+    def get_function(self, combo_box):
+        functions = ['baselevel', 'optimized']
+        if combo_box.currentIndex() >= len(functions):
+            print 'COMBOBOX: INDEX ERROR'
+        else:
+            return functions[combo_box.currentIndex()]
+
+
+    def save(self):
+        ''' Save changed settings
+        '''
+        self.apply_settings()
+        self.emit(SIGNAL('quit'))
+
+    def cancel(self):
+        ''' Exit settings without saving
+        '''
+        self.emit(SIGNAL("quit"))
+
+    def reset(self):
+        '''
+        '''
+        self.emo_settings['happy'][0].setText('CASA_Joy_01')
+        self.emo_settings['happy'][1].setValue(0.66)
+        self.emo_settings['happy'][2].setValue(1.0)
+        self.emo_settings['happy'][3].setValue(2)
+
+        self.emo_settings['concentrated'][0].setText(CASA_Relax_01)
+        self.emo_settings['concentrated'][1].setValue(0.25)
+        self.emo_settings['concentrated'][2].setValue(1.0)
+        self.emo_settings['concentrated'][3].setValue(2)
+
+        self.emo_settings['bored'][0].setText('CASA_Relax_01')
+        self.emo_settings['bored'][1].setValue(0.33)
+        self.emo_settings['bored'][2].setValue(1.0)
+        self.emo_settings['bored'][3].setValue(2)
+
+        self.emo_settings['annoyed'][0].setText('CASA_Sadness_01')
+        self.emo_settings['annoyed'][1].setValue(0.5)
+        self.emo_settings['annoyed'][2].setValue(1.0)
+        self.emo_settings['annoyed'][3].setValue(2)
+
+        self.emo_settings['angry'][0].setText('CASA_Anger_01')
+        self.emo_settings['angry'][1].setValue(0.66)
+        self.emo_settings['angry'][2].setValue(1.0)
+        self.emo_settings['angry'][3].setValue(2)
+
+        self.emo_settings['surprise'][0].setText('Surprise - CubeEmotion')
+        self.emo_settings['surprise'][1].setValue(0.66)
+        self.emo_settings['surprise'][2].setValue(1.0)
+        self.emo_settings['surprise'][3].setValue(2)
+        pass
+
     def test_wasabi(self):
         self.apply_settings()
         self.e.test_wasabi()
-
 
     def test_happy(self):
         self.apply_settings()
@@ -891,19 +1086,22 @@ class Welcome(QWidget):
         desc = QLabel('Welcome to the vocabulary trainer.')
 
         button_settings = QPushButton("&Edit settings")
+        button_emotions = QPushButton('&Edit emotions')
         button_mapping = QPushButton('&Edit mapping')
         button_start = QPushButton('&Start training')
         button_list = QPushButton('&Start list training')
 
         # Define button funcionalty:
         button_settings.clicked.connect(self.options)
+        button_emotions.clicked.connect(self.emotions)
         button_mapping.clicked.connect(self.mapping)
         button_start.clicked.connect(self.start)
         button_list.clicked.connect(self.list_test)
 
         # Design Layout:
-        option_layout = QBoxLayout(0)
+        option_layout = QBoxLayout(2)
         option_layout.addWidget(button_settings)
+        option_layout.addWidget(button_emotions)
         option_layout.addWidget(button_mapping)
         option_layout.addWidget(button_start)
         option_layout.addWidget(button_list)
@@ -920,6 +1118,11 @@ class Welcome(QWidget):
         ''' Show options
         '''
         self.emit(SIGNAL('settings'))
+
+    def emotions(self):
+        ''' Show emotions
+        '''
+        self.emit(SIGNAL('emotions'))
 
     def mapping(self):
         ''' Show mapping
@@ -970,8 +1173,10 @@ class MainWindow(QMainWindow):
         options.addAction(settings)
 
         self.setMenuBar(menubar)
-        self.show_welcome()
         self.load_config()
+        print 'EmoModule.REACT_POS_ANGRY:', EmoModule.REACT_POS_ANGRY
+        self.show_welcome()
+        print 'EmoModule.REACT_POS_ANGRY:', EmoModule.REACT_POS_ANGRY
         self.move(0, 0)
 
     def load_config(self):
@@ -1008,32 +1213,30 @@ class MainWindow(QMainWindow):
         CogModule.ACT_HIGH = config.getfloat('Activation', 'high')
         CogModule.ACT_LOW = config.getfloat('Activation', 'low')
 
-        def apply_react(VAR, name):
-            print 'APPLY:', VAR, name
-            VAR = (config.get(name, 'emotion'),
-                             config.getint(name, 'none'),
-                             config.getint(name, 'low'),
-                             config.getint(name, 'high'))
-            print '  - var now:', VAR
-        
-        apply_react(EmoModule.REACT_NEG_HAPPY, 'Map_Happy_Neg')
-        apply_react(EmoModule.REACT_NEG_CONCENTRATED, 'Map_Concentrated_Neg')
-        apply_react(EmoModule.REACT_NEG_BORED, 'Map_Bored_Neg')
-        apply_react(EmoModule.REACT_NEG_ANNOYED, 'Map_Annoyed_Neg')
-        apply_react(EmoModule.REACT_NEG_ANGRY, 'Map_Angry_Neg')
+        def get_config(name):
+            return (config.get(name, 'emotion'),
+                     config.getint(name, 'none'),
+                     config.getint(name, 'low'),
+                     config.getint(name, 'high'))
 
-        apply_react(EmoModule.REACT_POS_HAPPY, 'Map_Happy_Neg')
-        apply_react(EmoModule.REACT_POS_CONCENTRATED, 'Map_Concentrated_Neg')
-        apply_react(EmoModule.REACT_POS_BORED, 'Map_Bored_Neg')
-        apply_react(EmoModule.REACT_POS_ANNOYED, 'Map_Annoyed_Neg')
-        apply_react(EmoModule.REACT_POS_ANGRY, 'Map_Angry_Neg')
+        EmoModule.REACT_NEG_HAPPY = get_config('Map_Happy_Neg')
+        EmoModule.REACT_NEG_CONCENTRATED = get_config('Map_Concentrated_Neg')
+        EmoModule.REACT_NEG_BORED = get_config('Map_Bored_Neg')
+        EmoModule.REACT_NEG_ANNOYED = get_config('Map_Annoyed_Neg')
+        EmoModule.REACT_NEG_ANGRY = get_config('Map_Angry_Neg')
 
+        EmoModule.REACT_POS_HAPPY = get_config('Map_Happy_Pos')
+        EmoModule.REACT_POS_CONCENTRATED = get_config('Map_Concentrated_Pos')
+        EmoModule.REACT_POS_BORED = get_config('Map_Bored_Pos')
+        EmoModule.REACT_POS_ANNOYED = get_config('Map_Annoyed_Pos')
+        EmoModule.REACT_POS_ANGRY = get_config('Map_Angry_Pos')
 
     def show_welcome(self):
         ''' Shows the welcome screen
         '''
         welcome = Welcome()
         self.connect(welcome, SIGNAL('settings'), self.show_options)
+        self.connect(welcome, SIGNAL('emotions'), self.show_emotions)
         self.connect(welcome, SIGNAL('mapping'), self.show_mapping)
         self.connect(welcome, SIGNAL('training'), self.show_training)
         self.connect(welcome, SIGNAL('list_test'), self.show_list_training)
@@ -1047,6 +1250,15 @@ class MainWindow(QMainWindow):
         self.connect(settings, SIGNAL("quit"), self.show_welcome)
         settings.show()
         self.setCentralWidget(settings)
+
+    def show_emotions(self):
+        ''' Shows the option screen
+        '''
+        emotions = Emotions()
+        self.connect(emotions, SIGNAL("quit"), self.show_welcome)
+        emotions.show()
+        self.setCentralWidget(emotions)
+
 
     def show_mapping(self):
         ''' Shows the option screen

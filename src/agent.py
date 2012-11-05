@@ -2,7 +2,7 @@
 '''
 
 from threading import Thread
-import winsound                         # sound for windows
+#import winsound                         # sound for windows
 #import pygame
 from PyQt4.QtGui import QSound
 
@@ -43,8 +43,8 @@ class Agent:
             pygame.mixer.music.load('sounds/' + soundfile + '.wav')
             pygame.mixer.music.play()
 
-        thread = Thread(target=play, args=())
-        thread.start()
+        #thread = Thread(target=play, args=())
+        #thread.start()
 
     def introduce(self):
         ''' The agents reaction at the beginning of the training
