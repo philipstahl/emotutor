@@ -337,7 +337,217 @@ class ListTrainer(QWidget):
                 self.submit()
 
 
-class Parameters(QWidget):
+class Settings(QWidget):
+    ''' Frame showing all program settings
+
+        wasabi      ->  emotion  intensity  interpolate  hz/trigger
+        happy
+        concentrated
+        bored
+        annoyed
+        angry
+    '''
+
+    def __init__(self, parent=None):
+        super(Settings, self).__init__(parent)
+        self.setLayout(self.init_ui())
+        #self.resize(600, 100)
+        self.e = None
+
+    def init_ui(self):
+        ''' Creates the layout of the settings screen
+        '''
+        # Define button functionality:
+        button_save = QPushButton("&Save")
+        button_reset = QPushButton("&Reset")
+        button_cancel = QPushButton("&Cancel")
+
+        button_save.clicked.connect(self.save)
+        button_reset.clicked.connect(self.reset)
+        button_cancel.clicked.connect(self.cancel)
+
+        button_layout = QBoxLayout(0)
+        button_layout.addWidget(button_cancel)
+        button_layout.addWidget(button_reset)
+        button_layout.addWidget(button_save)
+
+        buttons = QWidget()
+        buttons.setLayout(button_layout)
+
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(self.init_parameters())
+        main_layout.addWidget(buttons)
+        return main_layout
+
+    def init_parameters(self):
+        ''' Has to be overwritten
+        '''
+        pass
+
+    def apply_settings(self):
+        ''' Has to be overwritten.
+        '''
+        pass
+
+    def save(self):
+        ''' Save changed settings
+        '''
+        self.apply_settings()
+        self.emit(SIGNAL('quit'))
+
+    def cancel(self):
+        ''' Exit settings without saving
+        '''
+        self.emit(SIGNAL("quit"))
+
+    def reset(self):
+        ''' Has to be overwritten
+        '''
+        pass
+
+
+class NetworkSettings(Settings):
+    ''' Frame showing all program settings
+
+        wasabi      ->  emotion  intensity  interpolate  hz/trigger
+        happy
+        concentrated
+        bored
+        annoyed
+        angry
+    '''
+
+    def __init__(self, parent=None):
+        self.marc_settings = \
+            {'ip': QLineEdit(Marc.IP),
+             'port_in': QLineEdit(str(Marc.PORT_IN)),
+             'port_out': QLineEdit(str(Marc.PORT_OUT))}
+
+        self.wasabi_settings = \
+            {'ip': QLineEdit(EmoModule.WASABI_IP),
+             'port_in': QLineEdit(str(EmoModule.WASABI_PORT_IN)),
+             'port_out': QLineEdit(str(EmoModule.WASABI_PORT_OUT))}
+
+        self.mary_settings = \
+            {'ip': QLineEdit(OpenMary.IP),
+             'voice': QLineEdit(OpenMary.VOICE),
+             'path': QLineEdit(OpenMary.PATH)}
+
+        super(NetworkSettings, self).__init__(parent)
+
+
+    def init_parameters(self):
+        ''' Creates the layout of the settings screen
+        '''
+        # Network settings
+        net_layout = QGridLayout()
+
+        net_layout.addWidget(QLabel('MARC:'), 0, 1)
+        net_layout.addWidget(QLabel('WASABI:'), 0, 2)
+
+        label_network = QLabel('Network:')
+        label_network.setStyleSheet('QLabel {font-weight:bold}')
+        net_layout.addWidget(label_network, 1, 0)
+
+        net_layout.addWidget(QLabel('IP:'), 2, 0)
+        net_layout.addWidget(self.marc_settings['ip'], 2, 1)
+        net_layout.addWidget(self.wasabi_settings['ip'], 2, 2)
+
+        net_layout.addWidget(QLabel('Input Port:'), 3, 0)
+        net_layout.addWidget(self.marc_settings['port_in'], 3, 1)
+        net_layout.addWidget(self.wasabi_settings['port_in'], 3, 2)
+
+        net_layout.addWidget(QLabel('Output Port:'), 4, 0)
+        net_layout.addWidget(self.marc_settings['port_out'], 4, 1)
+        net_layout.addWidget(self.wasabi_settings['port_out'], 4, 2)
+
+        button_test_wasabi = QPushButton("&Test")
+        button_test_wasabi.clicked.connect(self.test_wasabi)
+
+        net_layout.addWidget(button_test_wasabi, 4, 3)
+
+        net_values = QWidget()
+        net_values.setLayout(net_layout)
+
+        # Open Mary:
+        label_mary = QLabel('Open Mary:')
+        label_mary.setStyleSheet('QLabel {font-weight:bold}')
+
+        layout_mary = QGridLayout()
+        layout_mary.addWidget(label_mary, 0, 0)
+        layout_mary.addWidget(QLabel('Request:'), 1, 0)
+        layout_mary.addWidget(QLabel('Voice:'), 2, 0)
+        layout_mary.addWidget(QLabel('Path:'), 3, 0)
+        layout_mary.addWidget(self.mary_settings['ip'], 1, 1)
+        layout_mary.addWidget(self.mary_settings['voice'], 2, 1)
+        layout_mary.addWidget(self.mary_settings['path'], 3, 1)
+        widget_mary = QWidget()
+        widget_mary.setLayout(layout_mary)
+
+        # Define button functionality:
+        button_save = QPushButton("&Save")
+        button_reset = QPushButton("&Reset")
+        button_cancel = QPushButton("&Cancel")
+
+        button_save.clicked.connect(self.save)
+        button_reset.clicked.connect(self.reset)
+        button_cancel.clicked.connect(self.cancel)
+
+        button_layout = QBoxLayout(0)
+        button_layout.addWidget(button_cancel)
+        button_layout.addWidget(button_reset)
+        button_layout.addWidget(button_save)
+
+        buttons = QWidget()
+        buttons.setLayout(button_layout)
+
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(net_values)
+        main_layout.addWidget(widget_mary)
+        main_widget = QWidget()
+        main_widget.setLayout(main_layout)
+        return main_widget
+
+    def apply_settings(self):
+        ''' apply settings loaded from the gui
+        '''
+        Marc.IP = self.marc_settings['ip'].text()
+        Marc.PORT_IN = int(self.marc_settings['port_in'].text())
+        Marc.PORT_OUT = int(self.marc_settings['port_out'].text())
+
+        EmoModule.WASABI_IP = self.wasabi_settings['ip'].text()
+        EmoModule.WASABI_PORT_IN = int(self.wasabi_settings['port_in'].text())
+        EmoModule.WASABI_PORT_OUT = int(self.wasabi_settings['port_out'].text())
+
+        OpenMary.VOICE = self.mary_settings['voice'].text()
+        OpenMary.IP = self.mary_settings['ip'].text()
+        OpenMary.PATH = self.mary_settings['path'].text()
+
+        self.e = Environment(False, False, False)
+
+    def test_wasabi(self):
+        self.apply_settings()
+        self.e.test_wasabi()
+
+    def reset(self):
+        ''' Reset settins to original values
+
+        '''
+        self.wasabi_settings['ip'].setText('192.168.0.46')
+        self.wasabi_settings['port_in'].setText('42425')
+        self.wasabi_settings['port_out'].setText('42424')
+
+        self.marc_settings['ip'].setText('localhost')
+        self.marc_settings['port_in'].setText('4014')
+        self.marc_settings['port_out'].setText('4013')
+
+        self.mary_settings['ip'].setText('http://localhost:59125/')
+        self.mary_settings['voice'].setText('dfki-obadiah')
+        self.mary_settings['path'].setText(
+                            'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\')
+
+
+class Parameters(Settings):
     ''' Frame showing all program variables
 
         Matching: Baselevel activation  -> surprise, emotion, intense
@@ -350,8 +560,6 @@ class Parameters(QWidget):
     '''
 
     def __init__(self, parent=None):
-        super(Parameters, self).__init__(parent)
-
         def init(Emotion):
             return [QLineEdit(Emotion.MARC),
                     self.float_widget(Emotion.IMPULSE, 0.01, 2.00, 0.01),
@@ -392,10 +600,8 @@ class Parameters(QWidget):
                 [self.wIntense(100), self.wIntense(100), self.wIntense(100)]]}
 
 
+        super(Parameters, self).__init__(parent)
 
-        self.setLayout(self.init_ui())
-        self.resize(600, 100)
-        self.e = None
 
     def get_emo_values(self):
         # Emotion settings
@@ -484,7 +690,7 @@ class Parameters(QWidget):
         return box
 
 
-    def init_ui(self):
+    def init_parameters(self):
         ''' Creates the layout of the settings screen
         '''
         names = ['Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']
@@ -524,29 +730,15 @@ class Parameters(QWidget):
         map_widget = QWidget()
         map_widget.setLayout(map_layout)
 
-        # Define button functionality:
-        button_save = QPushButton("&Save")
-        button_reset = QPushButton("&Reset")
-        button_cancel = QPushButton("&Cancel")
 
-        button_save.clicked.connect(self.save)
-        button_reset.clicked.connect(self.reset)
-        button_cancel.clicked.connect(self.cancel)
-
-        button_layout = QBoxLayout(0)
-        button_layout.addWidget(button_cancel)
-        button_layout.addWidget(button_reset)
-        button_layout.addWidget(button_save)
-
-        buttons = QWidget()
-        buttons.setLayout(button_layout)
 
         main_layout = QBoxLayout(2)
         #main_layout.addWidget(self.get_emo_values())
         main_layout.addWidget(self.get_activation_widget())
         main_layout.addWidget(map_widget)
-        main_layout.addWidget(buttons)
-        return main_layout
+        main_widget = QWidget()
+        main_widget.setLayout(main_layout)
+        return main_widget
 
     def add_line(self, layout, values, line):
         for i in range(len(values)):
@@ -647,17 +839,6 @@ class Parameters(QWidget):
         else:
             return classes[combo_box.currentIndex()]
 
-    def save(self):
-        ''' Save changed settings
-        '''
-        self.apply_settings()
-        self.emit(SIGNAL('quit'))
-
-    def cancel(self):
-        ''' Exit settings without saving
-        '''
-        self.emit(SIGNAL("quit"))
-
     def reset(self):
         '''
         '''
@@ -693,7 +874,7 @@ class Parameters(QWidget):
         pass
 
 
-class Emotions(QWidget):
+class Emotions(Settings):
     ''' Frame showing all program variables
 
         Matching: Baselevel activation  -> surprise, emotion, intense
@@ -706,8 +887,6 @@ class Emotions(QWidget):
     '''
 
     def __init__(self, parent=None):
-        super(Emotions, self).__init__(parent)
-
         def init(Emotion):
             return [QLineEdit(Emotion.MARC),
                     self.float_widget(Emotion.IMPULSE, 0.01, 2.00, 0.01),
@@ -722,9 +901,7 @@ class Emotions(QWidget):
              'angry': init(Angry),
              'surprise': init(Surprise)}
 
-        self.setLayout(self.init_ui())
-        self.resize(600, 100)
-        self.e = None
+        super(Emotions, self).__init__(parent)
 
     def get_emo_values(self):
         # Emotion settings
@@ -797,32 +974,14 @@ class Emotions(QWidget):
         return box
 
 
-    def init_ui(self):
+    def init_parameters(self):
         ''' Creates the layout of the settings screen
         '''
-        # Define button functionality:
-        button_save = QPushButton("&Save")
-        button_reset = QPushButton("&Reset")
-        button_cancel = QPushButton("&Cancel")
-
-        button_save.clicked.connect(self.save)
-        button_reset.clicked.connect(self.reset)
-        button_cancel.clicked.connect(self.cancel)
-
-        button_layout = QBoxLayout(0)
-        button_layout.addWidget(button_cancel)
-        button_layout.addWidget(button_reset)
-        button_layout.addWidget(button_save)
-
-        buttons = QWidget()
-        buttons.setLayout(button_layout)
-
         main_layout = QBoxLayout(2)
         main_layout.addWidget(self.get_emo_values())
-        main_layout.addWidget(buttons)
-        return main_layout
-
-
+        main_widget = QWidget()
+        main_widget.setLayout(main_layout)
+        return main_widget
 
     def apply_settings(self):
         ''' apply settings loaded from the gui
@@ -842,18 +1001,6 @@ class Emotions(QWidget):
             print 'COMBOBOX: INDEX ERROR'
         else:
             return functions[combo_box.currentIndex()]
-
-
-    def save(self):
-        ''' Save changed settings
-        '''
-        self.apply_settings()
-        self.emit(SIGNAL('quit'))
-
-    def cancel(self):
-        ''' Exit settings without saving
-        '''
-        self.emit(SIGNAL("quit"))
 
     def reset(self):
         '''
@@ -921,159 +1068,6 @@ class Emotions(QWidget):
         ''' Test current settings
         '''
         self.e.test(emotion, 10)
-
-
-class Settings(QWidget):
-    ''' Frame showing all program settings
-
-        wasabi      ->  emotion  intensity  interpolate  hz/trigger
-        happy
-        concentrated
-        bored
-        annoyed
-        angry
-    '''
-
-    def __init__(self, parent=None):
-        super(Settings, self).__init__(parent)
-        self.marc_settings = \
-            {'ip': QLineEdit(Marc.IP),
-             'port_in': QLineEdit(str(Marc.PORT_IN)),
-             'port_out': QLineEdit(str(Marc.PORT_OUT))}
-
-        self.wasabi_settings = \
-            {'ip': QLineEdit(EmoModule.WASABI_IP),
-             'port_in': QLineEdit(str(EmoModule.WASABI_PORT_IN)),
-             'port_out': QLineEdit(str(EmoModule.WASABI_PORT_OUT))}
-
-        self.mary_settings = \
-            {'ip': QLineEdit(OpenMary.IP),
-             'voice': QLineEdit(OpenMary.VOICE),
-             'path': QLineEdit(OpenMary.PATH)}
-
-        self.setLayout(self.init_ui())
-        self.resize(600, 100)
-        self.e = None
-
-    def init_ui(self):
-        ''' Creates the layout of the settings screen
-        '''
-        # Network settings
-        net_layout = QGridLayout()
-
-        net_layout.addWidget(QLabel('MARC:'), 0, 1)
-        net_layout.addWidget(QLabel('WASABI:'), 0, 2)
-
-        label_network = QLabel('Network:')
-        label_network.setStyleSheet('QLabel {font-weight:bold}')
-        net_layout.addWidget(label_network, 1, 0)
-
-        net_layout.addWidget(QLabel('IP:'), 2, 0)
-        net_layout.addWidget(self.marc_settings['ip'], 2, 1)
-        net_layout.addWidget(self.wasabi_settings['ip'], 2, 2)
-
-        net_layout.addWidget(QLabel('Input Port:'), 3, 0)
-        net_layout.addWidget(self.marc_settings['port_in'], 3, 1)
-        net_layout.addWidget(self.wasabi_settings['port_in'], 3, 2)
-
-        net_layout.addWidget(QLabel('Output Port:'), 4, 0)
-        net_layout.addWidget(self.marc_settings['port_out'], 4, 1)
-        net_layout.addWidget(self.wasabi_settings['port_out'], 4, 2)
-
-        button_test_wasabi = QPushButton("&Test")
-        button_test_wasabi.clicked.connect(self.test_wasabi)
-
-        net_layout.addWidget(button_test_wasabi, 4, 3)
-
-        net_values = QWidget()
-        net_values.setLayout(net_layout)
-
-        # Open Mary:
-        label_mary = QLabel('Open Mary:')
-        label_mary.setStyleSheet('QLabel {font-weight:bold}')
-
-        layout_mary = QGridLayout()
-        layout_mary.addWidget(label_mary, 0, 0)
-        layout_mary.addWidget(QLabel('Request:'), 1, 0)
-        layout_mary.addWidget(QLabel('Voice:'), 2, 0)
-        layout_mary.addWidget(QLabel('Path:'), 3, 0)
-        layout_mary.addWidget(self.mary_settings['ip'], 1, 1)
-        layout_mary.addWidget(self.mary_settings['voice'], 2, 1)
-        layout_mary.addWidget(self.mary_settings['path'], 3, 1)
-        widget_mary = QWidget()
-        widget_mary.setLayout(layout_mary)
-
-        # Define button functionality:
-        button_save = QPushButton("&Save")
-        button_reset = QPushButton("&Reset")
-        button_cancel = QPushButton("&Cancel")
-
-        button_save.clicked.connect(self.save)
-        button_reset.clicked.connect(self.reset)
-        button_cancel.clicked.connect(self.cancel)
-
-        button_layout = QBoxLayout(0)
-        button_layout.addWidget(button_cancel)
-        button_layout.addWidget(button_reset)
-        button_layout.addWidget(button_save)
-
-        buttons = QWidget()
-        buttons.setLayout(button_layout)
-
-        main_layout = QBoxLayout(2)
-        main_layout.addWidget(net_values)
-        main_layout.addWidget(widget_mary)
-        main_layout.addWidget(buttons)
-        return main_layout
-
-    def apply_settings(self):
-        ''' apply settings loaded from the gui
-        '''
-        Marc.IP = self.marc_settings['ip'].text()
-        Marc.PORT_IN = int(self.marc_settings['port_in'].text())
-        Marc.PORT_OUT = int(self.marc_settings['port_out'].text())
-
-        EmoModule.WASABI_IP = self.wasabi_settings['ip'].text()
-        EmoModule.WASABI_PORT_IN = int(self.wasabi_settings['port_in'].text())
-        EmoModule.WASABI_PORT_OUT = int(self.wasabi_settings['port_out'].text())
-
-        OpenMary.VOICE = self.mary_settings['voice'].text()
-        OpenMary.IP = self.mary_settings['ip'].text()
-        OpenMary.PATH = self.mary_settings['path'].text()
-
-        self.e = Environment(False, False, False)
-
-    def test_wasabi(self):
-        self.apply_settings()
-        self.e.test_wasabi()
-
-    def save(self):
-        ''' Save changed settings
-        '''
-        self.apply_settings()
-        self.emit(SIGNAL('quit'))
-
-    def cancel(self):
-        ''' Exit settings without saving
-        '''
-        self.emit(SIGNAL("quit"))
-
-    def reset(self):
-        ''' Reset settins to original values
-
-        '''
-        self.wasabi_settings['ip'].setText('192.168.0.46')
-        self.wasabi_settings['port_in'].setText('42425')
-        self.wasabi_settings['port_out'].setText('42424')
-
-        self.marc_settings['ip'].setText('localhost')
-        self.marc_settings['port_in'].setText('4014')
-        self.marc_settings['port_out'].setText('4013')
-
-        self.mary_settings['ip'].setText('http://localhost:59125/')
-        self.mary_settings['voice'].setText('dfki-obadiah')
-        self.mary_settings['path'].setText(
-                            'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\')
 
 
 class Welcome(QWidget):
@@ -1159,7 +1153,7 @@ class MainWindow(QMainWindow):
         self.connect(new, SIGNAL('triggered()'), self.show_training)
 
         settings = QAction(QIcon('icons/icon.png'),
-                                 'Settings', self)
+                                 'NetworkSettings', self)
         self.connect(settings, SIGNAL('triggered()'), self.show_options)
 
         self.statusBar()
@@ -1246,7 +1240,7 @@ class MainWindow(QMainWindow):
     def show_options(self):
         ''' Shows the option screen
         '''
-        settings = Settings()
+        settings = NetworkSettings()
         self.connect(settings, SIGNAL("quit"), self.show_welcome)
         settings.show()
         self.setCentralWidget(settings)
