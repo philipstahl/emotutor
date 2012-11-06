@@ -2,16 +2,13 @@
 '''
 
 import sys
-#import signal
 import ConfigParser
-#import time # sound for ubuntu
 
-#import PyQt4.QtGui
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QBoxLayout, QMainWindow, QAction, QIcon, \
                         QApplication, QDesktopWidget, QMessageBox, \
                         QDoubleSpinBox, QSpinBox, QComboBox
-#import PyQt4.QtCore
+
 from PyQt4.QtCore import SIGNAL, Qt, QTimer
 
 from environment import Environment, ListEnvironment
@@ -20,6 +17,7 @@ from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, \
 from marc import Marc
 from cogmodule import CogModule
 from speechmodule import OpenMary
+
 
 class VocabTrainer(QWidget):
     ''' Gui for a simple vocabulary trainer
@@ -223,16 +221,6 @@ class ListTrainer(QWidget):
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
         self.phase = 0
-
-        # test: throw a signal that will change the display in 2 seconds.
-
-        print 'start timer'
-
-
-    def update(self):
-        ''' Updates the screen.
-        '''
-        print 'TIME FOR AN UPDARTE!'
 
     def update_output(self, emotion, cog, speech):
         ''' Updates the text output of the agent.
@@ -564,7 +552,7 @@ class Emotions(Settings):
 
         def init(Emotion):
             return [QLineEdit(Emotion.MARC),
-                    self.float_widget(Emotion.IMPULSE, 0.01, 2.00, 0.01),
+                    self.float_widget(Emotion.INTENSE, 0.01, 2.00, 0.01),
                     self.float_widget(Emotion.INTERPOLATE, 0.01, 2.00, 0.01),
                     self.int_widget(Emotion.FREQUENCE, 1, 20, 1)]
 
@@ -623,7 +611,7 @@ class Emotions(Settings):
             ''' Applies the specified values to the given emotion class.
             '''
             emo_class.MARC = self.emo_settings[emo_key][0].text()
-            emo_class.IMPULSE = self.emo_settings[emo_key][1].value()
+            emo_class.INTENSE = self.emo_settings[emo_key][1].value()
             emo_class.INTERPOLATE = self.emo_settings[emo_key][2].value()
             emo_class.FREQUENCE = self.emo_settings[emo_key][3].value()
 
@@ -896,7 +884,7 @@ class Parameters(Settings):
         ''' apply settings loaded from the gui
         '''
         CogModule.ACT_HIGH = self.activations[0].value()
-        CogModule.ACT_LOW = self.activations[0].value()
+        CogModule.ACT_LOW = self.activations[1].value()
 
         CogModule.FUNCTION = self.get_function(self.function)
 
@@ -1050,9 +1038,7 @@ class MainWindow(QMainWindow):
 
         self.setMenuBar(menubar)
         self.load_config()
-        print 'EmoModule.REACT_POS_ANGRY:', EmoModule.REACT_POS_ANGRY
         self.show_welcome()
-        print 'EmoModule.REACT_POS_ANGRY:', EmoModule.REACT_POS_ANGRY
         self.move(0, 0)
 
     def load_config(self):
@@ -1077,7 +1063,7 @@ class MainWindow(QMainWindow):
             ''' Apply the specified settings to the program.
             '''
             emo_class.MARC = config.get(emo_name, 'marc')
-            emo_class.IMPULSE = config.getfloat(emo_name, 'impulse')
+            emo_class.INTENSE = config.getfloat(emo_name, 'impulse')
             emo_class.INTERPOLATE = config.getfloat(emo_name, 'interpolate')
             emo_class.FREQUENCE = config.getint(emo_name, 'frequence')
 
@@ -1139,7 +1125,6 @@ class MainWindow(QMainWindow):
         emotions.show()
         self.setCentralWidget(emotions)
 
-
     def show_mapping(self):
         ''' Shows the option screen
         '''
@@ -1152,7 +1137,6 @@ class MainWindow(QMainWindow):
         ''' Starts the training
 
         '''
-        print 'start button pressed'
         trainer = VocabTrainer()
         trainer.show()
         self.setCentralWidget(trainer)
@@ -1164,7 +1148,6 @@ class MainWindow(QMainWindow):
         trainer = ListTrainer()
         trainer.show()
         self.setCentralWidget(trainer)
-
 
     def center(self):
         ''' Centers the current window

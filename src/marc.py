@@ -25,11 +25,11 @@ class Marc:
     def show(self, emotion):
         ''' Sends the BML Code of the given facial expression to MARC.
 
-            MARC will perform the expression, if the expression is in the database
-            of the selected agent.
+            MARC will perform the expression, if the expression is in the
+            database of the selected agent.
 
         '''
-        print 'MARC SHOWS', emotion.NAME        
+        print 'MARC: Show', emotion.NAME, emotion.INTENSE
         self.perform(emotion.NAME, emotion.get_bml_code())
 
     def speak(self, speech):
@@ -40,14 +40,11 @@ class Marc:
 
 
 if __name__ == '__main__':
-    import sys
-    from emomodule import Emotion, Happy
+    from emomodule import Happy
     from speechmodule import Speech
-    #if len(sys.argv) > 1:
-    #    marc = Marc('localhost', 4014, 4013)
-    #    marc.perform(sys.argv[1], Emotion(sys.argv[1]).get_bml_code())
     marc = Marc()
-    speech = Speech('introduction', 'Das ist ein Test. Test Test Check.', Happy())
+    speech_output = Speech('introduction', 'Das ist ein Test. Test Test Check.',
+                     Happy())
     marc.show(Happy())
-    marc.speak(speech)
+    marc.speak(speech_output)
     marc.show(Happy())

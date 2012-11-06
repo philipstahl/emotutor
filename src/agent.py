@@ -215,4 +215,4 @@ class ListAgent:
         '''
         emotion = self.emo_module.get_primary_emotion()
         expectation = self.cog_module.expectation(word)
-        return (str(emotion.name), expectation, '...')
+        return (str(emotion), expectation, '...')

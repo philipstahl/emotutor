@@ -12,13 +12,13 @@ class Emotion:
     ''' Class for representing a single Emotion
 
     '''
-    def __init__(self, marc, impulse=100, adjust=1, interpolate=1.0, frequence=2):
-        self.name = str(marc)
+    def __init__(self, name, marc, impulse=100, adjust=1, interpolate=1.0,
+                 frequence=2):
+        self.name = name
+        self.marc = str(marc)
         self.impulse = int(impulse)
         self.frequence = int(frequence)
         self.intensity = float(impulse) / 100 * adjust
-        if self.intensity < 0 :
-            self.intensity = self.intensity * -1
         self.interpolate = float(interpolate)
 
     def get_bml_code(self):
@@ -35,27 +35,26 @@ class Emotion:
                     loop=\"false\"  \
                     intensity=\"{5}\" /> \
                 </description> </face> </marc:fork> \
-                </bml>".format(self.name, self.name, 0, self.name,
+                </bml>".format(self.marc, self.marc, 0, self.marc,
                                self.interpolate, float(self.impulse) / 100)
 
     def __repr__(self):
-        return self.name + ": " + self.name + ' (' + str(self.impulse) + ',' \
-                         + str(self.intensity) + ') ' + str(self.interpolate) \
-                         + ' ' + str(self.frequence)
-
+        return self.name + ' ' + str(self.impulse) + ' ' + str(self.intensity)
 
 class Happy(Emotion):
     ''' Class for an happy emotion
     '''
     NAME = 'happy'
     MARC = ''
-    IMPULSE = 1.0
+    INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
-    def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Happy.MARC, impulse = impulse, adjust = Happy.IMPULSE,
-                         interpolate = Happy.INTERPOLATE*interpolate,
+    def __init__(self, impulse = 100):
+        Emotion.__init__(self, Happy.NAME, Happy.MARC,
+
+                         impulse = impulse, adjust = Happy.INTENSE,
+                         interpolate = Happy.INTERPOLATE,
                          frequence = Happy.FREQUENCE)
 
 
@@ -64,14 +63,14 @@ class Concentrated(Emotion):
     '''
     NAME = 'concentrated'
     MARC = ''
-    IMPULSE = 1.0
+    INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
-    def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Concentrated.MARC,
-                         impulse = impulse, adjust = Concentrated.IMPULSE,
-                         interpolate = Concentrated.INTERPOLATE*interpolate,
+    def __init__(self, impulse = 100):
+        Emotion.__init__(self, Concentrated.NAME, Concentrated.MARC,
+                         impulse = impulse, adjust = Concentrated.INTENSE,
+                         interpolate = Concentrated.INTERPOLATE,
                          frequence = Concentrated.FREQUENCE)
 
 
@@ -80,13 +79,13 @@ class Bored(Emotion):
     '''
     NAME = 'bored'
     MARC = ''
-    IMPULSE = 1.0
+    INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
-    def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Bored.MARC, impulse = impulse, adjust = Bored.IMPULSE,
-                         interpolate = Bored.INTERPOLATE*interpolate,
+    def __init__(self, impulse = 100):
+        Emotion.__init__(self, Bored.NAME, Bored.MARC, impulse = impulse, adjust = Bored.INTENSE,
+                         interpolate = Bored.INTERPOLATE,
                          frequence = Bored.FREQUENCE)
 
 
@@ -95,13 +94,13 @@ class Annoyed(Emotion):
     '''
     NAME = 'annoyed'
     MARC = ''
-    IMPULSE = 1.0
+    INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
-    def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Annoyed.MARC, impulse = impulse, adjust = -Annoyed.IMPULSE,
-                         interpolate = Annoyed.INTERPOLATE*interpolate,
+    def __init__(self, impulse = 100):
+        Emotion.__init__(self, Annoyed.NAME, Annoyed.MARC, impulse = -impulse, adjust = -Annoyed.INTENSE,
+                         interpolate = Annoyed.INTERPOLATE,
                          frequence = Annoyed.FREQUENCE)
 
 
@@ -110,13 +109,13 @@ class Angry(Emotion):
     '''
     NAME = 'angry'
     MARC = ''
-    IMPULSE = 1.0
+    INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
-    def __init__(self, impulse = 100, interpolate = 1.0):
-        Emotion.__init__(self, Angry.MARC, impulse = impulse, adjust = -Angry.IMPULSE,
-                         interpolate = Angry.INTERPOLATE*interpolate,
+    def __init__(self, impulse = 100):
+        Emotion.__init__(self, Angry.NAME, Angry.MARC, impulse = -impulse, adjust = -Angry.INTENSE,
+                         interpolate = Angry.INTERPOLATE,
                          frequence = Angry.FREQUENCE)
 
 class Surprise(Emotion):
@@ -124,14 +123,14 @@ class Surprise(Emotion):
     '''
     NAME = 'surprised'
     MARC = ''
-    IMPULSE = 1.0
+    INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
-    def __init__(self, impulse = 100, interpolate = 1.0, string='high'):
-        Emotion.__init__(self, Surprise.MARC,
-                         impulse = impulse, adjust = Surprise.IMPULSE,
-                         interpolate = Surprise.INTERPOLATE*interpolate,
+    def __init__(self, impulse = 100, string='high'):
+        Emotion.__init__(self, Surprise.NAME, Surprise.MARC,
+                         impulse = impulse, adjust = Surprise.INTENSE,
+                         interpolate = Surprise.INTERPOLATE,
                          frequence = Surprise.FREQUENCE)
         self.string = string
 
@@ -265,7 +264,7 @@ class EmoModule:
         sock_out.sendto(message, (EmoModule.WASABI_IP,
                                   EmoModule.WASABI_PORT_IN))
 
-        message = "JohnDoe&IMPULSE&1&" + str(impulse)
+        message = "JohnDoe&INTENSE&1&" + str(impulse)
         sock_out.sendto(message, (EmoModule.WASABI_IP,
                                   EmoModule.WASABI_PORT_IN))
 

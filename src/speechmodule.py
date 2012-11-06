@@ -135,8 +135,8 @@ class SpeechModule:
     def present(self, task, emotion):
         ''' The agent present a task
         '''
-        speech = Speech("task", "Was ist das englische Wort fuer " + task.question
-                                + "?", emotion)
+        speech = Speech("task", "Was ist das englische Wort fuer "
+                                + task.question + "?", emotion)
         if self.tts:
             self.tts.save_from_xml(speech)
 
@@ -216,8 +216,10 @@ class SpeechModule:
 
         reaction = ''
         if emotion.NAME == Happy.NAME:
-            reaction += 'Leider nein. Kann jedem passieren. Richtig wäre ' + word
-        elif emotion.NAME == Concentrated.NAME or emotion.NAME == Bored.NAME or emotion.NAME == Annoyed.NAME:
+            reaction += ('Leider nein. Kann jedem passieren. Richtig wäre '
+                        + word)
+        elif emotion.NAME == Concentrated.NAME or emotion.NAME == Bored.NAME \
+             or emotion.NAME == Annoyed.NAME:
             reaction += 'Nein. Richtig wäre ' + word
         elif emotion.NAME == Angry.NAME:
             reaction += 'Nein natürlich nicht! An die Stelle kommt ' + word
