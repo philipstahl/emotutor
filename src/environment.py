@@ -78,6 +78,7 @@ class Environment:
             while iterations > 0:
                 sock_in.recvfrom(1024)[0]
                 if count >= emotion.FREQUENCE:
+                    print 'Test: Marc shows', emotion.name, emotion.marc, emotion.intensity
                     marc.perform(emotion.name, emotion.get_bml_code())
                     iterations -= 1
                     count = 0

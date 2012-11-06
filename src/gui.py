@@ -216,7 +216,7 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(False, False, False)
+        self.exp = ListEnvironment(True, True, True)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
@@ -668,6 +668,7 @@ class Emotions(Settings):
     def test_happy(self):
         ''' Test happy emotion settings
         '''
+        print('Test happy called')
         self.apply_settings()
         self.test(Happy())
 
@@ -704,7 +705,7 @@ class Emotions(Settings):
     def test(self, emotion):
         ''' Test current settings
         '''
-        self.environment.test(emotion, 10)
+        self.environment.test(emotion, 5)
 
 
 class Parameters(Settings):

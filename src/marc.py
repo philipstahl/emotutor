@@ -20,6 +20,7 @@ class Marc:
     def perform(self, name, bml_code):
         ''' Performs the action specified in the bml code
         '''
+        print bml_code
         self.sock_out.sendto(bml_code, (Marc.IP, Marc.PORT_OUT))
 
     def show(self, emotion):

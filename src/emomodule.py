@@ -24,7 +24,7 @@ class Emotion:
     def get_bml_code(self):
         ''' Returns the BML Code of the emotion, for showing in MARC
         '''
-        print 'send', self.__repr__()
+        #print 'send', self.__repr__()
         return "<bml id=\"Perform{0}\"> \
                 <marc:fork id=\"Show_{1}_fork_1\"> \
                 <wait duration=\"{2}\" /> \
@@ -204,12 +204,12 @@ class EmoModule:
 
             Sends an emotional input to wasabi and text back to the agent
         '''
-        if surprise.impulse > 0:
-            if self.marc:
-                self.marc.show(surprise)
+        #if surprise.impulse > 0:
+            #if self.marc:
+            #    self.marc.show(surprise)
             # TODO(How to send surprise to wasabi correct?)
-            if self.wasabi:
-                self.send(surprise.NAME, int(surprise.impulse))
+            #if self.wasabi:
+            #    self.send(surprise.NAME, int(surprise.impulse))
 
         pos_emotions = {'happy': EmoModule.REACT_POS_HAPPY,
                         'concentrated': EmoModule.REACT_POS_CONCENTRATED,
@@ -263,7 +263,7 @@ class EmoModule:
         sock_out.sendto(message, (EmoModule.WASABI_IP,
                                   EmoModule.WASABI_PORT_IN))
 
-        message = "JohnDoe&INTENSE&1&" + str(impulse)
+        message = "JohnDoe&IMPULSE&1&" + str(impulse)
         sock_out.sendto(message, (EmoModule.WASABI_IP,
                                   EmoModule.WASABI_PORT_IN))
 
