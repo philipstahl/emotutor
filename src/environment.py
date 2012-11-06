@@ -180,7 +180,6 @@ class ListEnvironment:
     def wait(self):
         ''' Waits for user input and returns current emotional status
         '''
-        print 'WAIT CALLED WITH INDEX', self.index
         return self.agent.wait(self.words[self.index])
 
     def check(self, received):
@@ -214,7 +213,6 @@ class ListEnvironment:
     def reset(self):
         ''' Reset the current word index to start
         '''
-        print 'INDEX RESET'
         self.index = 0
 
     def has_next(self):

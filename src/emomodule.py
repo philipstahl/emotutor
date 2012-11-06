@@ -226,7 +226,6 @@ class EmoModule:
         # get emotion:
         current = self.get_primary_emotion()
         reaction = None
-        print 'current:', current.NAME
 
         if correct:
             reaction = pos_emotions[current.NAME]

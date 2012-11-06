@@ -20,8 +20,6 @@ class Speech:
         if emotion.NAME == Angry.NAME:
             self.emotion = 'angry'
         self.name = name + '_' + self.emotion
-        print 'saved', name
-
 
     def get_bml_code(self):
         ''' Return the bml code of the text
@@ -77,7 +75,6 @@ class OpenMary:
             neutral, poker, happy, angry, sad
 
         '''
-        print 'save', speech.name, speech.emotion
         text = speech.text.replace(' ', '+')
         text = text.replace('ä', '%C3%A4')
         text = text.replace('ö', '%C3%B6')
@@ -93,7 +90,7 @@ class OpenMary:
                 + request \
                 + '&INPUT_TYPE=RAWMARYXML&OUTPUT_TYPE=AUDIO' \
                 + '&AUDIO=WAVE_FILE&LOCALE=en_US&VOICE=' + OpenMary.VOICE
-        print 'query:', query
+
         received = urllib2.urlopen(query)
         data = received.read()
         wav = wave.open("sounds\\" + speech.name + ".wav", 'w')  # Windows
@@ -104,7 +101,6 @@ class OpenMary:
         wav.setnframes(40000)
         wav.writeframesraw(data)
         wav.close()
-        print 'wav file written'
 
 
 class SpeechModule:
@@ -146,7 +142,6 @@ class SpeechModule:
         ''' Returns the verbal reaction of the answer given by the user
         '''
         reaction = ""
-        print 'SPEECHMODULE: EVALUATE:', correct, surprise, emotion.NAME
 
         if correct and emotion.NAME == Happy.NAME:
             reaction += "Super gemacht! Deine Antwort ist richtig."
@@ -248,7 +243,3 @@ if __name__ == '__main__':
     speech = Speech('emo_happy', 'Willkommen zum Vokabel Test', Concentrated())
     #mary.save_from_xml('emo_neutral', 'Willkommen+zum+Vokabel+Test', 'neutral')
     mary.save_from_xml(speech)
-    #mary.save_from_xml('emo_angry', 'Willkommen+zum+Vokabel+Test', 'angry')
-    #mary.save_from_xml('emo_sad', 'Willkommen+zum+Vokabel+Test', 'sad')
-    #mary.save_from_xml('emo_poker', 'Willkommen+zum+Vokabel+Test', 'poker')
-    print 'saved'
