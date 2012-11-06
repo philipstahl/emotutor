@@ -143,15 +143,12 @@ class CogModule:
     def expectation(self, word):
         activation = self.activation(word.times, 0.5)
         expectation = str(activation) + ': '
-        if activation > 0:
+        if activation > CogModule.ACT_HIGH:
             expectation += 'Highly expecting'
-        elif activation > -0.5:
+        elif activation > CogModule.ACT_LOW:
             expectation += 'Expecting'
-        elif activation > -1.0:
-            expectation += 'Not expecting'
         else:
-            expectation += 'Highly not expecting'
-
+            expectation += 'Not expecting'
         return expectation #+ ' ' + word.word
 
 
