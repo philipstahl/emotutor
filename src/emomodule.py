@@ -158,6 +158,16 @@ class EmoModule:
     SURPRISE_POS_LOW = 50               # Expected correct, got correct
     SURPRISE_POS_NONE = 100             # Expected nothing, got correct
 
+    REACT_NEG_WRONG = ('None', 0)
+    REACT_NEG_RIGHT = ('Happy', 80)
+    REACT_NONE_WRONG = ('None', -50)
+    REACT_NONE_RIGHT = ('None', 50)
+    REACT_POS_WRONG = ('Angry', -80)
+    REACT_POS_RIGHT = ('None', 30)
+
+
+
+
 
     REACT_NEG_HAPPY = ('Angry', 30, 60, 100)
     REACT_NEG_CONCENTRATED = ('Angry', 30, 60, 100)

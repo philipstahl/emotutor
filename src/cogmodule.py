@@ -12,9 +12,8 @@ class CogModule:
     ''' This class handles all cognitive activity of the agent
     '''
     ACT_HIGH = 0.0
-    ACT_LOW = -0.5
-    ACT_NONE = -1.0
-    ACT_NEGATIVE = 0.0
+    ACT_NONE = -0.5
+    ACT_NEG = -1.0
 
     FUNCTION = 'baselevel'   # or 'optimized'
 

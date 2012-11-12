@@ -7,7 +7,7 @@ import ConfigParser
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QBoxLayout, QMainWindow, QAction, QIcon, \
                         QApplication, QDesktopWidget, QMessageBox, \
-                        QDoubleSpinBox, QSpinBox, QComboBox
+                        QDoubleSpinBox, QSpinBox, QComboBox, QCheckBox
 
 from PyQt4.QtCore import SIGNAL, Qt, QTimer
 
@@ -216,7 +216,7 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(True, True, True)
+        self.exp = ListEnvironment(False, False, False)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
@@ -389,7 +389,7 @@ class Settings(QWidget):
     def combo_box(self, selected):
         ''' Returns a combo box of the available emotions.
         '''
-        items = ['Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']
+        items = ['None', 'Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']
         combo = QComboBox()
         combo.setStyleSheet("QComboBox { combobox-popup: 0; }")
         combo.addItems(items)
@@ -409,7 +409,7 @@ class Settings(QWidget):
         box.setSingleStep(step)
         return box
 
-    def int_widget(self, start_val, min_val=0, max_val=100, step=1):
+    def int_widget(self, start_val, min_val=-100, max_val=100, step=1):
         ''' Returns an int widget with the given values.
         '''
         box = QSpinBox()
@@ -718,43 +718,23 @@ class Parameters(Settings):
 
         self.activations = \
             [self.float_widget(CogModule.ACT_HIGH, -10.0, 10.0, 0.1),
-             self.float_widget(CogModule.ACT_LOW, -10.0, 10.0, 0.1)]
+             self.float_widget(CogModule.ACT_NONE, -10.0, 10.0, 0.1)]
 
-        self.emotion = {\
-            'Happy': \
-                [self.combo_box(EmoModule.REACT_NEG_HAPPY[0]),
-                 self.combo_box(EmoModule.REACT_POS_HAPPY[0])],
-            'Concentrated': \
-                [self.combo_box(EmoModule.REACT_NEG_CONCENTRATED[0]),
-                 self.combo_box(EmoModule.REACT_POS_CONCENTRATED[0])],
-           'Bored': \
-                [self.combo_box(EmoModule.REACT_NEG_BORED[0]),
-                 self.combo_box(EmoModule.REACT_POS_BORED[0])],
-           'Annoyed': \
-                [self.combo_box(EmoModule.REACT_NEG_ANNOYED[0]),
-                 self.combo_box(EmoModule.REACT_POS_ANNOYED[0])],
-           'Angry': \
-                [self.combo_box(EmoModule.REACT_NEG_ANGRY[0]),
-                 self.combo_box(EmoModule.REACT_POS_ANGRY[0])]}
+        self.emotion = [\
+            {'Neg': self.combo_box(EmoModule.REACT_NEG_WRONG[0]),
+             'None': self.combo_box(EmoModule.REACT_NONE_WRONG[0]),
+             'Pos': self.combo_box(EmoModule.REACT_POS_WRONG[0])},
+            {'Neg': self.combo_box(EmoModule.REACT_NEG_RIGHT[0]),
+             'None': self.combo_box(EmoModule.REACT_NONE_RIGHT[0]),
+             'Pos': self.combo_box(EmoModule.REACT_POS_RIGHT[0])}]
 
-        def get_intense(emo_specification):
-            ''' Returns the widgets for the intense tripel of the given var.
-            '''
-            return [self.int_widget(emo_specification[1]),
-                    self.int_widget(emo_specification[2]),
-                    self.int_widget(emo_specification[3])]
-
-        self.intense = {\
-            'Happy': [get_intense(EmoModule.REACT_NEG_HAPPY),
-                      get_intense(EmoModule.REACT_POS_HAPPY)],
-            'Concentrated': [get_intense(EmoModule.REACT_NEG_CONCENTRATED),
-                             get_intense(EmoModule.REACT_POS_CONCENTRATED)],
-            'Bored': [get_intense(EmoModule.REACT_NEG_BORED),
-                      get_intense(EmoModule.REACT_POS_BORED)],
-            'Annoyed': [get_intense(EmoModule.REACT_NEG_ANNOYED),
-                        get_intense(EmoModule.REACT_POS_ANNOYED)],
-            'Angry': [get_intense(EmoModule.REACT_NEG_ANGRY),
-                      get_intense(EmoModule.REACT_POS_ANGRY)]}
+        self.intense = [\
+            {'Neg': self.int_widget(EmoModule.REACT_NEG_WRONG[1]),
+             'None': self.int_widget(EmoModule.REACT_NONE_WRONG[1]),
+             'Pos': self.int_widget(EmoModule.REACT_POS_WRONG[1])},
+            {'Neg': self.int_widget(EmoModule.REACT_NEG_RIGHT[1]),
+             'None': self.int_widget(EmoModule.REACT_NONE_RIGHT[1]),
+             'Pos': self.int_widget(EmoModule.REACT_POS_RIGHT[1])}]
 
         super(Parameters, self).__init__(parent)
 
@@ -778,68 +758,59 @@ class Parameters(Settings):
     def init_parameters(self):
         ''' Creates the layout of the settings screen
         '''
-        names = ['Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']
+        main_layout = QBoxLayout(2)
+        main_layout.addWidget(self.get_activation_widget())
+        main_layout.addWidget(self.get_reaction_widget())
+        main_widget = QWidget()
+        main_widget.setLayout(main_layout)
+        return main_widget
 
-        desc_layout = QBoxLayout(2)
-        desc_layout.addWidget(QLabel('Current emotion:'))
-        for name in names:
-            desc_layout.addWidget(QLabel(name + ':'))
-        desc_widget = QWidget()
-        desc_widget.setLayout(desc_layout)
 
+    def get_reaction_widget(self):
+        ''' Different cases:
+            - Expectation was negative and answer negative
+            - Expectation was none and answer was negative
+            - Expectation was positive and answer was negative
+            - Expectation was negative and answer was negative
+            - Expectation was none and answer was negative
+            - Expectation was positive and answer was negative
+
+            mapping to
+            - Surprise yes/no, Trigger Emotion, Intense
+        '''
         def get_emo_widget(correct):
             ''' Returns a block of emotions, specifying each emotional reaction
                 to the current emotion given the correctness of the current
                 answer.
             '''
-            layout = QBoxLayout(2)
-            layout.addWidget(QLabel('Emotion:'))
-            for name in names:
-                layout.addWidget(self.emotion[name][correct])
-            widget = QWidget()
-            widget.setLayout(layout)
-            return widget
 
-        def get_int_widget(correct):
-            ''' Returns a block of emotions, specifying each intense reaction
-                to the current emotion given the correctness of the current
-                answer.
-            '''
+        widget = QWidget()
+        layout = QGridLayout()
 
-            layout = QGridLayout()
-            self.add_line(layout, [QLabel('None'), QLabel('Low'),
-                                   QLabel('High')], 0)
-            for name in names:
-                self.add_line(layout, self.intense[name][correct],
-                              names.index(name) + 1)
-            widget = QWidget()
-            widget.setLayout(layout)
-            return widget
+        layout.addWidget(QLabel('Expectation:'), 0, 0)
+        layout.addWidget(QLabel('Answer:'), 0, 1)
+        layout.addWidget(QLabel('Trigger Surprise:'), 0, 2)
+        layout.addWidget(QLabel('Trigger Emotion:'), 0, 3)
+        layout.addWidget(QLabel('Intense:'), 0, 4)
 
-        map_layout = QGridLayout()
-        map_layout.addWidget(desc_widget, 0, 0)
-        map_layout.addWidget(get_emo_widget(0), 0, 1)
-        map_layout.addWidget(get_int_widget(0), 0, 2)
-        map_layout.addWidget(get_emo_widget(1), 0, 3)
-        map_layout.addWidget(get_int_widget(1), 0, 4)
+        def add(layout, expectation, answer, correct, expect, line):
+            layout.addWidget(QLabel(expectation), line, 0)
+            layout.addWidget(QLabel(answer), line, 1)
+            layout.addWidget(QCheckBox(), line, 2)
+            layout.addWidget(self.emotion[correct][expect], line, 3)
+            layout.addWidget(self.intense[correct][expect], line, 4)
 
-        map_widget = QWidget()
-        map_widget.setLayout(map_layout)
+        add(layout, 'Negative', 'Wrong', 0, 'Neg', 1)
+        add(layout, 'Negative', 'Positive', 1, 'Neg', 2)
+        add(layout, 'None', 'Wrong', 0, 'None', 3)
+        add(layout, 'None', 'Positive', 1, 'None', 4)
+        add(layout, 'Positive', 'Wrong', 0, 'Pos', 5)
+        add(layout, 'Positive', 'Positive', 1, 'Pos', 6)
 
-        desc_line_layout = QBoxLayout(0)
-        desc_line_layout.addWidget(QLabel(''))
-        desc_line_layout.addWidget(QLabel('Wrong answer'))
-        desc_line_layout.addWidget(QLabel('Correct answer'))
-        desc_line = QWidget()
-        desc_line.setLayout(desc_line_layout)
+        widget.setLayout(layout)
+        return widget
 
-        main_layout = QBoxLayout(2)
-        main_layout.addWidget(self.get_activation_widget())
-        main_layout.addWidget(desc_line)
-        main_layout.addWidget(map_widget)
-        main_widget = QWidget()
-        main_widget.setLayout(main_layout)
-        return main_widget
+
 
     def get_activation_widget(self):
         ''' Returns the widget containint the activation settings.
@@ -853,17 +824,17 @@ class Parameters(Settings):
         function_widget = QWidget()
         function_widget.setLayout(function_layout)
 
-        exp_layout = QBoxLayout(0)
-        exp_layout.addWidget(QLabel('Expection:'))
-        exp_layout.addWidget(QLabel('Not expected'))
-        exp_layout.addWidget(QLabel(' < '))
-        exp_layout.addWidget(self.activations[1])
-        exp_layout.addWidget(QLabel(' < '))
-        exp_layout.addWidget(QLabel('Expected'))
-        exp_layout.addWidget(QLabel(' < '))
-        exp_layout.addWidget(self.activations[0])
-        exp_layout.addWidget(QLabel(' < '))
-        exp_layout.addWidget(QLabel('Highly expected'))
+        exp_layout = QGridLayout()
+        exp_layout.addWidget(QLabel('Expection:'), 0, 0)
+        exp_layout.addWidget(QLabel('Negative expected'), 1, 0)
+        exp_layout.addWidget(QLabel(' < '), 1, 1)
+        exp_layout.addWidget(self.activations[1], 1, 2)
+        exp_layout.addWidget(QLabel(' < '), 1, 3)
+        exp_layout.addWidget(QLabel('None expected'), 1, 4)
+        exp_layout.addWidget(QLabel(' < '), 1, 5)
+        exp_layout.addWidget(self.activations[0], 1, 6)
+        exp_layout.addWidget(QLabel(' < '), 1, 7)
+        exp_layout.addWidget(QLabel('Positive expected'), 1, 8)
         exp_widget = QWidget()
         exp_widget.setLayout(exp_layout)
 

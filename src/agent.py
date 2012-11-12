@@ -2,7 +2,7 @@
 '''
 
 from threading import Thread
-import winsound                         # sound for windows
+#import winsound                         # sound for windows
 #import pygame
 from PyQt4.QtGui import QSound
 
@@ -31,20 +31,20 @@ class Agent:
         ''' Plays a wave sound
         '''
         print 'play sound', soundfile
-        def play():
-            ''' Plays a sound as an extra thread
-            '''
+        #def play():
+            #''' Plays a sound as an extra thread
+            #'''
             # Windows:
-            path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
-            winsound.PlaySound(path + '%s.wav' % soundfile,
-                                winsound.SND_FILENAME)
+            #path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+            #winsound.PlaySound(path + '%s.wav' % soundfile,
+            #                    winsound.SND_FILENAME)
             #pygame.init()
             #pygame.mixer.set_num_channels(1)
             #pygame.mixer.music.load('sounds/' + soundfile + '.wav')
             #pygame.mixer.music.play()
 
-        thread = Thread(target=play, args=())
-        thread.start()
+        #thread = Thread(target=play, args=())
+        #thread.start()
 
     def introduce(self):
         ''' The agents reaction at the beginning of the training
