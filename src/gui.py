@@ -11,147 +11,12 @@ from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
 
 from PyQt4.QtCore import SIGNAL, Qt, QTimer
 
-from environment import Environment, ListEnvironment
+from environment import Environment
 from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, \
                       Surprise
 from marc import Marc
 from cogmodule import CogModule
 from speechmodule import OpenMary
-
-
-class VocabTrainer(QWidget):
-    ''' Gui for a simple vocabulary trainer
-    '''
-    def __init__(self, parent=None):
-        super(VocabTrainer, self).__init__(parent)
-        # Create widgets:
-        label_emo_output = QLabel('Emotional Output:')
-        label_speech_output = QLabel('Speech Output:')
-
-        self.emo_output = QLabel('')
-        self.speech_output = QLabel('')
-
-        self.user_input = QLineEdit()
-        self.user_input.hide()
-
-        self.label_solution = QLabel('')
-        self.label_solution.show()
-
-        self.submit_button = QPushButton("&Submit")
-        self.submit_button.hide()
-
-        self.next_button = QPushButton("&Start")
-        self.next_button.show()
-
-        # Define button functionality:QtCore
-        self.submit_button.clicked.connect(self.submit)
-        self.next_button.clicked.connect(self.next)
-
-        # Design layout:
-        agent_layout = QGridLayout()
-        agent_layout.addWidget(label_emo_output, 0, 0)
-        agent_layout.addWidget(self.emo_output, 0, 1)
-        agent_layout.addWidget(label_speech_output, 1, 0)
-        agent_layout.addWidget(self.speech_output, 1, 1)
-
-        agent_layout.setColumnMinimumWidth(0, 100)
-        agent_layout.setColumnMinimumWidth(1, 500)
-
-        agent = QWidget()
-        agent.setLayout(agent_layout)
-
-        user_layout = QGridLayout()
-        user_layout.addWidget(self.user_input, 0, 0)
-        user_layout.addWidget(self.submit_button, 0, 1)
-        user_layout.addWidget(self.next_button, 0, 1)
-        user_layout.addWidget(self.label_solution, 1, 0)
-        user_layout.setColumnMinimumWidth(0, 500)
-        user_layout.setColumnMinimumWidth(1, 100)
-
-        user = QWidget()
-        user.setLayout(user_layout)
-
-        main_layout = QBoxLayout(2)
-        main_layout.addWidget(agent)
-        main_layout.addWidget(user)
-
-        self.setLayout(main_layout)
-        self.resize(600, 200)
-        self.exp = Environment(False, False, True)
-
-        emotion, speech = self.exp.start()
-        self.emo_output.setText(emotion)
-        self.speech_output.setText(speech)
-
-    def submit(self):
-        ''' Submit an answer by the user
-        '''
-        answer = self.user_input.text()
-
-        if answer == "":
-            QMessageBox.information(self, "Empty Field", "Please enter a word")
-            return
-
-        emotion, speech, solved = self.exp.evaluate(answer)
-
-        if solved:
-            self.user_input.setStyleSheet('QLineEdit {color: green}')
-        else:
-            self.user_input.setStyleSheet('QLineEdit {color: red}')
-            self.label_solution.setText(self.exp.tasks[0].answer)
-
-        self.emo_output.setText(emotion)
-        self.speech_output.setText(speech)
-
-        self.submit_button.hide()
-        self.user_input.setReadOnly(True)
-        self.next_button.show()
-
-    def next(self):
-        ''' Show next task
-        '''
-        if self.user_input.isHidden():
-            self.next_button.setText("Next")
-            self.user_input.show()
-
-        if len(self.exp.tasks) == 0:
-            self.end()
-        else:
-            emotion, speech = self.exp.present_task()
-
-            self.emo_output.setText(emotion)
-            self.speech_output.setText(speech)
-
-            self.label_solution.setText('')
-            self.next_button.hide()
-            self.user_input.setStyleSheet('QLineEdit {color: black}')
-            self.user_input.setText('')
-            self.user_input.setReadOnly(False)
-            self.submit_button.show()
-
-    def end(self):
-        ''' End vocabulary test
-        '''
-        emotion, speech = self.exp.end()
-        self.emo_output.setText(emotion)
-        self.speech_output.setText(speech)
-
-        self.next_button.hide()
-        self.user_input.setText('')
-        self.user_input.hide()
-
-    def keyPressEvent(self, event):
-        ''' Handles key events
-        '''
-        if event.key() == Qt.Key_Return:
-            if ((self.user_input.isHidden()
-                 and not self.next_button.isHidden()) or
-               (not self.user_input.isHidden()
-                and self.user_input.isReadOnly())):
-                self.next()
-            elif (not self.user_input.isHidden() and
-                  not self.user_input.isReadOnly()):
-                self.submit()
 
 
 class ListTrainer(QWidget):
@@ -216,7 +81,7 @@ class ListTrainer(QWidget):
 
         self.setLayout(main_layout)
         self.resize(600, 200)
-        self.exp = ListEnvironment(False, False, False)
+        self.exp = Environment(False, False, False)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
@@ -386,10 +251,9 @@ class Settings(QWidget):
         return button
 
 
-    def combo_box(self, selected):
+    def combo_box(self, selected, items=['None', 'Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']):
         ''' Returns a combo box of the available emotions.
         '''
-        items = ['None', 'Happy', 'Concentrated', 'Bored', 'Annoyed', 'Angry']
         combo = QComboBox()
         combo.setStyleSheet("QComboBox { combobox-popup: 0; }")
         combo.addItems(items)
@@ -759,12 +623,53 @@ class Parameters(Settings):
         ''' Creates the layout of the settings screen
         '''
         main_layout = QBoxLayout(2)
+
+
+        desc1 = QLabel('Map activation to expectation:')
+        desc2 = QLabel('Map expectation to emotion:')
+        desc3 = QLabel('Map expectation + answer to reaction:')
+        for desc in [desc1, desc2, desc3]:
+            desc.setStyleSheet('QLabel {font-weight:bold}')
+
+        main_layout.addWidget(desc1)
+        main_layout.addWidget(self.get_function_widget())
         main_layout.addWidget(self.get_activation_widget())
+        main_layout.addWidget(desc2)
+        main_layout.addWidget(self.get_expectation_widget())
+        main_layout.addWidget(desc3)
         main_layout.addWidget(self.get_reaction_widget())
         main_widget = QWidget()
         main_widget.setLayout(main_layout)
         return main_widget
 
+    def get_function_widget(self):
+        ''' Returns the widget containing the function settings
+        '''
+        layout = QBoxLayout(0)
+        layout.addWidget(QLabel('Function:'))
+        layout.addWidget(self.function)
+        widget = QWidget()
+        widget.setLayout(layout)
+        return widget
+
+    def get_activation_widget(self):
+        ''' Returns the widget containint the activation settings.
+        '''
+        layout = QGridLayout()
+        layout.addWidget(QLabel('Expection:'), 0, 0)
+        layout.addWidget(QLabel('Negative'), 0, 1)
+        layout.addWidget(QLabel(' < '), 0, 2)
+        layout.addWidget(self.activations[1], 0, 3)
+        layout.addWidget(QLabel(' < '), 0, 4)
+        layout.addWidget(QLabel('None'), 0, 5)
+        layout.addWidget(QLabel(' < '), 0, 6)
+        layout.addWidget(self.activations[0], 0, 7)
+        layout.addWidget(QLabel(' < '), 0, 8)
+        layout.addWidget(QLabel('Positive'), 0, 9)
+
+        widget = QWidget()
+        widget.setLayout(layout)
+        return widget
 
     def get_reaction_widget(self):
         ''' Different cases:
@@ -778,19 +683,11 @@ class Parameters(Settings):
             mapping to
             - Surprise yes/no, Trigger Emotion, Intense
         '''
-        def get_emo_widget(correct):
-            ''' Returns a block of emotions, specifying each emotional reaction
-                to the current emotion given the correctness of the current
-                answer.
-            '''
-
-        widget = QWidget()
         layout = QGridLayout()
-
         layout.addWidget(QLabel('Expectation:'), 0, 0)
         layout.addWidget(QLabel('Answer:'), 0, 1)
-        layout.addWidget(QLabel('Trigger Surprise:'), 0, 2)
-        layout.addWidget(QLabel('Trigger Emotion:'), 0, 3)
+        layout.addWidget(QLabel('Surprise:'), 0, 2)
+        layout.addWidget(QLabel('Emotion:'), 0, 3)
         layout.addWidget(QLabel('Intense:'), 0, 4)
 
         def add(layout, expectation, answer, correct, expect, line):
@@ -801,56 +698,31 @@ class Parameters(Settings):
             layout.addWidget(self.intense[correct][expect], line, 4)
 
         add(layout, 'Negative', 'Wrong', 0, 'Neg', 1)
-        add(layout, 'Negative', 'Positive', 1, 'Neg', 2)
+        add(layout, 'Negative', 'Correct', 1, 'Neg', 2)
         add(layout, 'None', 'Wrong', 0, 'None', 3)
-        add(layout, 'None', 'Positive', 1, 'None', 4)
+        add(layout, 'None', 'Correct', 1, 'None', 4)
         add(layout, 'Positive', 'Wrong', 0, 'Pos', 5)
-        add(layout, 'Positive', 'Positive', 1, 'Pos', 6)
+        add(layout, 'Positive', 'Correct', 1, 'Pos', 6)
 
+        widget = QWidget()
         widget.setLayout(layout)
         return widget
 
 
-
-    def get_activation_widget(self):
-        ''' Returns the widget containint the activation settings.
-        '''
-        desc = QLabel('Activation:')
-        desc.setStyleSheet('QLabel {font-weight:bold}')
-
-        function_layout = QBoxLayout(0)
-        function_layout.addWidget(QLabel('Function:'))
-        function_layout.addWidget(self.function)
-        function_widget = QWidget()
-        function_widget.setLayout(function_layout)
-
-        exp_layout = QGridLayout()
-        exp_layout.addWidget(QLabel('Expection:'), 0, 0)
-        exp_layout.addWidget(QLabel('Negative expected'), 1, 0)
-        exp_layout.addWidget(QLabel(' < '), 1, 1)
-        exp_layout.addWidget(self.activations[1], 1, 2)
-        exp_layout.addWidget(QLabel(' < '), 1, 3)
-        exp_layout.addWidget(QLabel('None expected'), 1, 4)
-        exp_layout.addWidget(QLabel(' < '), 1, 5)
-        exp_layout.addWidget(self.activations[0], 1, 6)
-        exp_layout.addWidget(QLabel(' < '), 1, 7)
-        exp_layout.addWidget(QLabel('Positive expected'), 1, 8)
-        exp_widget = QWidget()
-        exp_widget.setLayout(exp_layout)
-
-        layout = QBoxLayout(2)
-        layout.addWidget(desc)
-        layout.addWidget(function_widget)
-        layout.addWidget(exp_widget)
+    def get_expectation_widget(self):
+        items = ['None', 'Fear', 'Hope']
+        layout = QGridLayout()
+        layout.addWidget(QLabel('Expectation:'), 0, 0)
+        layout.addWidget(QLabel('Trigger:'), 0, 1)
+        layout.addWidget(QLabel('Negative:'), 1, 0)
+        layout.addWidget(QLabel('None:'), 2, 0)
+        layout.addWidget(QLabel('Positive:'), 3, 0)
+        layout.addWidget(self.combo_box('Fear', items=items), 1, 1)
+        layout.addWidget(self.combo_box('None', items=items), 2, 1)
+        layout.addWidget(self.combo_box('Hope', items=items), 3, 1)
         widget = QWidget()
         widget.setLayout(layout)
-
-        extra_layout = QBoxLayout(0)
-        extra_layout.addWidget(widget)
-        extra_layout.addWidget(QLabel(''))
-        extra_widget = QWidget()
-        extra_widget.setLayout(extra_layout)
-        return extra_widget
+        return widget
 
     def apply_settings(self):
         ''' apply settings loaded from the gui

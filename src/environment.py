@@ -4,33 +4,11 @@
 
 '''
 import datetime
-from agent import Agent, ListAgent
+from agent import Agent
 from marc import Marc
 
 from emomodule import WasabiListener, EmoModule
 
-
-class Task:
-    ''' Class representing a single task in the experimental environment
-    '''
-    def __init__(self, question, answer):
-        self.question = question
-        self.answer = answer
-        self.trials = []
-
-    def last_trial(self):
-        ''' Return the values of the last trial of the task
-        '''
-        return(self.trials[-1])
-
-    def misses(self):
-        ''' Counts how many times the task was answered wrong
-        '''
-        misses = 0
-        for trial in self.trials:
-            if not trial[0]:
-                misses += 1
-        return misses
 
 class Word:
     ''' Class representing a single word from a list of words the user has to
@@ -46,6 +24,7 @@ class Word:
     def time(i):
         return self.times[i]
 
+
 class Environment:
     ''' The class for the experimental environment
     '''
@@ -53,13 +32,14 @@ class Environment:
     def __init__(self, marc=False, wasabi=False, mary=False):
         ''' vars indicate the use of marc, wasabi and open mary
         '''
-        self.tasks = [Task("Auto", "Car"), Task("Haus", "House"),
-                      Task("Stuhl", "Chair"), Task("Messer", "Knife")]
-        self.solved_tasks = []
-        self.task = None
-        self.time_start = 0
+        self.words = [Word('Haus'), Word('Baum'), Word('Auto')]
+        import random
+        random.shuffle(self.words)
+
+        self.index = 0
 
         self.agent = Agent(marc, wasabi, mary)
+
 
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time
@@ -96,55 +76,6 @@ class Environment:
         listener = WasabiListener(marc)
         listener.start()
 
-    def start(self):
-        ''' Show init text and wait for start button.
-        '''
-        return self.agent.introduce()
-
-    def present(self):
-        ''' Show next task and wait for answer.
-        '''
-        self.task = self.tasks.pop()
-        self.time_start = datetime.datetime.now().replace(microsecond=0)
-        return self.agent.present(self.task)
-
-    def evaluate(self, answer):
-        ''' Show feedback of task and wait for next button
-        '''
-        time_end = datetime.datetime.now().replace(microsecond=0)
-        time_diff = time_end - self.time_start
-
-        solved = False
-        if self.task.check(answer, time_diff.seconds):
-            self.solved_tasks.append(self.task)
-            solved = True
-        else:
-            self.tasks.insert(0, self.task)
-
-        emotion, speech = self.agent.evaluate(self.task)
-        return (emotion, speech, solved)
-
-    def end(self):
-        ''' Show final text
-        '''
-        return self.agent.end(self.solved_tasks)
-
-
-class ListEnvironment:
-    ''' The class for the experimental environment
-    '''
-
-    def __init__(self, marc=False, wasabi=False, mary=False):
-        ''' vars indicate the use of marc, wasabi and open mary
-        '''
-        self.words = [Word('Haus'), Word('Baum'), Word('Auto')]
-        import random
-        random.shuffle(self.words)
-
-        self.index = 0
-
-        self.agent = ListAgent(marc, wasabi, mary)
-
     def seconds(self, time):
         ''' Returns the given time in seconds
         '''
@@ -169,7 +100,7 @@ class ListEnvironment:
     def present_current(self):
         ''' Presents the current task.
         '''
-        # TODO: check is this line could be in one unequality
+        # TODO: check if this line could be in one unequality
         if 0 <= self.index and self.index <= len(self.words):
             word = self.words[self.index]
             word.add(self.seconds(datetime.datetime.now()))
