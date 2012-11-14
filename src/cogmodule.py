@@ -5,7 +5,7 @@ import random
 import math
 import datetime
 
-from emomodule import Surprise, EmoModule
+from emomodule import EmoModule, Surprise, Hope, Fear
 
 
 class CogModule:
@@ -142,13 +142,19 @@ class CogModule:
     def expectation(self, word):
         activation = self.activation(word.times, 0.5)
         expectation = str(activation) + ': '
+        emotion = None
         if activation > CogModule.ACT_HIGH:
-            expectation += 'Highly expecting'
+            expectation += 'Expecting right answer.'
+            emotion = Hope()
         elif activation > CogModule.ACT_LOW:
-            expectation += 'Expecting'
+            expectation += 'Expecting nothing.'
         else:
-            expectation += 'Not expecting'
-        return expectation #+ ' ' + word.word
+            expectation += 'Expecting wrong'
+            emotion = Fear()
+
+        # Trigger hope / fear
+
+        return (expectation, emotion)
 
 
 if __name__ == '__main__':

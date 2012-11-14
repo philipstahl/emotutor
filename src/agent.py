@@ -71,6 +71,16 @@ class Agent:
         self.speak(speech)
         return (str(emotion), '...', speech.text)
 
+    def wait(self, word):
+        ''' Wait for user input and return the current emotion
+        '''
+        emotion = self.emo_module.get_primary_emotion()
+        expectation, emo = self.cog_module.expectation(word)
+        if emo:
+            self.emo_module.send(emo, 0)
+
+        return (str(emotion), expectation, '...')
+
 
     def speak(self, speech):
         ''' Speaks the given speech via marc or wave file
@@ -98,10 +108,3 @@ class Agent:
             verbal_output = speech.text
 
         return (str(emotion), '...', verbal_output)
-
-    def wait(self, word):
-        ''' Wait for user input and return the current emotion
-        '''
-        emotion = self.emo_module.get_primary_emotion()
-        expectation = self.cog_module.expectation(word)
-        return (str(emotion), expectation, '...')

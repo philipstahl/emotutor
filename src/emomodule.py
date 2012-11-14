@@ -138,6 +138,39 @@ class Surprise(Emotion):
         return self.string
 
 
+class Hope(Emotion):
+    ''' Class for an angry emotion
+    '''
+    NAME = 'hope'
+    MARC = ''
+    INTENSE = 1.0
+    INTERPOLATE = 1.0
+    FREQUENCE = 2
+
+    def __init__(self, impulse = 100):
+        Emotion.__init__(self, Hope.NAME, Hope.MARC,
+                         impulse = impulse, adjust = Hope.INTENSE,
+                         interpolate = Hope.INTERPOLATE,
+                         frequence = Hope.FREQUENCE)
+
+
+class Fear(Emotion):
+    ''' Class for an angry emotion
+    '''
+    NAME = 'hope'
+    MARC = ''
+    INTENSE = 1.0
+    INTERPOLATE = 1.0
+    FREQUENCE = 2
+
+    def __init__(self, impulse = 100):
+        Emotion.__init__(self, Fear.NAME, Fear.MARC,
+                         impulse = impulse, adjust = Fear.INTENSE,
+                         interpolate = Fear.INTERPOLATE,
+                         frequence = Fear.FREQUENCE)
+
+
+
 class EmoModule:
     ''' If WASABI is used, the emotional status of the agent is represented by
         the WASABI model.
