@@ -24,11 +24,11 @@ class Speech:
     def __init__(self, name, text, emotion):
         self.text = text
         self.emotion = 'neutral'
-        if emotion.NAME == Happy.NAME:
+        if emotion.name == 'happy':
             self.emotion = 'happy'
-        if emotion.NAME == Annoyed.NAME:
+        if emotion.name == 'annoyed':
             self.emotion = 'sad'
-        if emotion.NAME == Angry.NAME:
+        if emotion.name == 'angry':
             self.emotion = 'angry'
         self.name = name + '_' + self.emotion
 
@@ -166,25 +166,25 @@ class SpeechModule:
         '''
         reaction = ""
 
-        if correct and emotion.NAME == Happy.NAME:
+        if correct and emotion.name == 'happy':
             reaction += "Super gemacht! Deine Antwort ist richtig."
-        elif correct and emotion.NAME == Concentrated.NAME:
+        elif correct and emotion.name == 'concentrated':
             reaction += "Genau. Deine Antwort ist richtig."
-        elif correct and emotion.NAME == Bored.NAME:
+        elif correct and emotion.name == 'bored':
             reaction += "Deine Antwork ist richtig."
-        elif correct and emotion.NAME == Annoyed.NAME:
+        elif correct and emotion.name == 'annoyed':
             reaction += "Deine Antwork ist richtig."
-        elif correct and emotion.NAME == Angry.NAME:
+        elif correct and emotion.name == 'angry':
             reaction += "Ja deine Antwort ist richtig."
-        elif not correct and emotion.NAME == Happy.NAME:
+        elif not correct and emotion.name == 'happy':
             reaction += "Halb so schlimm. Kann ja mal passieren."
-        elif not correct and emotion.NAME == Concentrated.NAME:
+        elif not correct and emotion.name == 'concentrated':
             reaction += "Deine Antwort ist leider falsch."
-        elif not correct and emotion.NAME == Bored.NAME:
+        elif not correct and emotion.name == 'bored':
             reaction += "Deine Antwork ist falsch"
-        elif not correct and emotion.NAME == Annoyed.NAME:
+        elif not correct and emotion.name == 'annoyed':
             reaction += "Schade. Deine Antwort ist falsch."
-        elif not correct and emotion.NAME == Angry.NAME:
+        elif not correct and emotion.name == 'angry':
             reaction += "Unfassbar. Wie kannst Du das nicht wissen?"
         else:
             reaction += "Wrong emotion or surprise" + emotion.name
@@ -230,16 +230,16 @@ class SpeechModule:
         #    self.tts.save_from_xml(speech)
         return speech
 
-    def react(self, surprise, emotion, word):
+    def react(self, emotion, word):
 
         reaction = ''
-        if emotion.NAME == Happy.NAME:
+        if emotion.name == 'happy':
             reaction += ('Leider nein. Kann jedem passieren. Richtig wäre '
                         + word)
-        elif emotion.NAME == Concentrated.NAME or emotion.NAME == Bored.NAME \
-             or emotion.NAME == Annoyed.NAME:
+        elif emotion.name == 'concentrated' or emotion.name == 'bored' \
+             or emotion.name == 'annoyed':
             reaction += 'Nein. Richtig wäre ' + word
-        elif emotion.NAME == Angry.NAME:
+        elif emotion.name == 'angry':
             reaction += 'Nein natürlich nicht! An die Stelle kommt ' + word
 
         speech = Speech('reaction', reaction, emotion)

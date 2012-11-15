@@ -24,7 +24,6 @@ class Emotion:
     def get_bml_code(self):
         ''' Returns the BML Code of the emotion, for showing in MARC
         '''
-        #print 'send', self.__repr__()
         return "<bml id=\"Perform{0}\"> \
                 <marc:fork id=\"Show_{1}_fork_1\"> \
                 <wait duration=\"{2}\" /> \
@@ -44,15 +43,13 @@ class Emotion:
 class Happy(Emotion):
     ''' Class for an happy emotion
     '''
-    NAME = 'happy'
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, Happy.NAME, Happy.MARC,
-
+        Emotion.__init__(self, 'happy', Happy.MARC,
                          impulse = impulse, adjust = Happy.INTENSE,
                          interpolate = Happy.INTERPOLATE,
                          frequence = Happy.FREQUENCE)
@@ -61,14 +58,13 @@ class Happy(Emotion):
 class Concentrated(Emotion):
     ''' Class for a concentrated emotion
     '''
-    NAME = 'concentrated'
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, Concentrated.NAME, Concentrated.MARC,
+        Emotion.__init__(self, 'concentrated', Concentrated.MARC,
                          impulse = impulse, adjust = Concentrated.INTENSE,
                          interpolate = Concentrated.INTERPOLATE,
                          frequence = Concentrated.FREQUENCE)
@@ -77,14 +73,13 @@ class Concentrated(Emotion):
 class Bored(Emotion):
     ''' Class for a bored emotion
     '''
-    NAME = 'bored'
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, Bored.NAME, Bored.MARC, impulse = impulse, adjust = Bored.INTENSE,
+        Emotion.__init__(self, 'bored', Bored.MARC, impulse = impulse, adjust = Bored.INTENSE,
                          interpolate = Bored.INTERPOLATE,
                          frequence = Bored.FREQUENCE)
 
@@ -92,14 +87,13 @@ class Bored(Emotion):
 class Annoyed(Emotion):
     ''' Class for an annoyed emotion
     '''
-    NAME = 'annoyed'
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, Annoyed.NAME, Annoyed.MARC, impulse = -impulse, adjust = -Annoyed.INTENSE,
+        Emotion.__init__(self, 'annoyed', Annoyed.MARC, impulse = -impulse, adjust = -Annoyed.INTENSE,
                          interpolate = Annoyed.INTERPOLATE,
                          frequence = Annoyed.FREQUENCE)
 
@@ -107,28 +101,26 @@ class Annoyed(Emotion):
 class Angry(Emotion):
     ''' Class for an angry emotion
     '''
-    NAME = 'angry'
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, Angry.NAME, Angry.MARC, impulse = -impulse, adjust = -Angry.INTENSE,
+        Emotion.__init__(self, 'angry', Angry.MARC, impulse = -impulse, adjust = -Angry.INTENSE,
                          interpolate = Angry.INTERPOLATE,
                          frequence = Angry.FREQUENCE)
 
 class Surprise(Emotion):
     ''' Class for an angry emotion
     '''
-    NAME = 'surprised'
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100, string='high'):
-        Emotion.__init__(self, Surprise.NAME, Surprise.MARC,
+        Emotion.__init__(self, 'surprised', Surprise.MARC,
                          impulse = impulse, adjust = Surprise.INTENSE,
                          interpolate = Surprise.INTERPOLATE,
                          frequence = Surprise.FREQUENCE)
@@ -141,14 +133,13 @@ class Surprise(Emotion):
 class Hope(Emotion):
     ''' Class for an angry emotion
     '''
-    NAME = 'hope'
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, Hope.NAME, Hope.MARC,
+        Emotion.__init__(self, 'hope', Hope.MARC,
                          impulse = impulse, adjust = Hope.INTENSE,
                          interpolate = Hope.INTERPOLATE,
                          frequence = Hope.FREQUENCE)
@@ -157,14 +148,13 @@ class Hope(Emotion):
 class Fear(Emotion):
     ''' Class for an angry emotion
     '''
-    NAME = 'hope'
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, Fear.NAME, Fear.MARC,
+        Emotion.__init__(self, 'fear', Fear.MARC,
                          impulse = impulse, adjust = Fear.INTENSE,
                          interpolate = Fear.INTERPOLATE,
                          frequence = Fear.FREQUENCE)
@@ -182,37 +172,12 @@ class EmoModule:
     WASABI_PORT_IN = 0
     WASABI_PORT_OUT = 0
 
-
-    SURPRISE_NEG_HIGH = 100             # Higly expected correct, got false
-    SURPRISE_NEG_LOW = 50               # Expected correct, got false
-    SURPRISE_NEG_NONE = 0               # Expected nothing, got false
-
-    SURPRISE_POS_HIGH = 0              # Higly expected correct, got correct
-    SURPRISE_POS_LOW = 50               # Expected correct, got correct
-    SURPRISE_POS_NONE = 100             # Expected nothing, got correct
-
     REACT_NEG_WRONG = ('None', 0)
     REACT_NEG_RIGHT = ('Happy', 80)
     REACT_NONE_WRONG = ('None', -50)
     REACT_NONE_RIGHT = ('None', 50)
     REACT_POS_WRONG = ('Angry', -80)
     REACT_POS_RIGHT = ('None', 30)
-
-
-
-
-
-    REACT_NEG_HAPPY = ('Angry', 30, 60, 100)
-    REACT_NEG_CONCENTRATED = ('Angry', 30, 60, 100)
-    REACT_NEG_BORED = ('Angry', 30, 60, 100)
-    REACT_NEG_ANNOYED = ('Angry', 30, 60, 100)
-    REACT_NEG_ANGRY = ('Angry', 30, 60, 100)
-
-    REACT_POS_HAPPY = ('Happy', 30, 60, 100)
-    REACT_POS_CONCENTRATED = ('Happy', 30, 60, 100)
-    REACT_POS_BORED = ('Happy', 30, 60, 100)
-    REACT_POS_ANNOYED = ('Happy', 30, 60, 100)
-    REACT_POS_ANGRY = ('Happy', 30, 60, 100)
 
 
     def __init__(self, marc=None, use_wasabi=False):
@@ -239,77 +204,76 @@ class EmoModule:
         if name in name_to_emotion.keys():
             return name_to_emotion[name](impulse=impulse)
         else:
-            print 'Wrong emotion name given'
+            return None
 
 
-    def check(self, correct, surprise):
+    def check(self, correct, expectation):
         ''' Task evaluation according to the emotional reaction.
-
             Sends an emotional input to wasabi and text back to the agent
+
+            correct: correctness of the given answer: true / false
+            expecation: of the answer before answer was given:
+                        negative / none / positive
         '''
-        #if surprise.impulse > 0:
-            #if self.marc:
-            #    self.marc.show(surprise)
-            # TODO(How to send surprise to wasabi correct?)
-            #if self.wasabi:
-            #    self.send(surprise.NAME, int(surprise.impulse))
-
-        pos_emotions = {'happy': EmoModule.REACT_POS_HAPPY,
-                        'concentrated': EmoModule.REACT_POS_CONCENTRATED,
-                        'bored': EmoModule.REACT_POS_BORED,
-                        'annoyed': EmoModule.REACT_POS_ANNOYED,
-                        'angry': EmoModule.REACT_POS_ANGRY}
-
-        neg_emotions = {'happy': EmoModule.REACT_NEG_HAPPY,
-                        'concentrated': EmoModule.REACT_NEG_CONCENTRATED,
-                        'bored': EmoModule.REACT_NEG_BORED,
-                        'annoyed': EmoModule.REACT_NEG_ANNOYED,
-                        'angry': EmoModule.REACT_NEG_ANGRY}
-
-        # get emotion:
-        current = self.get_primary_emotion()
-        reaction = None
-
+        emotion = 'None'
+        impulse = 0
         if correct:
-            reaction = pos_emotions[current.NAME]
+            if expectation == 'negative':
+                emotion, impulse = EmoModule.REACT_NEG_RIGHT
+            elif expectation == 'none':
+                emotion, impulse = EmoModule.REACT_NONE_RIGHT
+            elif expectation == 'positive':
+                emotion, impulse = EmoModule.REACT_POS_RIGHT
+            else:
+                print 'Got wrong expectation:', expectation
         else:
-            reaction = neg_emotions[current.NAME]
+            if expectation == 'negative':
+                emotion, impulse = EmoModule.REACT_NEG_WRONG
+            elif expectation == 'none':
+                emotion, impulse = EmoModule.REACT_NONE_WRONG
+            elif expectation == 'positive':
+                emotion, impulse = EmoModule.REACT_POS_WRONG
+            else:
+                print 'Got wrong expectation:', expectation
 
-        pos_impulses = [EmoModule.SURPRISE_POS_NONE, EmoModule.SURPRISE_POS_LOW, EmoModule.SURPRISE_POS_HIGH]
-        neg_impulses = [EmoModule.SURPRISE_NEG_NONE, EmoModule.SURPRISE_NEG_LOW, EmoModule.SURPRISE_NEG_HIGH]
-        # get intense:
-        if correct:
-            impulse = reaction[pos_impulses.index(surprise.impulse) + 1]
-        else:
-            impulse = reaction[neg_impulses.index(surprise.impulse) + 1]
+        self.last_emotion = self.emotion_by_name(emotion, impulse)
 
-        # create emotion here:
-        emotion = self.emotion_by_name(reaction[0], impulse)
+        #TODO: Trigger surprise if selected
 
-        self.last_emotion = emotion
-        if self.wasabi:
-            self.send(emotion.NAME, int(emotion.impulse))
-        elif self.marc:
-            self.marc.show(emotion)
+        if emotion != 'None':
+            self.trigger(emotion)
+
+        if impulse != 0:
+            self.impulse(impulse)
+
+        if not self.wasabi and self.marc:
+            self.marc.show(self.last_emotion)
 
         # TODO(How to wait here until first wasabi message is received?)
         return self.get_primary_emotion()
 
 
-    def send(self, emotion, impulse):
-        ''' Possible emotions are:
-            happy, angry, annoyed, surprised, bored, sad, depressed, fearful
+    def impulse(self, impulse):
+        ''' Send the given impulse to wasabi.
         '''
         if self.wasabi:
             sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-            print 'Send to wasabi', emotion, impulse
+            print 'Send to wasabi: Impulse', impulse
 
-            message = "JohnDoe&TRIGGER&1&" + emotion
+            message = "JohnDoe&IMPULSE&1&" + str(impulse)
             sock_out.sendto(message, (EmoModule.WASABI_IP,
                                       EmoModule.WASABI_PORT_IN))
 
-            message = "JohnDoe&IMPULSE&1&" + str(impulse)
+    def trigger(self, emotion):
+        ''' Trigger the given emotion in wasabi.
+        '''
+        if self.wasabi:
+            sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+            print 'Send to wasabi: Trigger', emotion
+
+            message = "JohnDoe&TRIGGER&1&" + emotion
             sock_out.sendto(message, (EmoModule.WASABI_IP,
                                       EmoModule.WASABI_PORT_IN))
 
@@ -428,14 +392,13 @@ class WasabiListener():
 
         # Get dominating emotion:
         primary_emo = self.get_primary_emotion()
-        emotion = self.name_to_emo[primary_emo.NAME]()
+        emotion = self.name_to_emo[primary_emo.name]()
 
         # Send to MARC:
         if self.marc:
             if emotion.FREQUENCE <= self.count:
                 self.count = 0
                 self.marc.show(emotion)
-                #self.marc.perform(emotion.name, emotion.get_bml_code())
             else:
                 self.count += 1
 

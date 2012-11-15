@@ -920,28 +920,22 @@ class MainWindow(QMainWindow):
         apply_emo(Surprise, 'Surprise')
 
         CogModule.ACT_HIGH = config.getfloat('Activation', 'high')
-        CogModule.ACT_LOW = config.getfloat('Activation', 'low')
+        CogModule.ACT_NONE = config.getfloat('Activation', 'low')
 
         def get_config(name):
             ''' Returns the values for the given emotion specifictation.
             '''
             return (config.get(name, 'emotion'),
-                     config.getint(name, 'none'),
-                     config.getint(name, 'low'),
-                     config.getint(name, 'high'))
+                    config.getint(name, 'impulse'))
 
-        EmoModule.REACT_NEG_HAPPY = get_config('Map_Happy_Neg')
-        EmoModule.REACT_NEG_CONCENTRATED = get_config('Map_Concentrated_Neg')
-        EmoModule.REACT_NEG_BORED = get_config('Map_Bored_Neg')
-        EmoModule.REACT_NEG_ANNOYED = get_config('Map_Annoyed_Neg')
-        EmoModule.REACT_NEG_ANGRY = get_config('Map_Angry_Neg')
+        EmoModule.REACT_NEG_WRONG = get_config('React_Neg_Wrong')
+        EmoModule.REACT_NEG_RIGHT = get_config('React_Neg_Right')
+        EmoModule.REACT_NONE_WRONG = get_config('React_None_Wrong')
+        EmoModule.REACT_NONE_RIGHT = get_config('React_None_Right')
+        EmoModule.REACT_POS_WRONG = get_config('React_Pos_Wrong')
+        EmoModule.REACT_POS_RIGHT = get_config('React_Pos_Right')
 
-        EmoModule.REACT_POS_HAPPY = get_config('Map_Happy_Pos')
-        EmoModule.REACT_POS_CONCENTRATED = get_config('Map_Concentrated_Pos')
-        EmoModule.REACT_POS_BORED = get_config('Map_Bored_Pos')
-        EmoModule.REACT_POS_ANNOYED = get_config('Map_Annoyed_Pos')
-        EmoModule.REACT_POS_ANGRY = get_config('Map_Angry_Pos')
-
+        
     def show_welcome(self):
         ''' Shows the welcome screen
         '''

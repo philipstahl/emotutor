@@ -11,7 +11,7 @@ from emomodule import EmoModule, Surprise, Hope, Fear
 class CogModule:
     ''' This class handles all cognitive activity of the agent
     '''
-    ACT_HIGH = 0.0
+    ACT_POS = 0.0
     ACT_NONE = -0.5
     ACT_NEG = -1.0
 
@@ -115,41 +115,26 @@ class CogModule:
         '''
         activation = self.activation(times, 0.5)
         impulse = 0
-
-        if correct:
-            if activation > CogModule.ACT_HIGH:
-                # Highly expected result happes.
-                impulse = EmoModule.SURPRISE_POS_HIGH
-            elif activation > CogModule.ACT_LOW:
-                # Expected result happens.
-                impulse = EmoModule.SURPRISE_POS_LOW
-            else:
-                # Result was not expected.
-                impulse = EmoModule.SURPRISE_POS_NONE
-        else:
-            if activation > CogModule.ACT_HIGH:
-                # Result was highly not expected.
-                impulse = EmoModule.SURPRISE_NEG_HIGH
-            elif activation > CogModule.ACT_LOW:
-                # Result was not expected.
-                impulse = EmoModule.SURPRISE_NEG_LOW
-            else:
-                # result was expected.
-                impulse = EmoModule.SURPRISE_NEG_NONE
-
-        return Surprise(impulse = impulse)
-
+        
+        expectation = 'none'
+        if activation > CogModule.ACT_POS:
+            expectation = 'positive'
+        elif activation < CogModule.ACT_NEG:
+            expectation = 'negative'
+                
+        return expectation
+        
     def expectation(self, word):
         activation = self.activation(word.times, 0.5)
         expectation = str(activation) + ': '
         emotion = None
-        if activation > CogModule.ACT_HIGH:
+        if activation > CogModule.ACT_POS:
             expectation += 'Expecting right answer.'
             emotion = Hope()
-        elif activation > CogModule.ACT_LOW:
+        elif activation > CogModule.ACT_NONE:
             expectation += 'Expecting nothing.'
         else:
-            expectation += 'Expecting wrong'
+            expectation += 'Expecting wrong answer'
             emotion = Fear()
 
         # Trigger hope / fear

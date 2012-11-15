@@ -79,7 +79,7 @@ class Agent:
         emotion = self.emo_module.get_primary_emotion()
         expectation, emo = self.cog_module.expectation(word)
         if emo:
-            self.emo_module.send(emo.NAME, 0)
+            self.emo_module.trigger(emo.name)
 
         return (str(emotion), expectation, '...')
 
@@ -98,14 +98,14 @@ class Agent:
             emotional and verbal evaluation
         '''
         # cognitive evaluation: Determines surprise and intensity of emotion
-        surprise = self.cog_module.react(correct, word.times)
+        expectation = self.cog_module.react(correct, word.times)
 
         # emotional evaluation:
-        emotion = self.emo_module.check(correct, surprise)
-
+        emotion = self.emo_module.check(correct, expectation)
+        
         verbal_output = '...'
         if not correct:
-            speech = self.speech_module.react(surprise, emotion, word.word)
+            speech = self.speech_module.react(emotion, word.word)
             self.speak(speech)
             verbal_output = speech.text
 
