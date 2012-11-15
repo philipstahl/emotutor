@@ -2,7 +2,7 @@
 '''
 
 from threading import Thread
-#import winsound                         # sound for windows
+import winsound                         # sound for windows
 #import pygame
 from PyQt4.QtGui import QSound
 
@@ -27,8 +27,10 @@ class Agent:
         '''
         def play():
              #Windows:
-             path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
-             winsound.PlaySound(path + '%s.wav' % soundfile,
+            print 'play sound'
+            path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+            path = 'C:\\Users\\Philip.Stahl\\emotutor\\src\\sounds\\'
+            winsound.PlaySound(path + '%s.wav' % soundfile,
                                  winsound.SND_FILENAME)
 
         self.thread = Thread(target=play, args=())
@@ -77,7 +79,7 @@ class Agent:
         emotion = self.emo_module.get_primary_emotion()
         expectation, emo = self.cog_module.expectation(word)
         if emo:
-            self.emo_module.send(emo, 0)
+            self.emo_module.send(emo.NAME, 0)
 
         return (str(emotion), expectation, '...')
 

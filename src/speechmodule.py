@@ -6,6 +6,17 @@ import urllib2
 import wave
 from emomodule import Happy, Angry, Annoyed, Concentrated, Bored
 
+''' BML CODE:
+
+<bml id="Track_0">
+      <marc:fork id="Track_0_fork_1">
+            <wait duration="0.6" />
+            <speech  id="bml_item_2"  marc:synthesizer="OpenMary"  marc:voice="dfki-pavoque-styles"  marc:options=""  marc:f0_shift="0.0"  marc:locale="de"  text="Hallo und herzlich Willkommen." />
+      </marc:fork>
+</bml>
+
+'''
+
 
 class Speech:
     ''' A class for some spoken text. Generates the spoken text via Open Mary
@@ -24,6 +35,17 @@ class Speech:
     def get_bml_code(self):
         ''' Return the bml code of the text
         '''
+        return '<bml id="Track_0"> \
+                <marc:fork id="Track_0_fork_1"> \
+                <wait duration="0.6" /> \
+                <speech  id="bml_item_2"  marc:synthesizer="OpenMary"  \
+                    marc:voice="dfki-pavoque-styles"  marc:options=""  \
+                    marc:f0_shift="0.0"  marc:locale="de"  \
+                    text=\"' + self.text + '\" /> \
+              </marc:fork> </bml>'
+
+        '''
+        # wav file based
         return "<bml id=\"Perform{0}\"> \
                <marc:fork id=\"Track_0_fork_2\"> \
                <wait duration=\"0.00\" /> \
@@ -31,6 +53,7 @@ class Speech:
                 marc:file=\"" + OpenMary.PATH \
                 + "{1}.wav\" marc:articulate=\"0.4\" /> \
                </marc:fork></bml>".format(self.name, self.name)
+        '''
 
 
 class OpenMary:
@@ -185,8 +208,8 @@ class SpeechModule:
 
         speech = Speech("introduction", "Willkommen zum Lernen von Wörtern.",
                         emotion)
-        if self.tts:
-            self.tts.save_from_xml(speech)
+        #if self.tts:
+        #    self.tts.save_from_xml(speech)
         return speech
 
 
@@ -196,15 +219,15 @@ class SpeechModule:
         speech = Speech('present_list', 'Bitte merken Sie sich die folgenden '
                                     + 'Wörter, in der Reihenfolge in der ich '
                                     + 'sie vorlese.', emotion)
-        if self.tts:
-            self.tts.save_from_xml(speech)
+        #if self.tts:
+        #    self.tts.save_from_xml(speech)
 
         return speech
 
     def present_word(self, word, emotion):
         speech = Speech('word', word.word, emotion)
-        if self.tts:
-            self.tts.save_from_xml(speech)
+        #if self.tts:
+        #    self.tts.save_from_xml(speech)
         return speech
 
     def react(self, surprise, emotion, word):
@@ -220,8 +243,8 @@ class SpeechModule:
             reaction += 'Nein natürlich nicht! An die Stelle kommt ' + word
 
         speech = Speech('reaction', reaction, emotion)
-        if self.tts:
-            self.tts.save_from_xml(speech)
+        #if self.tts:
+        #    self.tts.save_from_xml(speech)
 
         return speech
 

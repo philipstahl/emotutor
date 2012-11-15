@@ -17,10 +17,9 @@ class Marc:
                               socket.SOCK_DGRAM)
         self.sock_in.bind((Marc.IP, Marc.PORT_IN))
 
-    def perform(self, name, bml_code):
+    def _perform(self, name, bml_code):
         ''' Performs the action specified in the bml code
         '''
-        print bml_code
         self.sock_out.sendto(bml_code, (Marc.IP, Marc.PORT_OUT))
 
     def show(self, emotion):
@@ -30,14 +29,14 @@ class Marc:
             database of the selected agent.
 
         '''
-        print 'MARC: Show', emotion.NAME, emotion.INTENSE
-        self.perform(emotion.NAME, emotion.get_bml_code())
+        print 'MARC is', emotion.name, '- Show ', emotion.marc, emotion.intensity
+        self._perform(emotion.name, emotion.get_bml_code())
 
     def speak(self, speech):
         ''' Sends the BML Code for speacking the given wave file to MARC.
         '''
-        print 'MARC SAYS', speech.name
-        self.perform(speech.name, speech.get_bml_code())
+        print 'MARC says', speech.text
+        self._perform(speech.name, speech.get_bml_code())
 
 
 if __name__ == '__main__':

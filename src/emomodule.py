@@ -36,7 +36,7 @@ class Emotion:
                     intensity=\"{5}\" /> \
                 </description> </face> </marc:fork> \
                 </bml>".format(self.marc, self.marc, 0, self.marc,
-                               self.interpolate, float(self.impulse) / 100)
+                               self.interpolate, self.intensity)
 
     def __repr__(self):
         return self.name + ' ' + str(self.impulse) + ' ' + str(self.intensity)
@@ -289,6 +289,8 @@ class EmoModule:
         self.last_emotion = emotion
         if self.wasabi:
             self.send(emotion.NAME, int(emotion.impulse))
+        elif self.marc:
+            self.marc.show(emotion)
 
         # TODO(How to wait here until first wasabi message is received?)
         return self.get_primary_emotion()
@@ -298,17 +300,18 @@ class EmoModule:
         ''' Possible emotions are:
             happy, angry, annoyed, surprised, bored, sad, depressed, fearful
         '''
-        sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        if self.wasabi:
+            sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        print 'Send to wasabi', emotion, impulse
+            print 'Send to wasabi', emotion, impulse
 
-        message = "JohnDoe&TRIGGER&1&" + emotion
-        sock_out.sendto(message, (EmoModule.WASABI_IP,
-                                  EmoModule.WASABI_PORT_IN))
+            message = "JohnDoe&TRIGGER&1&" + emotion
+            sock_out.sendto(message, (EmoModule.WASABI_IP,
+                                      EmoModule.WASABI_PORT_IN))
 
-        message = "JohnDoe&IMPULSE&1&" + str(impulse)
-        sock_out.sendto(message, (EmoModule.WASABI_IP,
-                                  EmoModule.WASABI_PORT_IN))
+            message = "JohnDoe&IMPULSE&1&" + str(impulse)
+            sock_out.sendto(message, (EmoModule.WASABI_IP,
+                                      EmoModule.WASABI_PORT_IN))
 
     def start_hearing(self):
         ''' Starts the connectivity to WASABI.
@@ -350,8 +353,12 @@ class WasabiListener():
                 current emotional status.
             '''
             sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock_in.bind((EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT))
+            #sock_in.bind((EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT))
+            #sock_in.bind(('192.168.0.46', EmoModule.WASABI_PORT_OUT))
+            sock_in.bind(('132.230.17.153', EmoModule.WASABI_PORT_OUT))
 
+
+            print 'start hearing'
             while self.hearing:
                 data = sock_in.recvfrom(1024)[0]
                 self.update_emo_status(data)
@@ -427,7 +434,8 @@ class WasabiListener():
         if self.marc:
             if emotion.FREQUENCE <= self.count:
                 self.count = 0
-                self.marc.perform(emotion.name, emotion.get_bml_code())
+                self.marc.show(emotion)
+                #self.marc.perform(emotion.name, emotion.get_bml_code())
             else:
                 self.count += 1
 
