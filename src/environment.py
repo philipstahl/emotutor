@@ -49,7 +49,9 @@ class Environment:
         from threading import Thread
         import socket
         sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock_in.bind((EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT))
+        
+        #sock_in.bind((EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT))
+        sock_in.bind(('132.230.17.153', EmoModule.WASABI_PORT_OUT))
 
         def show(emotion, iterations):
             ''' Shows iteration many times the emotion
@@ -59,7 +61,7 @@ class Environment:
                 sock_in.recvfrom(1024)[0]
                 if count >= emotion.FREQUENCE:
                     print 'Test: Marc shows', emotion.name, emotion.marc, emotion.intensity
-                    marc.perform(emotion.name, emotion.get_bml_code())
+                    marc.show(emotion)
                     iterations -= 1
                     count = 0
                 else:

@@ -533,7 +533,6 @@ class Emotions(Settings):
     def test_happy(self):
         ''' Test happy emotion settings
         '''
-        print('Test happy called')
         self.apply_settings()
         self.test(Happy())
 
