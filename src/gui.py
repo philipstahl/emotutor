@@ -82,7 +82,7 @@ class ListTrainer(QWidget):
         self.setLayout(main_layout)
         self.resize(600, 200)
         #192.168.0.46
-        self.exp = Environment(False, True, False)
+        self.exp = Environment(True, True, True)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)

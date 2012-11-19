@@ -37,13 +37,24 @@ class Speech:
         '''
         return '<bml id="Track_0"> \
                 <marc:fork id="Track_0_fork_1"> \
+                <speech  id="bml_item_2"  marc:synthesizer="OpenMary"\
+                 marc:voice="dfki-pavoque-styles"  marc:options=""  \
+                 marc:f0_shift="0.0"  marc:locale="de"  \
+                 marc:style="' + self.emotion + '"\
+                 text="' + self.text + '" />\
+                </marc:fork></bml>'
+
+
+        '''
+        return '<bml id="Track_0"> \
+                <marc:fork id="Track_0_fork_1"> \
                 <wait duration="0.6" /> \
                 <speech  id="bml_item_2"  marc:synthesizer="OpenMary"  \
                     marc:voice="dfki-pavoque-styles"  marc:options=""  \
                     marc:f0_shift="0.0"  marc:locale="de"  \
                     text=\"' + self.text + '\" /> \
               </marc:fork> </bml>'
-
+        '''
         '''
         # wav file based
         return "<bml id=\"Perform{0}\"> \
