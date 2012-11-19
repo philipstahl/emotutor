@@ -79,7 +79,7 @@ class Agent:
         emotion = self.emo_module.get_primary_emotion()
         expectation, emo = self.cog_module.expectation(word)
         if emo:
-            self.emo_module.trigger(emo.name)
+            self.emo_module.trigger(emo)
 
         return (str(emotion), expectation, '...')
 

@@ -139,7 +139,7 @@ class Hope(Emotion):
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, 'hope', Hope.MARC,
+        Emotion.__init__(self, 'HOPE', Hope.MARC,
                          impulse = impulse, adjust = Hope.INTENSE,
                          interpolate = Hope.INTERPOLATE,
                          frequence = Hope.FREQUENCE)
@@ -154,7 +154,7 @@ class Fear(Emotion):
     FREQUENCE = 2
 
     def __init__(self, impulse = 100):
-        Emotion.__init__(self, 'fear', Fear.MARC,
+        Emotion.__init__(self, 'fearful', Fear.MARC,
                          impulse = impulse, adjust = Fear.INTENSE,
                          interpolate = Fear.INTERPOLATE,
                          frequence = Fear.FREQUENCE)
@@ -172,12 +172,12 @@ class EmoModule:
     WASABI_PORT_IN = 0
     WASABI_PORT_OUT = 0
 
-    REACT_NEG_WRONG = ('None', 0)
-    REACT_NEG_RIGHT = ('Happy', 80)
-    REACT_NONE_WRONG = ('None', -50)
-    REACT_NONE_RIGHT = ('None', 50)
-    REACT_POS_WRONG = ('Angry', -80)
-    REACT_POS_RIGHT = ('None', 30)
+    REACT_NEG_WRONG = (False, 'None', 0)
+    REACT_NEG_RIGHT = (True, 'Happy', 80)
+    REACT_NONE_WRONG = (False, 'None', -50)
+    REACT_NONE_RIGHT = (False, 'None', 50)
+    REACT_POS_WRONG = (True, 'Angry', -80)
+    REACT_POS_RIGHT = (False, 'None', 30)
 
 
     def __init__(self, marc=None, use_wasabi=False):
@@ -219,29 +219,35 @@ class EmoModule:
         impulse = 0
         if correct:
             if expectation == 'negative':
-                emotion, impulse = EmoModule.REACT_NEG_RIGHT
+                surprise, emotion, impulse = EmoModule.REACT_NEG_RIGHT
             elif expectation == 'none':
-                emotion, impulse = EmoModule.REACT_NONE_RIGHT
+                surprise, emotion, impulse = EmoModule.REACT_NONE_RIGHT
             elif expectation == 'positive':
-                emotion, impulse = EmoModule.REACT_POS_RIGHT
+                surprise, emotion, impulse = EmoModule.REACT_POS_RIGHT
             else:
                 print 'Got wrong expectation:', expectation
         else:
             if expectation == 'negative':
-                emotion, impulse = EmoModule.REACT_NEG_WRONG
+                surprise, emotion, impulse = EmoModule.REACT_NEG_WRONG
             elif expectation == 'none':
-                emotion, impulse = EmoModule.REACT_NONE_WRONG
+                surprise, emotion, impulse = EmoModule.REACT_NONE_WRONG
             elif expectation == 'positive':
-                emotion, impulse = EmoModule.REACT_POS_WRONG
+                surprise, emotion, impulse = EmoModule.REACT_POS_WRONG
             else:
                 print 'Got wrong expectation:', expectation
+
+        print 'react to', correct, expectation
+        print 'result:', surprise
 
         self.last_emotion = self.emotion_by_name(emotion, impulse)
 
         #TODO: Trigger surprise if selected
 
+        if surprise:
+            self.trigger(Surprise())
+
         if emotion != 'None':
-            self.trigger(emotion)
+            self.trigger(self.emotion_by_name(emotion))
 
         if impulse != 0:
             self.impulse(impulse)
@@ -271,9 +277,9 @@ class EmoModule:
         if self.wasabi:
             sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-            print 'Send to wasabi: Trigger', emotion
+            print 'Send to wasabi: Trigger', emotion.name
 
-            message = "JohnDoe&TRIGGER&1&" + emotion
+            message = "JohnDoe&TRIGGER&1&" + emotion.name
             sock_out.sendto(message, (EmoModule.WASABI_IP,
                                       EmoModule.WASABI_PORT_IN))
 

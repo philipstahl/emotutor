@@ -82,7 +82,7 @@ class ListTrainer(QWidget):
         self.setLayout(main_layout)
         self.resize(600, 200)
         #192.168.0.46
-        self.exp = Environment(True, True, True)
+        self.exp = Environment(False, True, False)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
@@ -584,23 +584,38 @@ class Parameters(Settings):
             [self.float_widget(CogModule.ACT_HIGH, -10.0, 10.0, 0.1),
              self.float_widget(CogModule.ACT_NONE, -10.0, 10.0, 0.1)]
 
-        self.emotion = [\
-            {'Neg': self.combo_box(EmoModule.REACT_NEG_WRONG[0]),
-             'None': self.combo_box(EmoModule.REACT_NONE_WRONG[0]),
-             'Pos': self.combo_box(EmoModule.REACT_POS_WRONG[0])},
-            {'Neg': self.combo_box(EmoModule.REACT_NEG_RIGHT[0]),
-             'None': self.combo_box(EmoModule.REACT_NONE_RIGHT[0]),
-             'Pos': self.combo_box(EmoModule.REACT_POS_RIGHT[0])}]
+        self.surprise = [
+            {'Neg': self.check_box(EmoModule.REACT_NEG_WRONG[0]),
+             'None': self.check_box(EmoModule.REACT_NONE_WRONG[0]),
+             'Pos': self.check_box(EmoModule.REACT_POS_WRONG[0])},
+            {'Neg': self.check_box(EmoModule.REACT_NEG_RIGHT[0]),
+             'None': self.check_box(EmoModule.REACT_NONE_RIGHT[0]),
+             'Pos': self.check_box(EmoModule.REACT_POS_RIGHT[0])}]
 
-        self.intense = [\
-            {'Neg': self.int_widget(EmoModule.REACT_NEG_WRONG[1]),
-             'None': self.int_widget(EmoModule.REACT_NONE_WRONG[1]),
-             'Pos': self.int_widget(EmoModule.REACT_POS_WRONG[1])},
-            {'Neg': self.int_widget(EmoModule.REACT_NEG_RIGHT[1]),
-             'None': self.int_widget(EmoModule.REACT_NONE_RIGHT[1]),
-             'Pos': self.int_widget(EmoModule.REACT_POS_RIGHT[1])}]
+
+        self.emotion = [\
+            {'Neg': self.combo_box(EmoModule.REACT_NEG_WRONG[1]),
+             'None': self.combo_box(EmoModule.REACT_NONE_WRONG[1]),
+             'Pos': self.combo_box(EmoModule.REACT_POS_WRONG[1])},
+            {'Neg': self.combo_box(EmoModule.REACT_NEG_RIGHT[1]),
+             'None': self.combo_box(EmoModule.REACT_NONE_RIGHT[1]),
+             'Pos': self.combo_box(EmoModule.REACT_POS_RIGHT[1])}]
+
+        self.impulse = [\
+            {'Neg': self.int_widget(EmoModule.REACT_NEG_WRONG[2]),
+             'None': self.int_widget(EmoModule.REACT_NONE_WRONG[2]),
+             'Pos': self.int_widget(EmoModule.REACT_POS_WRONG[2])},
+            {'Neg': self.int_widget(EmoModule.REACT_NEG_RIGHT[2]),
+             'None': self.int_widget(EmoModule.REACT_NONE_RIGHT[2]),
+             'Pos': self.int_widget(EmoModule.REACT_POS_RIGHT[2])}]
 
         super(Parameters, self).__init__(parent)
+
+    def check_box(self, selected):
+        box = QCheckBox()
+        if selected:
+            box.nextCheckState()
+        return box
 
     def function_box(self, selected):
         ''' Returns the combo box of the available functions.
@@ -681,7 +696,7 @@ class Parameters(Settings):
             - Expectation was positive and answer was negative
 
             mapping to
-            - Surprise yes/no, Trigger Emotion, Intense
+            - Surprise yes/no, Trigger Emotion, Impulse
         '''
         layout = QGridLayout()
         layout.addWidget(QLabel('Expectation:'), 0, 0)
@@ -693,9 +708,9 @@ class Parameters(Settings):
         def add(layout, expectation, answer, correct, expect, line):
             layout.addWidget(QLabel(expectation), line, 0)
             layout.addWidget(QLabel(answer), line, 1)
-            layout.addWidget(QCheckBox(), line, 2)
+            layout.addWidget(self.surprise[correct][expect], line, 2)
             layout.addWidget(self.emotion[correct][expect], line, 3)
-            layout.addWidget(self.intense[correct][expect], line, 4)
+            layout.addWidget(self.impulse[correct][expect], line, 4)
 
         add(layout, 'Negative', 'Wrong', 0, 'Neg', 1)
         add(layout, 'Negative', 'Correct', 1, 'Neg', 2)
@@ -732,26 +747,17 @@ class Parameters(Settings):
 
         CogModule.FUNCTION = self.get_function(self.function)
 
-        def get_emotion(name, correct):
-            ''' Return the specified emotion values for the given emotion
-                specification.
-            '''
-            return(self.get_class(self.emotion[name][correct]),
-                   self.intense[name][correct][0].value(),
-                   self.intense[name][correct][1].value(),
-                   self.intense[name][correct][2].value())
+        def get_reaction(correct, expect):
+            return (bool(self.surprise[correct][expect].isChecked()),
+                    str(self.emotion[correct][expect].currentText()),
+                    int(self.impulse[correct][expect].value()))
 
-        EmoModule.REACT_POS_HAPPY = get_emotion('Happy', 1)
-        EmoModule.REACT_POS_CONCENTRATED = get_emotion('Concentrated', 1)
-        EmoModule.REACT_POS_BORED = get_emotion('Bored', 1)
-        EmoModule.REACT_POS_ANNOYED = get_emotion('Annoyed', 1)
-        EmoModule.REACT_POS_ANGRY = get_emotion('Angry', 1)
-
-        EmoModule.REACT_NEG_HAPPY = get_emotion('Happy', 0)
-        EmoModule.REACT_NEG_CONCENTRATED = get_emotion('Concentrated', 0)
-        EmoModule.REACT_NEG_BORED = get_emotion('Bored', 0)
-        EmoModule.REACT_NEG_ANNOYED = get_emotion('Annoyed', 0)
-        EmoModule.REACT_NEG_ANGRY = get_emotion('Angry', 0)
+        EmoModule.REACT_NEG_WRONG = get_reaction(0, 'Neg')
+        EmoModule.REACT_NONE_WRONG = get_reaction(0, 'None')
+        EmoModule.REACT_POS_WRONG = get_reaction(0, 'Pos')
+        EmoModule.REACT_NEG_RIGHT = get_reaction(1, 'Neg')
+        EmoModule.REACT_NONE_RIGHT = get_reaction(1, 'None')
+        EmoModule.REACT_POS_RIGHT = get_reaction(1, 'Pos')
 
         self.environment = Environment(False, False, False)
 
@@ -924,7 +930,8 @@ class MainWindow(QMainWindow):
         def get_config(name):
             ''' Returns the values for the given emotion specifictation.
             '''
-            return (config.get(name, 'emotion'),
+            return (config.getboolean(name, 'surprise'),
+                    config.get(name, 'emotion'),
                     config.getint(name, 'impulse'))
 
         EmoModule.REACT_NEG_WRONG = get_config('React_Neg_Wrong')
