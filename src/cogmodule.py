@@ -12,14 +12,16 @@ class CogModule:
     ''' This class handles all cognitive activity of the agent
     '''
     ACT_POS = 0.0
-    ACT_NONE = -0.5
-    ACT_NEG = -1.0
+    ACT_NEG = -0.5
+
+    #ACT_NONE = -0.5
+    #ACT_NEG = -1.0
 
     FUNCTION = 'baselevel'   # or 'optimized'
 
 
     def __init__(self):
-        pass
+        self.last_expectation = None
 
     def seconds(self, time):
         ''' Returns the given time in seconds
@@ -94,52 +96,51 @@ class CogModule:
             return self.optimized_learning(times, d)
         return self.baselevel_activation(times, d)
 
-
-    def check(self, task, times):
-        ''' A cognitive analysis of the task.
-
-            The Agent predicts the answer given
-            by the human solver and the time needed.
-            If the predictions do not match to the facts, the agent will show a
-            reaction of surprise.
-
-        '''
-        activation = self.activation(times, 0.5)
-        question = task.question
-        return "[not surprised]"
-
-
-    def react(self, correct, times):
-        ''' Cognitive reaction to correctness and times of a given word.
-            Returns surprise emotion.
-        '''
-        activation = self.activation(times, 0.5)
-        impulse = 0
-        
+    def expectation(self, activation):
         expectation = 'none'
         if activation > CogModule.ACT_POS:
             expectation = 'positive'
         elif activation < CogModule.ACT_NEG:
             expectation = 'negative'
-                
         return expectation
-        
-    def expectation(self, word):
+
+    def get_expectation(self, word):
         activation = self.activation(word.times, 0.5)
-        expectation = str(activation) + ': '
+        self.last_expectation = self.expectation(activation)
+
+        print 'CogModule: Formulate expectation:', self.last_expectation
+
+        status = str(activation) + ': '
         emotion = None
-        if activation > CogModule.ACT_POS:
-            expectation += 'Expecting right answer.'
+        
+        if self.last_expectation == 'positive':
+            status += 'Expecting right answer.'
             emotion = Hope()
-        elif activation > CogModule.ACT_NONE:
-            expectation += 'Expecting nothing.'
-        else:
-            expectation += 'Expecting wrong answer'
+        elif self.last_expectation == 'none':
+            status += 'Expecting nothing.'
+        elif self.last_expectation == 'negative':
+            status += 'Expecting wrong answer'
             emotion = Fear()
+        else:
+            print 'Wrong expectation value', self.last_expectation
 
-        # Trigger hope / fear
+        return (status, emotion)
+    
 
-        return (expectation, emotion)
+    def react(self, correct, times):
+        ''' Cognitive reaction to correctness and times of a given word.
+        '''
+        #activation = self.activation(times, 0.5)
+        #impulse = 0
+        
+        #expectation = 'none'
+        #if activation > CogModule.ACT_POS:
+        #    expectation = 'positive'
+        #elif activation < CogModule.ACT_NEG:
+        #    expectation = 'negative'
+                
+        #return expectation
+        return self.last_expectation
 
 
 if __name__ == '__main__':

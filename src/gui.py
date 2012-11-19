@@ -108,7 +108,7 @@ class ListTrainer(QWidget):
             self.exp.reset()
 
     def next(self):
-        ''' Show next task
+        ''' Introduce or show next task
         '''
         if self.phase == 0:
             self.phase += 1

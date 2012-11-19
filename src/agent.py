@@ -77,7 +77,7 @@ class Agent:
         ''' Wait for user input and return the current emotion
         '''
         emotion = self.emo_module.get_primary_emotion()
-        expectation, emo = self.cog_module.expectation(word)
+        expectation, emo = self.cog_module.get_expectation(word)
         if emo:
             self.emo_module.trigger(emo)
 
