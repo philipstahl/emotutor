@@ -131,8 +131,6 @@ class Surprise(Emotion):
 
 
 class Hope(Emotion):
-    ''' Class for an angry emotion
-    '''
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
@@ -146,8 +144,6 @@ class Hope(Emotion):
 
 
 class Fear(Emotion):
-    ''' Class for an angry emotion
-    '''
     MARC = ''
     INTENSE = 1.0
     INTERPOLATE = 1.0
@@ -158,6 +154,16 @@ class Fear(Emotion):
                          impulse = impulse, adjust = Fear.INTENSE,
                          interpolate = Fear.INTERPOLATE,
                          frequence = Fear.FREQUENCE)
+
+
+class Relief(Emotion):
+    def __init__(self):
+        Emotion.__init__(self, name='RELIEF', marc='')
+        
+
+class FearsConfirmed(Emotion):
+    def __init__(self):
+        Emotion.__init__(self, name='FEARS-CONFIRMED', marc='')
 
 
 
@@ -236,12 +242,9 @@ class EmoModule:
             else:
                 print 'Got wrong expectation:', expectation
 
-        print 'react to', correct, expectation
-        print 'result:', surprise
+        print '  EmoModule:', correct, 'answer and', expectation, 'expectation:'
 
         self.last_emotion = self.emotion_by_name(emotion, impulse)
-
-        #TODO: Trigger surprise if selected
 
         if surprise:
             self.trigger(Surprise())
@@ -265,7 +268,7 @@ class EmoModule:
         if self.wasabi:
             sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-            print 'Send to wasabi: Impulse', impulse
+            print '    Wasabi:Impulse', impulse
 
             message = "JohnDoe&IMPULSE&1&" + str(impulse)
             sock_out.sendto(message, (EmoModule.WASABI_IP,
@@ -277,7 +280,7 @@ class EmoModule:
         if self.wasabi:
             sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-            print 'Send to wasabi: Trigger', emotion.name
+            print '    Wasabi:Trigger', emotion.name
 
             message = "JohnDoe&TRIGGER&1&" + emotion.name
             sock_out.sendto(message, (EmoModule.WASABI_IP,

@@ -76,6 +76,8 @@ class Agent:
     def wait(self, word):
         ''' Wait for user input and return the current emotion
         '''
+        print 'Agent: Waiting ...'
+        
         emotion = self.emo_module.get_primary_emotion()
         expectation, emo = self.cog_module.get_expectation(word)
         if emo:
@@ -97,11 +99,16 @@ class Agent:
             Return emotional and verbal output, based on the cognitve,
             emotional and verbal evaluation
         '''
+        print 'Agent: Evaluating answer ...'
         # cognitive evaluation: Determines surprise and intensity of emotion
-        expectation = self.cog_module.react(correct, word.times)
+        expectation = self.cog_module.last_expectation
 
         # emotional evaluation:
         emotion = self.emo_module.check(correct, expectation)
+
+        cog_react = self.cog_module.react(correct, word.times)
+        if cog_react:
+            self.emo_module.trigger(cog_react)
         
         verbal_output = '...'
         if not correct:

@@ -584,6 +584,20 @@ class Parameters(Settings):
             [self.float_widget(CogModule.ACT_HIGH, -10.0, 10.0, 0.1),
              self.float_widget(CogModule.ACT_NONE, -10.0, 10.0, 0.1)]
 
+        # Map expectation {Neg, Pos} to
+        #       [emotion to trigger before event,
+        #        emotion to trigger if event occurs,
+        #        emotion to trigger if event does not occur]
+        before = ['None', 'Fear', 'Hope']
+        after = ['None', 'Relief', 'Fears-Confirmed']
+        self.expectation = {
+            'Neg': [self.combo_box(CogModule.EXPECT_NEG[0], items=before),
+                    self.combo_box(CogModule.EXPECT_NEG[1], items=after),
+                    self.combo_box(CogModule.EXPECT_NEG[2], items=after)],
+            'Pos': [self.combo_box(CogModule.EXPECT_POS[0], items=before),
+                    self.combo_box(CogModule.EXPECT_POS[1], items=after),
+                    self.combo_box(CogModule.EXPECT_POS[2], items=after)]}
+
         self.surprise = [
             {'Neg': self.check_box(EmoModule.REACT_NEG_WRONG[0]),
              'None': self.check_box(EmoModule.REACT_NONE_WRONG[0]),
@@ -610,6 +624,7 @@ class Parameters(Settings):
              'Pos': self.int_widget(EmoModule.REACT_POS_RIGHT[2])}]
 
         super(Parameters, self).__init__(parent)
+        
 
     def check_box(self, selected):
         box = QCheckBox()
@@ -686,6 +701,29 @@ class Parameters(Settings):
         widget.setLayout(layout)
         return widget
 
+    def get_expectation_widget(self):
+        items = ['None', 'Fear', 'Hope']
+        layout = QGridLayout()
+        layout.addWidget(QLabel('Expectation:'), 0, 0)
+        layout.addWidget(QLabel('Trigger before Event:'), 0, 1)
+        layout.addWidget(QLabel('Trigger if occured:'), 0, 2)
+        layout.addWidget(QLabel('Trigger if not occured:'), 0, 3)
+    
+        layout.addWidget(QLabel('Negative:'), 1, 0)
+        layout.addWidget(QLabel('Positive:'), 2, 0)
+
+        layout.addWidget(self.expectation['Neg'][0], 1, 1)
+        layout.addWidget(self.expectation['Neg'][1], 1, 2)
+        layout.addWidget(self.expectation['Neg'][2], 1, 3)
+
+        layout.addWidget(self.expectation['Pos'][0], 2, 1)
+        layout.addWidget(self.expectation['Pos'][1], 2, 2)
+        layout.addWidget(self.expectation['Pos'][2], 2, 3)
+        
+        widget = QWidget()
+        widget.setLayout(layout)
+        return widget
+
     def get_reaction_widget(self):
         ''' Different cases:
             - Expectation was negative and answer negative
@@ -723,22 +761,6 @@ class Parameters(Settings):
         widget.setLayout(layout)
         return widget
 
-
-    def get_expectation_widget(self):
-        items = ['None', 'Fear', 'Hope']
-        layout = QGridLayout()
-        layout.addWidget(QLabel('Expectation:'), 0, 0)
-        layout.addWidget(QLabel('Trigger:'), 0, 1)
-        layout.addWidget(QLabel('Negative:'), 1, 0)
-        layout.addWidget(QLabel('None:'), 2, 0)
-        layout.addWidget(QLabel('Positive:'), 3, 0)
-        layout.addWidget(self.combo_box('Fear', items=items), 1, 1)
-        layout.addWidget(self.combo_box('None', items=items), 2, 1)
-        layout.addWidget(self.combo_box('Hope', items=items), 3, 1)
-        widget = QWidget()
-        widget.setLayout(layout)
-        return widget
-
     def apply_settings(self):
         ''' apply settings loaded from the gui
         '''
@@ -746,6 +768,14 @@ class Parameters(Settings):
         CogModule.ACT_LOW = self.activations[1].value()
 
         CogModule.FUNCTION = self.get_function(self.function)
+
+        CogModule.EXPECT_NEG = (str(self.expectation['Neg'][0].currentText()),
+                                str(self.expectation['Neg'][1].currentText()),
+                                str(self.expectation['Neg'][2].currentText()))
+        
+        CogModule.EXPECT_POS = (str(self.expectation['Pos'][0].currentText()),
+                                str(self.expectation['Pos'][1].currentText()),
+                                str(self.expectation['Pos'][2].currentText()))
 
         def get_reaction(correct, expect):
             return (bool(self.surprise[correct][expect].isChecked()),
@@ -926,6 +956,13 @@ class MainWindow(QMainWindow):
 
         CogModule.ACT_HIGH = config.getfloat('Activation', 'high')
         CogModule.ACT_NONE = config.getfloat('Activation', 'low')
+
+        CogModule.EXPECT_NEG = (config.get('Neg_Expectation', 'before'),
+                                config.get('Neg_Expectation', 'after'),
+                                config.get('Neg_Expectation', 'after_not'))
+        CogModule.EXPECT_POS = (config.get('Pos_Expectation', 'before'),
+                                config.get('Pos_Expectation', 'after'),
+                                config.get('Pos_Expectation', 'after_not'))
 
         def get_config(name):
             ''' Returns the values for the given emotion specifictation.
