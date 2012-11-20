@@ -85,7 +85,7 @@ class Agent:
         ''' Wait for user input and return the current emotion
         '''
         print 'Agent: Waiting ...'
-        if not self.emo_module.is_dynamic():
+        if not self.emo_module.is_dynamic() and self.emo_module.use_wasabi:
             
             self.emo_module.start_expressing()
         
