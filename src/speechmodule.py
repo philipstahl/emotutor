@@ -245,12 +245,12 @@ class SpeechModule:
     def react(self, emotion, word):
 
         reaction = ''
-        if emotion.name == 'happy':
-            reaction += ('Leider nein. Kann jedem passieren. Richtig wäre '
-                        + word)
-        elif emotion.name == 'concentrated' or emotion.name == 'bored' \
+        if not emotion or emotion.name == 'concentrated' or emotion.name == 'bored' \
              or emotion.name == 'annoyed':
             reaction += 'Nein. Richtig wäre ' + word
+        elif emotion.name == 'happy':
+            reaction += ('Leider nein. Kann jedem passieren. Richtig wäre '
+                        + word)
         elif emotion.name == 'angry':
             reaction += 'Nein natürlich nicht! An die Stelle kommt ' + word
 
