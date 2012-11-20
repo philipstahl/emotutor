@@ -286,6 +286,15 @@ class EmoModule:
             sock_out.sendto(message, (EmoModule.WASABI_IP,
                                       EmoModule.WASABI_PORT_IN))
 
+    def show_static_emotion(self, emotion):
+        if self.wasabi:
+            self.wasabi.show_static_emotion(emotion)
+
+    def start_expressing(self):
+        if self.wasabi:
+            self.wasabi.clear_static_emotion()
+            self.wasabi.start_expressing()
+            
     def start_hearing(self):
         ''' Starts the connectivity to WASABI.
         '''
@@ -297,6 +306,12 @@ class EmoModule:
         '''
         if self.wasabi:
             self.wasabi.end()
+
+    def is_dynamic(self):
+        if self.wasabi:
+            if self.wasabi.expressing:
+                return True
+        return False
 
 
 class WasabiListener():
@@ -314,7 +329,10 @@ class WasabiListener():
                               'concentrated': Concentrated, 'happy': Happy,
                               'surprise': Surprise}
         self.hearing = False
-        self.wait_for_message = False
+        self.expressing = False
+
+        self.static_emo = None
+      
         self.thread = None
 
     def start(self):
@@ -334,7 +352,12 @@ class WasabiListener():
             print 'start hearing'
             while self.hearing:
                 data = sock_in.recvfrom(1024)[0]
-                self.update_emo_status(data)
+                if self.expressing:
+                    self.update_emo_status(data)
+                elif self.static_emotion:
+                    self.show_static()
+
+                    
 
         self.thread = Thread(target=run, args=())
         self.thread.start()
@@ -344,6 +367,28 @@ class WasabiListener():
         '''
         self.hearing = False
 
+    def start_expressing(self):
+        self.expressing = True
+
+    def stop_expressing(self):
+        self.expressing = False
+
+    def show_static_emotion(self, emotion):
+        self.expressing = False
+        self.static_emotion = emotion
+
+    def clear_static_emotion(self):
+        self.static_emotion = None
+
+    def show_static(self):
+        # Send to MARC:
+        if self.marc:
+            if self.static_emotion.FREQUENCE <= self.count:
+                self.count = 0
+                self.marc.show(self.static_emotion)
+            else:
+                self.count += 1
+    
     def extract(self, data):
         ''' Extract data received from wasabi and returns a dict containing
             the emotion status for every current emotion
@@ -371,19 +416,19 @@ class WasabiListener():
 
         '''
         # TODO(wait here for next received message)
-        #self.wait_for_message = True
-        #while wait_for_message:
-        #    pass
 
-        primary_emo = ''
-        highest_imp = 0
-        for emotion in self.emo_status.keys():
-            if math.fabs(self.emo_status[emotion]) >= math.fabs(highest_imp):
-                primary_emo = emotion
-                highest_imp = self.emo_status[emotion]
-        if highest_imp == 0:
-            primary_emotion = 'concentrated'
-        return self.name_to_emo[primary_emo](impulse = highest_imp)
+        if self.expressing:
+            primary_emo = ''
+            highest_imp = 0
+            for emotion in self.emo_status.keys():
+                if math.fabs(self.emo_status[emotion]) >= math.fabs(highest_imp):
+                    primary_emo = emotion
+                    highest_imp = self.emo_status[emotion]
+            if highest_imp == 0:
+                primary_emotion = 'concentrated'
+            return self.name_to_emo[primary_emo](impulse = highest_imp)
+        else:
+            return self.static_emotion
 
     def update_emo_status(self, data):
         ''' Gets a string of emotion values received from wasabi

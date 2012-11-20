@@ -7,12 +7,14 @@ import winsound                         # sound for windows
 from PyQt4.QtGui import QSound
 
 from cogmodule import CogModule
-from emomodule import EmoModule
+from emomodule import EmoModule, Happy, Angry
 from speechmodule import SpeechModule
 from marc import Marc
 
 
 class Agent:
+
+    INIT_EMOTION = 'None'
 
     def __init__(self, use_marc, use_wasabi, use_mary):
         self.marc = None
@@ -50,33 +52,42 @@ class Agent:
 
         '''
         self.emo_module.start_hearing()
+        if Agent.INIT_EMOTION == 'Wasabi':
+            self.emo_module.start_expressing()
+        else:
+            inits = {'Happy': Happy(), 'Neutral': None, 'Angry': Angry()}
+            self.emo_module.show_static_emotion(inits[Agent.INIT_EMOTION])
+
         emotion = self.emo_module.get_primary_emotion()
+
         speech = self.speech_module.start_list(emotion)
-
         self.speak(speech)
-
         return (str(emotion), '...', speech.text)
 
     def introduce(self):
         ''' The agent speaks the introduction text to present the list of words.
         '''
-        emotion = self.emo_module.get_primary_emotion()
+        emotion = self.emo_module.get_primary_emotion() 
         speech = self.speech_module.present_list(emotion)
         self.speak(speech)
         return (str(emotion), '...', speech.text)
-
+        
     def present(self, word):
         ''' The Agent present the given word
         '''
+        
         emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_word(word, emotion)
         self.speak(speech)
         return (str(emotion), '...', speech.text)
-
+        
     def wait(self, word):
         ''' Wait for user input and return the current emotion
         '''
         print 'Agent: Waiting ...'
+        if not self.emo_module.is_dynamic():
+            
+            self.emo_module.start_expressing()
         
         emotion = self.emo_module.get_primary_emotion()
         expectation, emo = self.cog_module.get_expectation(word)

@@ -11,6 +11,7 @@ from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
 
 from PyQt4.QtCore import SIGNAL, Qt, QTimer
 
+from agent import Agent
 from environment import Environment
 from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, \
                       Surprise
@@ -578,6 +579,9 @@ class Parameters(Settings):
     '''
 
     def __init__(self, parent=None):
+        self.init = self.combo_box(Agent.INIT_EMOTION,
+                                   items=['Happy', 'Neutral', 'Angry', 'Wasabi'])
+
         self.function = self.function_box(CogModule.FUNCTION)
 
         self.activations = \
@@ -654,23 +658,34 @@ class Parameters(Settings):
         '''
         main_layout = QBoxLayout(2)
 
-
-        desc1 = QLabel('Map activation to expectation:')
-        desc2 = QLabel('Map expectation to emotion:')
-        desc3 = QLabel('Map expectation + answer to reaction:')
-        for desc in [desc1, desc2, desc3]:
+        desc1 = QLabel('Intructions:')
+        desc2 = QLabel('Map activation to expectation:')
+        desc3 = QLabel('Map expectation to emotion:')
+        desc4 = QLabel('Map expectation + answer to reaction:')
+        for desc in [desc1, desc2, desc3, desc4]:
             desc.setStyleSheet('QLabel {font-weight:bold}')
 
         main_layout.addWidget(desc1)
+        main_layout.addWidget(self.get_init_emotion_widget())
+        main_layout.addWidget(desc2)
         main_layout.addWidget(self.get_function_widget())
         main_layout.addWidget(self.get_activation_widget())
-        main_layout.addWidget(desc2)
-        main_layout.addWidget(self.get_expectation_widget())
         main_layout.addWidget(desc3)
+        main_layout.addWidget(self.get_expectation_widget())
+        main_layout.addWidget(desc4)
         main_layout.addWidget(self.get_reaction_widget())
         main_widget = QWidget()
         main_widget.setLayout(main_layout)
         return main_widget
+
+    def get_init_emotion_widget(self):
+        layout = QGridLayout()
+        layout.addWidget(QLabel('Show emotion:'), 0, 0)
+        layout.addWidget(self.init, 0, 1)
+        widget = QWidget()
+        widget.setLayout(layout)
+        return widget
+
 
     def get_function_widget(self):
         ''' Returns the widget containing the function settings
@@ -687,15 +702,15 @@ class Parameters(Settings):
         '''
         layout = QGridLayout()
         layout.addWidget(QLabel('Expection:'), 0, 0)
-        layout.addWidget(QLabel('Negative'), 0, 1)
-        layout.addWidget(QLabel(' < '), 0, 2)
-        layout.addWidget(self.activations[1], 0, 3)
-        layout.addWidget(QLabel(' < '), 0, 4)
-        layout.addWidget(QLabel('None'), 0, 5)
-        layout.addWidget(QLabel(' < '), 0, 6)
-        layout.addWidget(self.activations[0], 0, 7)
-        layout.addWidget(QLabel(' < '), 0, 8)
-        layout.addWidget(QLabel('Positive'), 0, 9)
+        layout.addWidget(QLabel('Negative'), 1, 0)
+        layout.addWidget(QLabel(' < '), 1, 1)
+        layout.addWidget(self.activations[1], 1, 2)
+        layout.addWidget(QLabel(' < '), 1, 3)
+        layout.addWidget(QLabel('None'), 1, 4)
+        layout.addWidget(QLabel(' < '), 1, 5)
+        layout.addWidget(self.activations[0], 1, 6)
+        layout.addWidget(QLabel(' < '), 1, 7)
+        layout.addWidget(QLabel('Positive'), 1, 8)
 
         widget = QWidget()
         widget.setLayout(layout)
@@ -764,6 +779,8 @@ class Parameters(Settings):
     def apply_settings(self):
         ''' apply settings loaded from the gui
         '''
+        Agent.INIT_EMOTION = str(self.init.currentText())
+        
         CogModule.ACT_HIGH = self.activations[0].value()
         CogModule.ACT_LOW = self.activations[1].value()
 
@@ -953,6 +970,8 @@ class MainWindow(QMainWindow):
         apply_emo(Annoyed, 'Annoyed')
         apply_emo(Angry, 'Angry')
         apply_emo(Surprise, 'Surprise')
+
+        Agent.INIT_EMOTION = config.get('Init', 'emotion')
 
         CogModule.ACT_HIGH = config.getfloat('Activation', 'high')
         CogModule.ACT_NONE = config.getfloat('Activation', 'low')

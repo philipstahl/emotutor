@@ -24,12 +24,13 @@ class Speech:
     def __init__(self, name, text, emotion):
         self.text = text
         self.emotion = 'neutral'
-        if emotion.name == 'happy':
-            self.emotion = 'happy'
-        if emotion.name == 'annoyed':
-            self.emotion = 'sad'
-        if emotion.name == 'angry':
-            self.emotion = 'angry'
+        if emotion:
+            if emotion.name == 'happy':
+                self.emotion = 'happy'
+            if emotion.name == 'annoyed':
+                self.emotion = 'sad'
+            if emotion.name == 'angry':
+                self.emotion = 'angry'
         self.name = name + '_' + self.emotion
 
     def get_bml_code(self):
