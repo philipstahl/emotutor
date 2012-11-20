@@ -83,7 +83,7 @@ class ListTrainer(QWidget):
         self.setLayout(main_layout)
         self.resize(600, 200)
         #192.168.0.46
-        self.exp = Environment(True, False, True)
+        self.exp = Environment(True, True, True)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
@@ -756,7 +756,7 @@ class Parameters(Settings):
         layout.addWidget(QLabel('Answer:'), 0, 1)
         layout.addWidget(QLabel('Surprise:'), 0, 2)
         layout.addWidget(QLabel('Emotion:'), 0, 3)
-        layout.addWidget(QLabel('Intense:'), 0, 4)
+        layout.addWidget(QLabel('Impulse:'), 0, 4)
 
         def add(layout, expectation, answer, correct, expect, line):
             layout.addWidget(QLabel(expectation), line, 0)

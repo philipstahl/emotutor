@@ -18,7 +18,7 @@ class Emotion:
         self.marc = str(marc)
         self.impulse = int(impulse)
         self.frequence = int(frequence)
-        self.intensity = float(impulse) / 100 * adjust
+        self.intensity = math.fabs(float(impulse) / 100 * adjust)
         self.interpolate = float(interpolate)
 
     def get_bml_code(self):
@@ -188,21 +188,12 @@ class EmoModule:
 
     def __init__(self, marc=None, use_wasabi=False):
         self.marc = marc
-        self.wasabi = None
-
         self.use_wasabi = use_wasabi
-        #if use_wasabi:
-        #    self.wasabi = WasabiListener(self.marc)
         self.wasabi = WasabiListener(self.marc)
-
-        self.last_emotion = Concentrated()
 
     def get_primary_emotion(self):
         ''' Returns the currently dominating emotion
         '''
-        #if self.wasabi:
-        #    return self.wasabi.get_primary_emotion()
-        #return self.last_emotion
         return self.wasabi.get_primary_emotion()
 
 
@@ -211,9 +202,7 @@ class EmoModule:
         '''
         if name == 'None' or impulse == 0:
             return None
-        if impulse < 0:
-            impulse = impulse * -1
-        
+
         name = name.lower()
         name_to_emotion = {'happy': Happy, 'concentrated': Concentrated,
                            'bored': Bored, 'annoyed': Annoyed, 'angry': Angry}
@@ -233,28 +222,14 @@ class EmoModule:
         '''
         emotion = 'None'
         impulse = 0
-        if correct:
-            if expectation == 'negative':
-                surprise, emotion, impulse = EmoModule.REACT_NEG_RIGHT
-            elif expectation == 'none':
-                surprise, emotion, impulse = EmoModule.REACT_NONE_RIGHT
-            elif expectation == 'positive':
-                surprise, emotion, impulse = EmoModule.REACT_POS_RIGHT
-            else:
-                print 'Got wrong expectation:', expectation
-        else:
-            if expectation == 'negative':
-                surprise, emotion, impulse = EmoModule.REACT_NEG_WRONG
-            elif expectation == 'none':
-                surprise, emotion, impulse = EmoModule.REACT_NONE_WRONG
-            elif expectation == 'positive':
-                surprise, emotion, impulse = EmoModule.REACT_POS_WRONG
-            else:
-                print 'Got wrong expectation:', expectation
 
-        print '  EmoModule Check ->', emotion, impulse
-
-        self.last_emotion = self.emotion_by_name(emotion, impulse)
+        reactions = {'negative': {True: EmoModule.REACT_NEG_RIGHT,
+                                  False: EmoModule.REACT_NEG_WRONG},
+                     'none': {True: EmoModule.REACT_NONE_RIGHT,
+                              False: EmoModule.REACT_NONE_WRONG},
+                     'positive': {True:EmoModule.REACT_POS_RIGHT,
+                                  False:EmoModule.REACT_POS_WRONG}}
+        surprise, emotion, impulse = reactions[expectation][correct]
 
         if surprise:
             self.trigger(Surprise())
@@ -266,6 +241,7 @@ class EmoModule:
             if impulse != 0:
                 self.impulse(impulse)
         else:
+            print 'SHOW STATITC:', emotion, impulse
             self.show_static_emotion(self.emotion_by_name(emotion, impulse))
 
         # TODO(How to wait here until first wasabi message is received?)
@@ -275,53 +251,40 @@ class EmoModule:
     def impulse(self, impulse):
         ''' Send the given impulse to wasabi.
         '''
-        #if self.use_wasabi:
-        sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
         print '    Wasabi:Impulse', impulse
-
-        message = "JohnDoe&IMPULSE&1&" + str(impulse)
-        sock_out.sendto(message, (EmoModule.WASABI_IP,
-                                      EmoModule.WASABI_PORT_IN))
+        self.send_to_wasabi("JohnDoe&IMPULSE&1&" + str(impulse))
 
     def trigger(self, emotion):
         ''' Trigger the given emotion in wasabi.
         '''
-        #if self.use_wasabi:
-        sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
         print '    Wasabi:Trigger', emotion.name
-
-        message = "JohnDoe&TRIGGER&1&" + emotion.name
+        self.send_to_wasabi("JohnDoe&TRIGGER&1&" + emotion.name)
+        
+    def send_to_wasabi(self, message):
+        sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock_out.sendto(message, (EmoModule.WASABI_IP,
                                   EmoModule.WASABI_PORT_IN))
-        
 
     def show_static_emotion(self, emotion):
-        #if self.wasabi:
         self.wasabi.show_static_emotion(emotion)
 
     def start_expressing(self):
-        if self.wasabi:
-            self.wasabi.clear_static_emotion()
-            self.wasabi.start_expressing()
+        self.wasabi.clear_static_emotion()
+        self.wasabi.start_expressing()
             
     def start_hearing(self):
         ''' Starts the connectivity to WASABI.
         '''
-        if self.wasabi:
-            self.wasabi.start()
+        self.wasabi.start()
 
     def end_hearing(self):
         ''' Ends the connectivity to WASABI
         '''
-        if self.wasabi:
-            self.wasabi.end()
+        self.wasabi.end()
 
     def is_dynamic(self):
-        if self.wasabi:
-            if self.wasabi.expressing:
-                return True
+        if self.wasabi.expressing:
+            return True
         return False
 
 
@@ -329,19 +292,13 @@ class WasabiListener():
     ''' Class for recieving input by WASABI
 
     '''
-
     def __init__(self, marc):
         self.marc = marc
         self.count = 0
         self.emo_status = {'happy': 0, 'concentrated': 0, 'depressed': 0,
                            'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
-        self.name_to_emo = {'angry': Angry, 'annoyed': Annoyed,
-                              'bored': Bored,
-                              'concentrated': Concentrated, 'happy': Happy,
-                              'surprise': Surprise}
         self.hearing = False
         self.expressing = False
-
         self.static_emo = None
       
         self.thread = None
@@ -437,7 +394,7 @@ class WasabiListener():
                     highest_imp = self.emo_status[emotion]
             if highest_imp == 0:
                 primary_emotion = 'concentrated'
-            return self.name_to_emo[primary_emo](impulse = highest_imp)
+            return self.get_emotion_by_name(primary_emo)(impulse = highest_imp)
         else:
             return self.static_emotion
 
@@ -457,7 +414,7 @@ class WasabiListener():
 
         # Get dominating emotion:
         primary_emo = self.get_primary_emotion()
-        emotion = self.name_to_emo[primary_emo.name]()
+        emotion = self.get_emotion_by_name(primary_emo.name)()
 
         # Send to MARC:
         if self.marc:
@@ -476,3 +433,10 @@ class WasabiListener():
             if intensity != 0:
                 output += emotion + '=' + str(intensity) + " "
         print output
+
+    def get_emotion_by_name(self, name):
+        name_to_emo = {'angry': Angry, 'annoyed': Annoyed, 'bored': Bored,
+                       'concentrated': Concentrated, 'happy': Happy,
+                       'surprise': Surprise}
+        if name in name_to_emo.keys():
+            return name_to_emo[name]

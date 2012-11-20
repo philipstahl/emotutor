@@ -29,7 +29,6 @@ class Marc:
             database of the selected agent.
 
         '''
-        print 'MARC is', emotion.name, '- Show ', emotion.marc, emotion.intensity
         self._perform(emotion.name, emotion.get_bml_code())
 
     def speak(self, speech):
