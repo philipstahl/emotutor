@@ -194,8 +194,6 @@ class CogModule:
             activation the Wj are all set to l/n.
         '''
 
-        #Wj = 1/n
-
         ''' The associative strengths, Sji, reflect the competition among
             the associations to the cue j. According to the ACT-R theory,
             Sji = S + ln(P(i | j)), where P(i | j) is the probability that
@@ -215,11 +213,11 @@ class CogModule:
                 It can be set in the simulation but if not set it will default to the log
                 of the total number of chunks.
         '''
-        n = 0                                   # total nr of items
+        n = 0                                                   # total nr of items
         for group in task:
             n += len(group)
             
-        nr_chunks = len(task)                   # total nr of chunks
+        nr_chunks = len(task)                                   # total nr of chunks
 
         # remove all items which are already done:
         remaining_task = []
@@ -234,7 +232,6 @@ class CogModule:
             if remaining_group:
                 remaining_task.append(remaining_group)
 
-        print 'remaining task:', remaining_task
         task = remaining_task
 
         activations = []
@@ -256,35 +253,42 @@ class CogModule:
 
 
                 
-                m = nr_elem_associated_to[group_index]      # nr elements associated to j
+                m = nr_elem_associated_to[group_index]              # nr elements associated to j
                 if m == 0:
                     m = 1
                 
                 S = math.log(nr_chunks)
             
                 elements_in_focus = 0                       
-                #for group in task:                                  # ALLE ELEMENTE
-                #    elements_in_focus += len(group)
-                elements_in_focus = len(activations[group_index])    # NUR DIE DER GRUPPE?
+                for group in task:                                  # ALLE ELEMENTE
+                    elements_in_focus += len(group)                 # ODER
+                #elements_in_focus = len(activations[group_index])    # NUR DIE DER GRUPPE?
             
 
                 for j in range(elements_in_focus):
                     Wj = 1.0 / n
                     Sji = S - math.log(m)
-
-
-
-                    add = Wj * Sji
-                    #print '+= ', add
-                    activations[group_index][i] += add
+                    activations[group_index][i] += Wj * Sji
 
         return activations
 
-    def probability_of_retrieval(self):
+    #def probability_of_retrieval(self, Ai):
+    def prob(self, Mi, Mjs):
         ''' 1 / (1 + e_to_the_power(Ai - threshold))
+            return 1.0/(1.0 + math.exp((Ai - (-0.35)) / 0.3))
         '''
-        pass
+        s = 0.01
+        t = math.sqrt(2*s)
 
+        divisor = 0
+        for j in Mjs:
+            divisor += math.exp(j/t)
+
+        return math.exp(Mi/t) / divisor
+                
+
+    
+        
     def equation8(self, time, length):
         ''' Activation = ln(n) - 0.5 * ln(T) - ln(L)
 
@@ -293,46 +297,37 @@ class CogModule:
             L = list length
         '''
         activation = math.log(1.0) - 0.5 * math.log(time) - math.log(length)
+        # SEE ALSO EQUATION NR 9
         return activation
             
 
 if __name__ == '__main__':
     cog = CogModule()
-    #cog.print_random_activation_values(10, 20)
-
-    print 'Cog module started:'
 
     task = [[1, 5, 3], [8, 4, 7], [2, 6, 9]]
+    #task = [[1, 2, 3]]
+
     length = len(task)
     current = 0
 
     focus_activations = cog.focus_activation(task, current)
 
-    print 'focus:', focus_activations
-    
     now = cog.seconds(datetime.datetime.now())
     diff = 9
     times = []
     for d in range(diff):
         times.insert(0, now - (d+2))
 
-    print task
-    print times
+    time_diffs = []
+    for time in times:
+        time_diffs.append(now - time)
 
     task = cog.get_remaining_task(task, current)
-    print task
 
     num_remaining = 0
     for group in task:
         num_remaining += len(group)
     times = times[(len(times) - num_remaining):]
-
-    time_diffs = []
-    for time in times:
-        time_diffs.append(now - time)
-        
-    print 'times:', times
-    print 'diffs:', time_diffs
     
     baselevel_activations = []
     for group_index in range(len(task)):
@@ -349,21 +344,14 @@ if __name__ == '__main__':
             activation = cog.baselevel_activation(time, 0.5)
             group_activations.append(activation)
         baselevel_activations.append(group_activations)
-            
-    print 'baselevel:', baselevel_activations
 
-    activations = []
+    ep1_activations = []
     for group_index in range(len(baselevel_activations)):
         group_activations = []
         for item_index in range(len(baselevel_activations[group_index])):
             activation = baselevel_activations[group_index][item_index] + focus_activations[group_index][item_index]
             group_activations.append(activation)
-        activations.append(group_activations)
-
-    print 'ACTIVATIONS:'
-    for group in activations:
-        for item in group:
-            print item
+        ep1_activations.append(group_activations)
 
 
     '''EQUATION 8:'''
@@ -382,10 +370,33 @@ if __name__ == '__main__':
             activation = cog.equation8(time, length)
             group_activations.append(activation)
         activations.append(group_activations)
+    '''
+    print 'BASELEVEL'
+    for group in baselevel_activations:
+        for item in group:
+            print item
 
+    print 'FOCUS'
+    for group in focus_activations:
+        for item in group:
+            print item
+    
+    print 'EQUATION 1:'
+    for group in ep1_activations:
+        for item in group:
+            print item
+        
     print 'EQUATION 8'
     for group in activations:
         for item in group:
             print item
+    '''
+    baselevels = []    
+    for group in activations:
+        for item in group:
+            baselevels.append(item)
 
-    
+    print baselevels
+    print 'PROBAILITY:'
+    for baselevel in baselevels:
+        print cog.prob(baselevel, baselevels)
