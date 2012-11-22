@@ -7,6 +7,7 @@ import datetime
 from agent import Agent
 from marc import Marc
 from logger import Logger
+import utilities
 from emomodule import WasabiListener, EmoModule
 
 
@@ -79,11 +80,6 @@ class Environment:
         listener = WasabiListener(marc)
         listener.start()
 
-    def seconds(self, time):
-        ''' Returns the given time in seconds
-        '''
-        return time.second + 60 * time.minute + 60 * 60 * time.hour
-
     def start(self):
         ''' Show init text and wait for start button.
         '''
@@ -103,7 +99,7 @@ class Environment:
     def present_current(self):
         ''' Presents the current task.
         '''
-        now = self.seconds(datetime.datetime.now())
+        now = utilities.seconds(datetime.datetime.now())
         # TODO: check if this line could be in one unequality
         if 0 <= self.index and self.index <= len(self.words):
             word = self.words[self.index]
@@ -132,7 +128,7 @@ class Environment:
     def evaluate(self, answer, correct):
         ''' Show feedback of task and wait for next button
         '''
-        now = self.seconds(datetime.datetime.now())
+        now = utilities.seconds(datetime.datetime.now())
 
         word = self.words[self.index]
         emotion, cog, speech = self.agent.evaluate(word, correct)

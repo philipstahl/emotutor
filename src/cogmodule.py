@@ -5,8 +5,8 @@ import random
 import math
 import datetime
 
+import utilities
 from emomodule import Hope, Fear, Relief, FearsConfirmed
-
 
 class CogModule:
     ''' This class handles all cognitive activity of the agent
@@ -35,16 +35,10 @@ class CogModule:
         else:
             return None
 
-    def seconds(self, time):
-        ''' Returns the given time in seconds
-        '''
-        return time.second + 60 * time.minute + 60 * 60 * time.hour
-
-
     def print_random_activation_values(self, runs, max_time):
         ''' Function for visualizing the baseline activation
         '''
-        now = self.seconds(datetime.datetime.now())
+        now = utilities.seconds(datetime.datetime.now())
         tmp_now = now
         times = []
 
@@ -80,7 +74,7 @@ class CogModule:
         n = len(times)
 
         summed = 0
-        now = self.seconds(datetime.datetime.now())
+        now = utilities.seconds(datetime.datetime.now())
         for j in range(n):
             diff = now - times[j]
             summed += math.pow(diff, -d)
@@ -99,7 +93,7 @@ class CogModule:
         '''
         n = len(times)
 
-        L = self.seconds(datetime.datetime.now()) - times[0]
+        L = self.utilities(datetime.datetime.now()) - times[0]
         B = math.log(n / (1 - d)) - d * math.log(L)
 
         return B

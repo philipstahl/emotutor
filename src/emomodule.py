@@ -7,6 +7,7 @@
 import socket
 from threading import Thread
 import math
+import utilities
 
 class Emotion:
     ''' Class for representing a single Emotion
@@ -159,7 +160,7 @@ class Fear(Emotion):
 class Relief(Emotion):
     def __init__(self):
         Emotion.__init__(self, name='RELIEF', marc='')
-        
+
 
 class FearsConfirmed(Emotion):
     def __init__(self):
@@ -196,22 +197,6 @@ class EmoModule:
         '''
         return self.wasabi.get_primary_emotion()
 
-
-    def emotion_by_name(self, name, impulse=100):
-        ''' Returns an emotion object with the given impulse.
-        '''
-        if name == 'None' or impulse == 0:
-            return None
-
-        name = name.lower()
-        name_to_emotion = {'happy': Happy, 'concentrated': Concentrated,
-                           'bored': Bored, 'annoyed': Annoyed, 'angry': Angry}
-        if name in name_to_emotion.keys():
-            return name_to_emotion[name](impulse=impulse)
-        else:
-            return None
-
-
     def check(self, correct, expectation):
         ''' Task evaluation according to the emotional reaction.
             Sends an emotional input to wasabi and text back to the agent
@@ -236,13 +221,13 @@ class EmoModule:
 
         if self.use_wasabi:
             if emotion != 'None':
-                self.trigger(self.emotion_by_name(emotion))
+                self.trigger(utilities.emotion_by_name(emotion))
 
             if impulse != 0:
                 self.impulse(impulse)
         else:
             print 'SHOW STATITC:', emotion, impulse
-            self.show_static_emotion(self.emotion_by_name(emotion, impulse))
+            self.show_static_emotion(utilities.emotion_by_name(emotion, impulse))
 
         # TODO(How to wait here until first wasabi message is received?)
         return self.get_primary_emotion()
@@ -259,7 +244,7 @@ class EmoModule:
         '''
         print '    Wasabi:Trigger', emotion.name
         self.send_to_wasabi("JohnDoe&TRIGGER&1&" + emotion.name)
-        
+
     def send_to_wasabi(self, message):
         sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock_out.sendto(message, (EmoModule.WASABI_IP,
@@ -271,7 +256,7 @@ class EmoModule:
     def start_expressing(self):
         self.wasabi.clear_static_emotion()
         self.wasabi.start_expressing()
-            
+
     def start_hearing(self):
         ''' Starts the connectivity to WASABI.
         '''
@@ -300,7 +285,7 @@ class WasabiListener():
         self.hearing = False
         self.expressing = False
         self.static_emo = None
-      
+
         self.thread = None
 
     def start(self):
@@ -325,7 +310,7 @@ class WasabiListener():
                 elif self.static_emotion:
                     self.show_static()
 
-                    
+
 
         self.thread = Thread(target=run, args=())
         self.thread.start()
@@ -356,7 +341,7 @@ class WasabiListener():
                 self.marc.show(self.static_emotion)
             else:
                 self.count += 1
-    
+
     def extract(self, data):
         ''' Extract data received from wasabi and returns a dict containing
             the emotion status for every current emotion
@@ -394,7 +379,7 @@ class WasabiListener():
                     highest_imp = self.emo_status[emotion]
             if highest_imp == 0:
                 primary_emotion = 'concentrated'
-            return self.get_emotion_by_name(primary_emo)(impulse = highest_imp)
+            return utilities.emotion_by_name(primary_emo)(impulse = highest_imp)
         else:
             return self.static_emotion
 
@@ -414,7 +399,7 @@ class WasabiListener():
 
         # Get dominating emotion:
         primary_emo = self.get_primary_emotion()
-        emotion = self.get_emotion_by_name(primary_emo.name)()
+        emotion = utilities.emotion_by_name(primary_emo.name)()
 
         # Send to MARC:
         if self.marc:
@@ -433,10 +418,3 @@ class WasabiListener():
             if intensity != 0:
                 output += emotion + '=' + str(intensity) + " "
         print output
-
-    def get_emotion_by_name(self, name):
-        name_to_emo = {'angry': Angry, 'annoyed': Annoyed, 'bored': Bored,
-                       'concentrated': Concentrated, 'happy': Happy,
-                       'surprise': Surprise}
-        if name in name_to_emo.keys():
-            return name_to_emo[name]
