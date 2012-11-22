@@ -2,7 +2,7 @@
 '''
 
 from threading import Thread
-import winsound                         # sound for windows
+#import winsound                         # sound for windows
 #import pygame
 from PyQt4.QtGui import QSound
 
@@ -27,16 +27,17 @@ class Agent:
     def play_wave(self, soundfile):
         ''' Plays a wave sound
         '''
-        def play():
-             #Windows:
-            print 'play sound'
-            path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
-            path = 'C:\\Users\\Philip.Stahl\\emotutor\\src\\sounds\\'
-            winsound.PlaySound(path + '%s.wav' % soundfile,
-                                 winsound.SND_FILENAME)
+        pass
+        #def play():
+        #     #Windows:
+        #    print 'play sound'
+        #    path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
+        #    path = 'C:\\Users\\Philip.Stahl\\emotutor\\src\\sounds\\'
+        #    winsound.PlaySound(path + '%s.wav' % soundfile,
+        #                         winsound.SND_FILENAME)
 
-        self.thread = Thread(target=play, args=())
-        self.thread.start()
+        #self.thread = Thread(target=play, args=())
+        #self.thread.start()
 #        QSound.play('sounds/' + soundfile + '.wav')
 #        pygame.init()
 #        pygame.mixer.set_num_channels(1)
@@ -67,28 +68,28 @@ class Agent:
     def introduce(self):
         ''' The agent speaks the introduction text to present the list of words.
         '''
-        emotion = self.emo_module.get_primary_emotion() 
+        emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_list(emotion)
         self.speak(speech)
         return (str(emotion), '...', speech.text)
-        
+
     def present(self, word):
         ''' The Agent present the given word
         '''
-        
+
         emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_word(word, emotion)
         self.speak(speech)
         return (str(emotion), '...', speech.text)
-        
+
     def wait(self, word):
         ''' Wait for user input and return the current emotion
         '''
         print 'Agent: Waiting ...'
         if not self.emo_module.is_dynamic() and self.emo_module.use_wasabi:
-            
+
             self.emo_module.start_expressing()
-        
+
         emotion = self.emo_module.get_primary_emotion()
         expectation, emo = self.cog_module.get_expectation(word)
         if emo:
@@ -120,7 +121,7 @@ class Agent:
         cog_react = self.cog_module.react(correct, word.times)
         if cog_react:
             self.emo_module.trigger(cog_react)
-        
+
         verbal_output = '...'
         if not correct:
             speech = self.speech_module.react(emotion, word.word)

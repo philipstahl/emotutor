@@ -13,7 +13,7 @@ class CogModule:
     '''
     EXPECT_NEG = ('Fear', 'Fears-Confirmed', 'None')
     EXPECT_POS = ('Hope', 'Relief', 'None')
-    
+
     ACT_POS = 0.0
     ACT_NEG = -0.5
 
@@ -125,7 +125,7 @@ class CogModule:
 
         status = str(activation) + ': '
         emotion = None
-        
+
         if self.last_expectation == 'positive':
             status += 'Expecting right answer.'
             emotion = CogModule.EXPECT_POS[0]
@@ -138,7 +138,7 @@ class CogModule:
             print 'Wrong expectation value', self.last_expectation
 
         return (status, self.get_emotion_by_name(emotion))
-    
+
 
     def react(self, correct, times):
         ''' Cognitive reaction to correctness and times of a given word.
@@ -189,7 +189,7 @@ class CogModule:
             FRAGE: WELCHE EMLEMENTE SIND ALLES IM FOKUS?
         '''
 
-        
+
         ''' The typical ACT-R assumption is that, if there are n sources of
             activation the Wj are all set to l/n.
         '''
@@ -216,7 +216,7 @@ class CogModule:
         n = 0                                                   # total nr of items
         for group in task:
             n += len(group)
-            
+
         nr_chunks = len(task)                                   # total nr of chunks
 
         # remove all items which are already done:
@@ -252,18 +252,18 @@ class CogModule:
             for i in range(len(activations[group_index])):
 
 
-                
+
                 m = nr_elem_associated_to[group_index]              # nr elements associated to j
                 if m == 0:
                     m = 1
-                
+
                 S = math.log(nr_chunks)
-            
-                elements_in_focus = 0                       
+
+                elements_in_focus = 0
                 for group in task:                                  # ALLE ELEMENTE
                     elements_in_focus += len(group)                 # ODER
                 #elements_in_focus = len(activations[group_index])    # NUR DIE DER GRUPPE?
-            
+
 
                 for j in range(elements_in_focus):
                     Wj = 1.0 / n
@@ -272,23 +272,25 @@ class CogModule:
 
         return activations
 
-    #def probability_of_retrieval(self, Ai):
     def prob(self, Mi, Mjs):
         ''' 1 / (1 + e_to_the_power(Ai - threshold))
             return 1.0/(1.0 + math.exp((Ai - (-0.35)) / 0.3))
         '''
-        s = 0.01
+        s = 0.3
         t = math.sqrt(2*s)
 
         divisor = 0
         for j in Mjs:
-            divisor += math.exp(j/t)
+            if j != Mi:
+                divisor += math.exp(j/t)
 
-        return math.exp(Mi/t) / divisor
-                
+        result = math.exp(Mi/t) #/ divisor
+        print Mi, ': ', result
+        return result
 
-    
-        
+
+
+
     def equation8(self, time, length):
         ''' Activation = ln(n) - 0.5 * ln(T) - ln(L)
 
@@ -299,7 +301,7 @@ class CogModule:
         activation = math.log(1.0) - 0.5 * math.log(time) - math.log(length)
         # SEE ALSO EQUATION NR 9
         return activation
-            
+
 
 if __name__ == '__main__':
     cog = CogModule()
@@ -328,7 +330,7 @@ if __name__ == '__main__':
     for group in task:
         num_remaining += len(group)
     times = times[(len(times) - num_remaining):]
-    
+
     baselevel_activations = []
     for group_index in range(len(task)):
         group_activations = []
@@ -338,20 +340,20 @@ if __name__ == '__main__':
                 index += len(task[group_index-1])
             if group_index == 2:
                 index += len(task[group_index-1]) + len(task[group_index-2])
-            
+
             time = [times[index]]
 
             activation = cog.baselevel_activation(time, 0.5)
             group_activations.append(activation)
         baselevel_activations.append(group_activations)
 
-    ep1_activations = []
+    eq1_activations = []
     for group_index in range(len(baselevel_activations)):
         group_activations = []
         for item_index in range(len(baselevel_activations[group_index])):
             activation = baselevel_activations[group_index][item_index] + focus_activations[group_index][item_index]
             group_activations.append(activation)
-        ep1_activations.append(group_activations)
+        eq1_activations.append(group_activations)
 
 
     '''EQUATION 8:'''
@@ -364,39 +366,40 @@ if __name__ == '__main__':
                 index += len(task[group_index-1])
             if group_index == 2:
                 index += len(task[group_index-1]) + len(task[group_index-2])
-            
+
             time = time_diffs[index]
 
             activation = cog.equation8(time, length)
             group_activations.append(activation)
         activations.append(group_activations)
-    '''
+
     print 'BASELEVEL'
     for group in baselevel_activations:
         for item in group:
             print item
-
+    '''
     print 'FOCUS'
     for group in focus_activations:
         for item in group:
             print item
-    
+    '''
     print 'EQUATION 1:'
-    for group in ep1_activations:
+    for group in eq1_activations:
         for item in group:
             print item
-        
+    '''
     print 'EQUATION 8'
     for group in activations:
         for item in group:
             print item
     '''
-    baselevels = []    
-    for group in activations:
+    Mis = []
+    for group in eq1_activations:
         for item in group:
-            baselevels.append(item)
+            Mis.append(item)
 
-    print baselevels
+    print 'Mis:'
+    print Mis
     print 'PROBAILITY:'
-    for baselevel in baselevels:
-        print cog.prob(baselevel, baselevels)
+    for activation in Mis:
+        cog.prob(activation, Mis)

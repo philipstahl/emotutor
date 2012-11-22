@@ -83,7 +83,7 @@ class ListTrainer(QWidget):
         self.setLayout(main_layout)
         self.resize(600, 200)
         #192.168.0.46
-        self.exp = Environment(True, True, True)
+        self.exp = Environment(False, False, False)
 
         emotion, cog, speech = self.exp.start()
         self.update_output(emotion, cog, speech)
@@ -154,7 +154,7 @@ class ListTrainer(QWidget):
         correct = self.exp.check(word)
 
 
-        emotion, cog, speech = self.exp.evaluate(correct)
+        emotion, cog, speech = self.exp.evaluate(word, correct)
 
         if correct:
             self.user_input.setStyleSheet('QLineEdit {color: green}')
@@ -628,7 +628,7 @@ class Parameters(Settings):
              'Pos': self.int_widget(EmoModule.REACT_POS_RIGHT[2])}]
 
         super(Parameters, self).__init__(parent)
-        
+
 
     def check_box(self, selected):
         box = QCheckBox()
@@ -723,7 +723,7 @@ class Parameters(Settings):
         layout.addWidget(QLabel('Trigger before Event:'), 0, 1)
         layout.addWidget(QLabel('Trigger if occured:'), 0, 2)
         layout.addWidget(QLabel('Trigger if not occured:'), 0, 3)
-    
+
         layout.addWidget(QLabel('Negative:'), 1, 0)
         layout.addWidget(QLabel('Positive:'), 2, 0)
 
@@ -734,7 +734,7 @@ class Parameters(Settings):
         layout.addWidget(self.expectation['Pos'][0], 2, 1)
         layout.addWidget(self.expectation['Pos'][1], 2, 2)
         layout.addWidget(self.expectation['Pos'][2], 2, 3)
-        
+
         widget = QWidget()
         widget.setLayout(layout)
         return widget
@@ -780,7 +780,7 @@ class Parameters(Settings):
         ''' apply settings loaded from the gui
         '''
         Agent.INIT_EMOTION = str(self.init.currentText())
-        
+
         CogModule.ACT_HIGH = self.activations[0].value()
         CogModule.ACT_LOW = self.activations[1].value()
 
@@ -789,7 +789,7 @@ class Parameters(Settings):
         CogModule.EXPECT_NEG = (str(self.expectation['Neg'][0].currentText()),
                                 str(self.expectation['Neg'][1].currentText()),
                                 str(self.expectation['Neg'][2].currentText()))
-        
+
         CogModule.EXPECT_POS = (str(self.expectation['Pos'][0].currentText()),
                                 str(self.expectation['Pos'][1].currentText()),
                                 str(self.expectation['Pos'][2].currentText()))
@@ -997,7 +997,7 @@ class MainWindow(QMainWindow):
         EmoModule.REACT_POS_WRONG = get_config('React_Pos_Wrong')
         EmoModule.REACT_POS_RIGHT = get_config('React_Pos_Right')
 
-        
+
     def show_welcome(self):
         ''' Shows the welcome screen
         '''

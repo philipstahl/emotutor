@@ -6,7 +6,7 @@
 import datetime
 from agent import Agent
 from marc import Marc
-
+from logger import Logger
 from emomodule import WasabiListener, EmoModule
 
 
@@ -21,7 +21,7 @@ class Word:
     def add(self, time):
         self.times.append(time)
 
-    def time(i):
+    def time(self, i):
         return self.times[i]
 
 
@@ -39,6 +39,7 @@ class Environment:
         self.index = 0
 
         self.agent = Agent(marc, wasabi, mary)
+        self.logger = Logger('logfile.csv')
 
 
     def test(self, emotion, iterations):
@@ -49,7 +50,7 @@ class Environment:
         from threading import Thread
         import socket
         sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        
+
         #sock_in.bind((EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT))
         sock_in.bind(('132.230.17.153', EmoModule.WASABI_PORT_OUT))
 
@@ -102,10 +103,11 @@ class Environment:
     def present_current(self):
         ''' Presents the current task.
         '''
+        now = self.seconds(datetime.datetime.now())
         # TODO: check if this line could be in one unequality
         if 0 <= self.index and self.index <= len(self.words):
             word = self.words[self.index]
-            word.add(self.seconds(datetime.datetime.now()))
+            word.add(now)
             self.index += 1
             return self.agent.present(word)
         else:
@@ -127,14 +129,18 @@ class Environment:
 
         return correct
 
-    def evaluate(self, correct):
+    def evaluate(self, answer, correct):
         ''' Show feedback of task and wait for next button
         '''
+        now = self.seconds(datetime.datetime.now())
 
         word = self.words[self.index]
         emotion, cog, speech = self.agent.evaluate(word, correct)
+        word.add(now)
 
-        word.add(self.seconds(datetime.datetime.now()))
+        # log answer:
+        time = now - word.time(0)
+        self.logger.save(word.word, answer, correct, time)
 
         if correct:
             self.index += 1
