@@ -41,6 +41,7 @@ class Environment:
 
         self.agent = Agent(marc, wasabi, mary)
         self.logger = Logger('logfile.csv')
+        self.start_time = 0
 
 
     def test(self, emotion, iterations):
@@ -129,6 +130,8 @@ class Environment:
         ''' Show feedback of task and wait for next button
         '''
         now = utilities.seconds(datetime.datetime.now())
+        #print 'sec:', now
+        #print 'mis:', utilities.millisecond(datetime.datetime.now())
 
         word = self.words[self.index]
         emotion, cog, speech = self.agent.evaluate(word, correct)
