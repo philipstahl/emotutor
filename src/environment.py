@@ -34,6 +34,20 @@ class Environment:
         ''' vars indicate the use of marc, wasabi and open mary
         '''
         self.words = [Word('Haus'), Word('Baum'), Word('Auto')]
+
+        ''' Original pairs:
+            (bank, 0), (card, 1), (dart, 2), (face, 3), (game, 4)
+            (hand, 5), (jack, 6), (king, 7), (lamb, 8), (mask, 9)
+            (neck, 0), (pipe, 1), (guip, 2), (rope, 3), (sock, 4)
+            (tent, 5), (vent, 6), (wall, 7), (xray, 8), (zinc, 9)
+        '''
+
+        self.pairs = [(Word('Bank'), Word('Null')),
+                      (Word('Karte'), Word('Eins')),
+                      (Word('Dattel'), Word('Zwei')),
+                      (Word('Gesicht'), Word('drei')),
+                      (Word('Spiel'), Word('vier'))]
+        
         import random
         random.shuffle(self.words)
 
@@ -91,6 +105,24 @@ class Environment:
             words.
         '''
         return self.agent.introduce()
+
+    def present_word(self):
+        if 0 <= self.index and self.index <= len(self.pairs):
+            word = self.pairs[self.index][0]
+            return self.agent.present(word)
+        else:
+            print 'Index Error'
+
+    def present_number(self):
+        if 0 <= self.index and self.index <= len(self.pairs):
+            number = self.pairs[self.index][1]
+            self.index += 1
+            return self.agent.present(number)
+        else:
+            print 'Index Error'
+
+
+    
 
     def present_next(self):
         ''' Present next task. The one with index + 1
@@ -157,7 +189,7 @@ class Environment:
     def has_next(self):
         ''' Checks if words remains to present
         '''
-        if self.index <= len(self.words) - 1:
+        if self.index <= len(self.pairs) - 1:
             return True
         return False
 
