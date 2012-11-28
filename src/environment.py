@@ -57,8 +57,12 @@ class Environment:
             (tent, 5), (vent, 6), (wall, 7), (xray, 8), (zinc, 9)
         '''
 
-        self.pairs = [Pair('Bank', 'Null'), Pair('Karte', 'Eins'),
-                      Pair('Dattel', 'Zwei'), Pair('Gesicht', 'drei')]
+        #self.pairs = [Pair('Bank', 'Null'), Pair('Karte', 'Eins'),
+        #              Pair('Dattel', 'Zwei'), Pair('Gesicht', 'drei')]
+
+        self.pairs = [Pair('Bank', '0'), Pair('Dorf', '1'),
+                      Pair('Dose', '2'), Pair('Erde', '3'), 
+                      Pair('Fahrrad', '2'), Pair('Haus', '3')]
 
         import random
         random.shuffle(self.pairs)
@@ -138,23 +142,6 @@ class Environment:
         else:
             print 'Index Error'
 
-    def present_next(self):
-        ''' Present next task. The one with index + 1
-        '''
-        return self.present_current()
-
-    def present_current(self):
-        ''' Presents the current task.
-        '''
-        now = utilities.seconds(datetime.datetime.now())
-        # TODO: check if this line could be in one unequality
-        if 0 <= self.index and self.index <= len(self.words):
-            word = self.words[self.index]
-            word.add(now)
-            self.index += 1
-            return self.agent.present(word)
-        else:
-            print 'Index Error'
 
     def wait(self):
         ''' Waits for user input and returns current emotional status
@@ -166,29 +153,34 @@ class Environment:
         '''
         received = received.replace('\n', '')
 
-        correct = False
-        if received == self.words[self.index].word:
-            correct = True
+        
 
         return correct
 
-    def evaluate(self, answer, correct):
+    def evaluate(self, received):
         ''' Show feedback of task and wait for next button
         '''
+        correct = False
+        if received == self.pairs[self.index].number.word:
+            correct = True
+        print received, ' == ', self.pairs[self.index].number.word, correct
+
+
+        
         now = utilities.seconds(datetime.datetime.now())
 
-        word = self.words[self.index]
+        word = self.pairs[self.index].word
         emotion, cog, speech = self.agent.evaluate(word, correct)
         word.add(now)
 
         # log answer:
         time = now - word.time(0)
-        self.logger.save(word.word, answer, correct, time)
+        self.logger.save(word.word, received, correct, time)
 
-        if correct:
-            self.index += 1
-        else:
-            self.reset()
+        #if correct:
+        #    self.index += 1
+        #else:
+        #    self.reset()
 
         return (emotion, cog, speech)
 

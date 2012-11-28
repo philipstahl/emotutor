@@ -2,9 +2,6 @@
 '''
 
 from threading import Thread
-#import winsound                         # sound for windows
-#import pygame
-from PyQt4.QtGui import QSound
 
 from cogmodule import CogModule
 from emomodule import EmoModule, Happy, Angry
@@ -20,30 +17,11 @@ class Agent:
         self.marc = None
         if use_marc:
             self.marc = Marc()
-        self.emo_module = EmoModule(self.marc, use_wasabi)
+
+        self.emo_module = EmoModule(self.marc, function='rule-based')
+   
         self.speech_module = SpeechModule(use_mary)
         self.cog_module = CogModule()
-
-    def play_wave(self, soundfile):
-        ''' Plays a wave sound
-        '''
-        pass
-        #def play():
-        #     #Windows:
-        #    print 'play sound'
-        #    path = 'C:\\Users\\User\\Desktop\\emotutor\\src\\sounds\\'
-        #    path = 'C:\\Users\\Philip.Stahl\\emotutor\\src\\sounds\\'
-        #    winsound.PlaySound(path + '%s.wav' % soundfile,
-        #                         winsound.SND_FILENAME)
-
-        #self.thread = Thread(target=play, args=())
-        #self.thread.start()
-#        QSound.play('sounds/' + soundfile + '.wav')
-#        pygame.init()
-#        pygame.mixer.set_num_channels(1)
-#        pygame.mixer.music.load('sounds/' + soundfile + '.wav')
-#        pygame.mixer.music.play()
-
 
     def start(self):
         ''' The agents reaction at the beginning of the training
@@ -113,19 +91,21 @@ class Agent:
         '''
         print 'Agent: Evaluating answer ...'
         # cognitive evaluation: Determines surprise and intensity of emotion
-        expectation = self.cog_module.last_expectation
+        #expectation = self.cog_module.last_expectation
+        expectation = 'none'
 
         # emotional evaluation:
         emotion = self.emo_module.check(correct, expectation)
 
-        cog_react = self.cog_module.react(correct, word.times)
-        if cog_react:
-            self.emo_module.trigger(cog_react)
+        #cog_react = self.cog_module.react(correct, word.times)
+
+        #if cog_react:
+        #    self.emo_module.trigger(cog_react)
 
         verbal_output = '...'
-        if not correct:
-            speech = self.speech_module.react(emotion, word.word)
-            self.speak(speech)
-            verbal_output = speech.text
+        #if not correct:
+        #    speech = self.speech_module.react(emotion, word.word)
+        #    self.speak(speech)
+        #    verbal_output = speech.text
 
         return (str(emotion), '...', verbal_output)

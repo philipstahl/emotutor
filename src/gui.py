@@ -72,16 +72,18 @@ class AssociatedPair(QWidget):
             self.start_button.clicked.connect(self.start_button_clicked)
 
             main_layout = QBoxLayout(2)
-            main_layout.addWidget(self.speech_output)
+            #main_layout.addWidget(self.speech_output)
             main_layout.addWidget(self.start_button)
             self.input_widget = self.get_input_widget()
             self.input_widget.hide()
             main_layout.addWidget(self.input_widget)
 
             self.setLayout(main_layout)
-            self.resize(600, 400)
+            self.resize(300, 300)
+            self.width = 300
+            self.height = 300
             #192.168.0.46
-            self.exp = Environment(False, False, False)
+            self.exp = Environment(True, False, True)
             self.waiting_for_answer = False
 
             emotion, cog, speech = self.exp.start()
@@ -166,6 +168,8 @@ class AssociatedPair(QWidget):
     def answer_given(self, nr):
         if self.waiting_for_answer:
             print 'answer given:', nr
+            self.exp.evaluate(str(nr))
+
             self.waiting_for_answer = False
         else:
             print 'currently no answer allowed'
