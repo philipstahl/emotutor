@@ -12,8 +12,7 @@ from emomodule import WasabiListener, EmoModule
 
 
 class Word:
-    ''' Class representing a single word from a list of words the user has to
-        memorize.
+    ''' Class representing a single word.
     '''
     def __init__(self, word):
         self.word = word
@@ -26,6 +25,24 @@ class Word:
         return self.times[i]
 
 
+class Pair:
+    ''' Class representing a pair of a word associated with a number.
+    '''
+    def __init__(self, word, number):
+        self.word = Word(word)
+        self.number = Word(number)
+        self.answers = []
+
+    def word_called(self, time):
+        self.word.add(time)
+
+    def number_called(self, time):
+        self.number.add(time)
+
+    def answer_given(answer):
+        self.answers.append(answer)
+
+
 class Environment:
     ''' The class for the experimental environment
     '''
@@ -33,8 +50,6 @@ class Environment:
     def __init__(self, marc=False, wasabi=False, mary=False):
         ''' vars indicate the use of marc, wasabi and open mary
         '''
-        self.words = [Word('Haus'), Word('Baum'), Word('Auto')]
-
         ''' Original pairs:
             (bank, 0), (card, 1), (dart, 2), (face, 3), (game, 4)
             (hand, 5), (jack, 6), (king, 7), (lamb, 8), (mask, 9)
@@ -42,16 +57,14 @@ class Environment:
             (tent, 5), (vent, 6), (wall, 7), (xray, 8), (zinc, 9)
         '''
 
-        self.pairs = [(Word('Bank'), Word('Null')),
-                      (Word('Karte'), Word('Eins')),
-                      (Word('Dattel'), Word('Zwei')),
-                      (Word('Gesicht'), Word('drei')),
-                      (Word('Spiel'), Word('vier'))]
-        
+        self.pairs = [Pair('Bank', 'Null'), Pair('Karte', 'Eins'),
+                      Pair('Dattel', 'Zwei'), Pair('Gesicht', 'drei')]
+
         import random
-        random.shuffle(self.words)
+        random.shuffle(self.pairs)
 
         self.index = 0
+        self.runs = 2
 
         self.agent = Agent(marc, wasabi, mary)
         self.logger = Logger('logfile.csv')
@@ -108,21 +121,22 @@ class Environment:
 
     def present_word(self):
         if 0 <= self.index and self.index <= len(self.pairs):
-            word = self.pairs[self.index][0]
+            word = self.pairs[self.index].word
+            now = utilities.seconds(datetime.datetime.now())
+            self.pairs[self.index].word_called(now)
             return self.agent.present(word)
         else:
             print 'Index Error'
 
     def present_number(self):
         if 0 <= self.index and self.index <= len(self.pairs):
-            number = self.pairs[self.index][1]
+            number = self.pairs[self.index].number
+            now = utilities.seconds(datetime.datetime.now())
+            self.pairs[self.index].number_called(now)
             self.index += 1
             return self.agent.present(number)
         else:
             print 'Index Error'
-
-
-    
 
     def present_next(self):
         ''' Present next task. The one with index + 1
@@ -162,8 +176,6 @@ class Environment:
         ''' Show feedback of task and wait for next button
         '''
         now = utilities.seconds(datetime.datetime.now())
-        #print 'sec:', now
-        #print 'mis:', utilities.millisecond(datetime.datetime.now())
 
         word = self.words[self.index]
         emotion, cog, speech = self.agent.evaluate(word, correct)

@@ -19,194 +19,197 @@ from marc import Marc
 from cogmodule import CogModule
 from speechmodule import OpenMary
 
+DEBUG = False
+
 
 class AssociatedPair(QWidget):
     ''' Gui for a simple vocabulary trainer
     '''
     def __init__(self, parent=None):
         super(AssociatedPair, self).__init__(parent)
-        # Create widgets:
-        label_emo_output = QLabel('Emotional Output:')
-        label_cog_output = QLabel('Cognition Output:')
-        label_speech_output = QLabel('Speech Output:')
 
-        self.emo_output = QLabel('')
-        self.cog_output = QLabel('')
-        self.speech_output = QLabel('')
+        if DEBUG:
+            self.emo_output = QLabel('')
+            self.cog_output = QLabel('')
+            self.speech_output = QLabel('')
 
-        self.user_input = QLineEdit()
-        self.user_input.hide()
+            agent_layout = QGridLayout()
+            agent_layout.addWidget(QLabel('Emotional Output:'), 0, 0)
+            agent_layout.addWidget(self.emo_output, 0, 1)
+            agent_layout.addWidget(QLabel('Cognition Output:'), 1, 0)
+            agent_layout.addWidget(self.cog_output, 1, 1)
+            agent_layout.addWidget(QLabel('Speech Output:'), 2, 0)
+            agent_layout.addWidget(self.speech_output, 2, 1)
 
-        self.label_solution = QLabel('')
-        self.label_solution.show()
+            agent_layout.setColumnMinimumWidth(0, 100)
+            agent_layout.setColumnMinimumWidth(1, 500)
+            agent = QWidget()
+            agent.setLayout(agent_layout)
 
-        self.submit_button = QPushButton("&Submit")
-        self.submit_button.hide()
+            self.start_button = QPushButton("&Start")
+            self.start_button.clicked.connect(self.start_button_clicked)
 
-        self.next_button = QPushButton("&Start")
-        self.next_button.show()
+            main_layout = QBoxLayout(2)
+            main_layout.addWidget(agent)
+            main_layout.addWidget(self.start_button)
+            self.input_widget = self.get_input_widget()
+            self.input_widget.hide()
+            main_layout.addWidget(self.input_widget)
 
-        # Define button functionality:QtCore
-        self.submit_button.clicked.connect(self.submit)
-        self.next_button.clicked.connect(self.next)
+            self.setLayout(main_layout)
+            self.resize(600, 400)
+            #192.168.0.46
+            self.exp = Environment(False, False, False)
+            self.waiting_for_answer = False
 
-        # Design layout:
-        agent_layout = QGridLayout()
-        agent_layout.addWidget(label_emo_output, 0, 0)
-        agent_layout.addWidget(self.emo_output, 0, 1)
-        agent_layout.addWidget(label_cog_output, 1, 0)
-        agent_layout.addWidget(self.cog_output, 1, 1)
-        agent_layout.addWidget(label_speech_output, 2, 0)
-        agent_layout.addWidget(self.speech_output, 2, 1)
+            emotion, cog, speech = self.exp.start()
+            self.update_output(emotion, cog, speech)
+            self.phase = 0
+        else:
+            self.speech_output = QLabel('')
 
-        agent_layout.setColumnMinimumWidth(0, 100)
-        agent_layout.setColumnMinimumWidth(1, 500)
+            self.start_button = QPushButton("&Start")
+            self.start_button.clicked.connect(self.start_button_clicked)
 
-        agent = QWidget()
-        agent.setLayout(agent_layout)
+            main_layout = QBoxLayout(2)
+            main_layout.addWidget(self.speech_output)
+            main_layout.addWidget(self.start_button)
+            self.input_widget = self.get_input_widget()
+            self.input_widget.hide()
+            main_layout.addWidget(self.input_widget)
 
-        user_layout = QGridLayout()
-        user_layout.addWidget(self.user_input, 0, 0)
-        user_layout.addWidget(self.submit_button, 0, 1)
-        user_layout.addWidget(self.next_button, 0, 1)
-        user_layout.addWidget(self.label_solution, 1, 0)
-        user_layout.setColumnMinimumWidth(0, 500)
-        user_layout.setColumnMinimumWidth(1, 100)
+            self.setLayout(main_layout)
+            self.resize(600, 400)
+            #192.168.0.46
+            self.exp = Environment(False, False, False)
+            self.waiting_for_answer = False
 
-        user = QWidget()
-        user.setLayout(user_layout)
+            emotion, cog, speech = self.exp.start()
+            self.update_output(emotion, cog, speech)
+            self.phase = 0
 
-        main_layout = QBoxLayout(2)
-        main_layout.addWidget(agent)
-        main_layout.addWidget(user)
 
-        self.setLayout(main_layout)
-        self.resize(600, 200)
-        #192.168.0.46
-        self.exp = Environment(False, False, False)
+    def get_input_widget(self):
+        # Nr layout:
+        button0 = QPushButton("&0")
+        button1 = QPushButton("&1")
+        button2 = QPushButton("&2")
+        button3 = QPushButton("&3")
+        button4 = QPushButton("&4")
+        button5 = QPushButton("&5")
+        button6 = QPushButton("&6")
+        button7 = QPushButton("&7")
+        button8 = QPushButton("&8")
+        button9 = QPushButton("&9")
 
-        emotion, cog, speech = self.exp.start()
-        self.update_output(emotion, cog, speech)
-        self.phase = 0
+        button0.clicked.connect(self.bu0_clicked)
+        button1.clicked.connect(self.bu1_clicked)
+        button2.clicked.connect(self.bu2_clicked)
+        button3.clicked.connect(self.bu3_clicked)
+        button4.clicked.connect(self.bu4_clicked)
+        button5.clicked.connect(self.bu5_clicked)
+        button6.clicked.connect(self.bu6_clicked)
+        button7.clicked.connect(self.bu7_clicked)
+        button8.clicked.connect(self.bu8_clicked)
+        button9.clicked.connect(self.bu9_clicked)
+
+        nr_layout = QGridLayout()
+        nr_layout.addWidget(button7, 0, 0)
+        nr_layout.addWidget(button8, 0, 1)
+        nr_layout.addWidget(button9, 0, 2)
+        nr_layout.addWidget(button4, 1, 0)
+        nr_layout.addWidget(button5, 1, 1)
+        nr_layout.addWidget(button6, 1, 2)
+        nr_layout.addWidget(button1, 2, 0)
+        nr_layout.addWidget(button2, 2, 1)
+        nr_layout.addWidget(button3, 2, 2)
+        nr_layout.addWidget(button0, 3, 0)
+        nr_widget = QWidget()
+        nr_widget.setLayout(nr_layout)
+        return nr_widget
+
+    def start_button_clicked(self):
+        self.start_button.hide()
+        self.input_widget.show()
+        self.present_word()
+
+    def bu0_clicked(self):
+        self.answer_given(0)
+
+    def bu1_clicked(self):
+        self.answer_given(1)
+
+    def bu2_clicked(self):
+        self.answer_given(2)
+
+    def bu3_clicked(self):
+        self.answer_given(3)
+
+    def bu4_clicked(self):
+        self.answer_given(4)
+
+    def bu5_clicked(self):
+        self.answer_given(5)
+
+    def bu6_clicked(self):
+        self.answer_given(6)
+
+    def bu7_clicked(self):
+        self.answer_given(7)
+
+    def bu8_clicked(self):
+        self.answer_given(8)
+
+    def bu9_clicked(self):
+        self.answer_given(9)
+
+    def answer_given(self, nr):
+        if self.waiting_for_answer:
+            print 'answer given:', nr
+            self.waiting_for_answer = False
+        else:
+            print 'currently no answer allowed'
 
     def update_output(self, emotion, cog, speech):
         ''' Updates the text output of the agent.
         '''
-        self.emo_output.setText(emotion)
-        self.cog_output.setText(cog)
         self.speech_output.setText(speech)
+        if DEBUG:
+            self.emo_output.setText(emotion)
+            self.cog_output.setText(cog)
 
 
     def present_word(self):
         if self.exp.has_next():
             emotion, cog, speech = self.exp.present_word()
             self.update_output(emotion, cog, speech)
-            QTimer.singleShot(1000, self.present_number)
+            self.waiting_for_answer = True
+            QTimer.singleShot(4000, self.present_number)
         else:
-            self.speech_output.setText('')
-            self.next_button.show()
-            self.exp.reset()
+            if self.exp.runs > 0:
+                self.exp.runs = self.exp.runs -1
+                self.exp.reset()
+                emotion, cog, speech = self.exp.present_word()
+                self.update_output(emotion, cog, speech)
+                self.waiting_for_answer = True
+                QTimer.singleShot(4000, self.present_number)
+            else:
+                self.end()
 
     def present_number(self):
+        self.waiting_for_answer = False
         emotion, cog, speech = self.exp.present_number()
         self.update_output(emotion, cog, speech)
-        QTimer.singleShot(1000, self.present_word)
-            
-
-    def present(self):
-        ''' Presents a single word.
-        '''
-        if self.exp.has_next():
-            emotion, cog, speech = self.exp.present_next()
-            self.update_output(emotion, cog, speech)
-            QTimer.singleShot(1000, self.present)
-        else:
-            self.speech_output.setText('')
-            self.next_button.show()
-            self.exp.reset()
-
-    def next(self):
-        ''' Introduce or show next task
-        '''
-        if self.phase == 0:
-            self.phase += 1
-            self.next_button.hide()
-            emotion, cog, speech = self.exp.introduce()
-
-            self.update_output(emotion, cog, speech)
-
-            # present word list
-            QTimer.singleShot(6000, self.present_word)
-        else:
-            if self.user_input.isHidden():
-                self.next_button.setText("Next")
-                self.user_input.show()
-
-            if not self.exp.has_next():
-                self.end()
-            else:
-                # wait for user input
-                # show cognitive expecation here
-                emotion, cog, speech = self.exp.wait()
-
-                self.update_output(emotion, cog, speech)
-
-                self.label_solution.setText('')
-                self.next_button.hide()
-                self.user_input.setStyleSheet('QLineEdit {color: black}')
-                self.user_input.setText('')
-                self.user_input.setReadOnly(False)
-                self.submit_button.show()
-
-    def submit(self):
-        ''' Submit an answer by the user
-        '''
-        word = self.user_input.text()
-
-        if word == "":
-            QMessageBox.information(self, "Empty Field", "Please enter a word")
-            return
-
-        self.user_input.setReadOnly(True)
-        correct = self.exp.check(word)
-
-
-        emotion, cog, speech = self.exp.evaluate(word, correct)
-
-        if correct:
-            self.user_input.setStyleSheet('QLineEdit {color: green}')
-        else:
-            self.user_input.setStyleSheet('QLineEdit {color: red}')
-            #self.label_solution.setText(self.exp.words[self.exp.index].word)
-
-        self.update_output(emotion, cog, speech)
-
-        self.submit_button.hide()
-        self.next_button.show()
+        QTimer.singleShot(4000, self.present_word)
 
     def end(self):
         ''' End vocabulary test
         '''
         emotion, speech = self.exp.end()
-        self.emo_output.setText(emotion)
+        if DEBUG:
+            self.emo_output.setText(emotion)
         self.speech_output.setText(speech)
-
-        self.next_button.hide()
-        self.user_input.setText('')
-        self.user_input.hide()
-
-    def keyPressEvent(self, event):
-        ''' Handles key events
-        '''
-        if event.key() == Qt.Key_Return:
-            if ((self.user_input.isHidden()
-                 and not self.next_button.isHidden()) or
-               (not self.user_input.isHidden()
-                and self.user_input.isReadOnly())):
-                self.next()
-            elif (not self.user_input.isHidden() and
-                  not self.user_input.isReadOnly()):
-                self.submit()
+        self.input_widget.hide()
 
 
 class ListTrainer(QWidget):
