@@ -4,7 +4,7 @@
 '''
 import urllib2
 import wave
-from emomodule import Happy, Angry, Annoyed, Concentrated, Bored
+#from emomodule import Happy, Angry, Annoyed, Concentrated, Bored
 
 ''' BML CODE:
 

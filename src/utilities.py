@@ -18,9 +18,9 @@ def emotion_by_name(name, impulse=100):
         return None
 
     name = name.lower()
-    name_to_emotion = {'happy': Happy, 'concentrated': Concentrated,
-                       'bored': Bored, 'annoyed': Annoyed, 'angry': Angry}
+    name_to_emotion = {'happy': Happy(impulse=impulse), 'concentrated': Concentrated(impulse=impulse),
+                       'bored': Bored(impulse=impulse), 'annoyed': Annoyed(impulse=impulse), 'angry': Angry(impulse=impulse)}
     if name in name_to_emotion.keys():
-        return name_to_emotion[name](impulse=impulse)
+        return name_to_emotion[name]
     else:
         return None

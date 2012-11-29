@@ -187,11 +187,12 @@ class EmoModule:
     REACT_POS_RIGHT = (False, 'None', 30)
 
 
-    def __init__(self, marc=None, function='rule-based'):
+    def __init__(self, marc=None, function='passive'):
         self.marc = marc
         
         # function can be: passive, rule-based, wasabi
         self.function = function
+        print 'EMOMODULE WITH FUNCTION:', self.function
         
         self.wasabi = WasabiListener(self.marc)
 

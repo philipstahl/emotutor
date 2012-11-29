@@ -18,7 +18,7 @@ class Agent:
         if use_marc:
             self.marc = Marc()
 
-        self.emo_module = EmoModule(self.marc, function='rule-based')
+        self.emo_module = EmoModule(self.marc, function='wasabi')
    
         self.speech_module = SpeechModule(use_mary)
         self.cog_module = CogModule()

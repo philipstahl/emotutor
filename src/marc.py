@@ -7,8 +7,8 @@ class Marc:
     '''
 
     IP = 'localhost'
-    PORT_OUT = 4013
-    PORT_IN = 4014
+    PORT_OUT = 4010
+    PORT_IN = 4011
 
     def __init__(self):
         self.sock_out = socket.socket(socket.AF_INET,
@@ -39,11 +39,28 @@ class Marc:
 
 
 if __name__ == '__main__':
-    from emomodule import Happy
+
+    '''
+        (bank, 0), (card, 1), (dart, 2), (face, 3), (game, 4)
+        (hand, 5), (jack, 6), (king, 7), (lamb, 8), (mask, 9)
+        (neck, 0), (pipe, 1), (guip, 2), (rope, 3), (sock, 4)
+        (tent, 5), (vent, 6), (wall, 7), (xray, 8), (zinc, 9)
+    '''
+    words = ['Bank', 'Pfeil', 'Gesicht', 'Spiel', 'Hand', 'Jacke', 'Lamm',
+             'Maske', 'Nacken', 'Pfeife', 'Mantel', 'Socke', 'Zelt', 'Wand', 'Zink']
+
+    import time
+    from emomodule import Happy, Angry
     from speechmodule import Speech
     marc = Marc()
-    speech_output = Speech('introduction', 'Das ist ein Test. Test Test Check.',
-                     Happy())
-    marc.show(Happy())
-    marc.speak(speech_output)
-    marc.show(Happy())
+
+    for word in words:
+        speech_happy = Speech('test', word, Happy())
+        speech_neutral = Speech('test', word, None)
+        speech_angry = Speech('test', word, Angry())    
+        marc.speak(speech_happy)
+        time.sleep(2)
+        marc.speak(speech_neutral)
+        time.sleep(2)
+        marc.speak(speech_angry)
+        time.sleep(2)    
