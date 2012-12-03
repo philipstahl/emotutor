@@ -4,9 +4,9 @@ from emomodule import Happy, Concentrated, Bored, Annoyed, Angry
 def seconds(time):
     ''' Returns the given time in seconds.
     '''
-    return (time.second + 60 * time.minute + 60 * 60 * time.hour) * 1000 + time.microsecond / 100
+    return (time.second + 60 * time.minute + 60 * 60 * time.hour)
 
-def millisecond(time):
+def milliseconds(time):
     ''' Returns the given time in milli seconds.
     '''
     return time.microsecond / 100 + seconds(time) * 1000

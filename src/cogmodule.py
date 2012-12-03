@@ -56,7 +56,7 @@ class CogModule:
             activation = self.activation2(t, 0.5)
             print i, activation
 
-    def baselevel_activation(self, times, d):
+    def baselevel_activation(self, times, d, now=None):
         ''' Base level activation for a chunk i is:
 
             B_i = ln(sum_from_j=1_to_n(t_j^(-d)))    with
@@ -70,11 +70,12 @@ class CogModule:
             Values range around 0
                 - activation falls
                 + activation rises
-        '''
+        '''        
         n = len(times)
 
         summed = 0
-        now = utilities.seconds(datetime.datetime.now())
+        if not now:
+            now = utilities.seconds(datetime.datetime.now())
         for j in range(n):
             diff = now - times[j]
             summed += math.pow(diff, -d)
@@ -97,6 +98,176 @@ class CogModule:
         B = math.log(n / (1 - d)) - d * math.log(L)
 
         return B
+
+    def prob_of_recall(self, threshold, activation, noise):
+        '''
+            recall probability = 1 / (1 + e^((threshold - activation) / noise))
+        '''
+        return 1.0 / (1.0 + math.exp((threshold - activation) / noise))
+
+    def retrieval_latency(self, latency_factor, activation):
+        '''
+            time = latency_factor * e^(-activation)
+        '''
+        return latency_factor * math.exp(-activation)
+
+    def logistic_distribution(self, x, s):
+        '''
+            The mean is 0
+            The variance = (pi^2 / 3 * s^2)
+
+            F(x) = 1 / (1 + e^(-(x - mean) / variance))
+        '''
+        mean = 0
+        variance = math.pow(math.pi, 2) / 3 * math.pow(s, 2)
+
+        return random.lognormvariate(mean, variance)
+        #return 1.0 / 1.0 + math.exp(-(x - mean) / variance)
+
+    def paired_associate(self):
+        d = 0.5
+        s = 0.5
+        threshold = -2.0
+
+        
+        # init times:
+        from environment import Word, Pair
+
+        pairs = [Pair('bank', '0'), Pair('card', '1'), Pair('dart', '2'), Pair('face', '3'), Pair('game', '4'),
+                 Pair('hand', '5'), Pair('jack', '6'), Pair('king', '7'), Pair('lamb', '8'), Pair('mask', '9'),
+                 Pair('neck', '0'), Pair('pipe', '1'), Pair('guip', '2'), Pair('rope', '3'), Pair('sock', '4'),
+                 Pair('tent', '5'), Pair('vent', '6'), Pair('wall', '7'), Pair('xray', '8'), Pair('zinc', '9')]
+
+        
+        nr_runs = 8
+        now = utilities.seconds(datetime.datetime.now())
+
+        total_recalled = [0 for i in range(nr_runs)]
+        total_probs = [0 for i in range(nr_runs)]
+        for k in range(100):
+        
+            times = self.get_times(nr_runs, now)
+            probs = self.get_probabilities(times, now)
+            mean_probs = self.get_mean(probs)
+            recalled = self.simulate_run(probs)
+
+            for j in range(len(recalled)):
+                total_recalled[j] += recalled[j]
+                total_probs[j] += mean_probs[j]
+
+            #print 'RUN, RECALLED, PROB' 
+            #for i in range(nr_runs):
+            #    print i+1, recalled[i], mean_probs[i]
+
+        for i in range(nr_runs):
+            print i+1, total_recalled[i] / 100, total_probs[i] / 100
+
+        
+    def get_prob(self, times, now):
+        d = 0.5
+        s = 0.5
+        threshold = -2.0
+        baselevel = self.baselevel_activation(times, d, now)
+        noise = self.logistic_distribution(now, s)
+        #noise = 0.0
+#
+        
+        activation = baselevel + noise
+        #activation = baselevel + 0.8
+        return self.prob_of_recall(threshold, activation, s)
+
+
+    def get_mean(self, item_run_pairs):
+        means = [0 for i in range(len(item_run_pairs[0]))]
+        for item_index in range(len(item_run_pairs)):
+            for run_index in range(len(item_run_pairs[item_index])):
+                means[run_index] += item_run_pairs[item_index][run_index]
+
+        for i in range(len(means)):
+            means[i] = means[i] / len(item_run_pairs)
+        return means
+                
+
+    def get_times(self, nr_runs, now):
+        ''' Returns a vector of times:
+
+            [[5, 20], [10, 30], [15, 25]
+
+            First index: Item
+            Second Index: Run
+        '''
+        times = [[] for i in range(20)]
+
+        for current_run in range(nr_runs):
+            for i in range(20):
+                
+                offset = (nr_runs - current_run - 1) * 200
+                time = now - (i*10+5+offset)
+                assert time < now
+                times[i].append(time)
+                
+        # TODO: Shuffle
+        #random.shuffle(times)
+        return times
+
+
+    def get_probabilities(self, times, now):
+        ''' Input: Vector of calling times for each item:
+
+            [[5, 20], [10, 30], [15, 25]
+
+            First index: Item
+            Second Index: Run
+
+            Returns: Vector of possibilities. Each entry represents the
+            possibility of the current item in the selected run.
+
+            [[0.43, 0.67], [33.0, 60.9], [0.50, 0.70]]
+
+            First index: Item
+            Second Index: Run nr
+        '''
+        probs = [[0.0] for i in range(20)]
+        nr_runs = len(times[0])
+
+        for current_run in range(1, nr_runs):
+            offset = (nr_runs - current_run - 1) * 200
+            for i in range(20):
+                prob = self.get_prob(times[i][:current_run], now-offset)
+                probs[i].append(prob)
+
+        return probs
+
+
+
+    def simulate_run(self, probs):
+        recalled = [0 for i in range(len(probs[0]))]
+        
+        for item in probs:
+            for run_index in range(len(item)):
+                randvar = random.randint(0, 100)
+                if randvar < item[run_index] * 100:
+                    recalled[run_index] += 1
+
+        return recalled
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def activation(self, times, d):
         if CogModule.FUNCTION == 'optimized':
@@ -299,101 +470,4 @@ class CogModule:
 
 if __name__ == '__main__':
     cog = CogModule()
-
-    task = [[1, 5, 3], [8, 4, 7], [2, 6, 9]]
-    #task = [[1, 2, 3]]
-
-    length = len(task)
-    current = 0
-
-    focus_activations = cog.focus_activation(task, current)
-
-    now = cog.seconds(datetime.datetime.now())
-    diff = 9
-    times = []
-    for d in range(diff):
-        times.insert(0, now - (d+2))
-
-    time_diffs = []
-    for time in times:
-        time_diffs.append(now - time)
-
-    task = cog.get_remaining_task(task, current)
-
-    num_remaining = 0
-    for group in task:
-        num_remaining += len(group)
-    times = times[(len(times) - num_remaining):]
-
-    baselevel_activations = []
-    for group_index in range(len(task)):
-        group_activations = []
-        for item_index in range(len(task[group_index])):
-            index = item_index
-            if group_index == 1:
-                index += len(task[group_index-1])
-            if group_index == 2:
-                index += len(task[group_index-1]) + len(task[group_index-2])
-
-            time = [times[index]]
-
-            activation = cog.baselevel_activation(time, 0.5)
-            group_activations.append(activation)
-        baselevel_activations.append(group_activations)
-
-    eq1_activations = []
-    for group_index in range(len(baselevel_activations)):
-        group_activations = []
-        for item_index in range(len(baselevel_activations[group_index])):
-            activation = baselevel_activations[group_index][item_index] + focus_activations[group_index][item_index]
-            group_activations.append(activation)
-        eq1_activations.append(group_activations)
-
-
-    '''EQUATION 8:'''
-    activations = []
-    for group_index in range(len(task)):
-        group_activations = []
-        for item_index in range(len(task[group_index])):
-            index = item_index
-            if group_index == 1:
-                index += len(task[group_index-1])
-            if group_index == 2:
-                index += len(task[group_index-1]) + len(task[group_index-2])
-
-            time = time_diffs[index]
-
-            activation = cog.equation8(time, length)
-            group_activations.append(activation)
-        activations.append(group_activations)
-
-    print 'BASELEVEL'
-    for group in baselevel_activations:
-        for item in group:
-            print item
-    '''
-    print 'FOCUS'
-    for group in focus_activations:
-        for item in group:
-            print item
-    '''
-    print 'EQUATION 1:'
-    for group in eq1_activations:
-        for item in group:
-            print item
-    '''
-    print 'EQUATION 8'
-    for group in activations:
-        for item in group:
-            print item
-    '''
-    Mis = []
-    for group in eq1_activations:
-        for item in group:
-            Mis.append(item)
-
-    print 'Mis:'
-    print Mis
-    print 'PROBAILITY:'
-    for activation in Mis:
-        cog.prob(activation, Mis)
+    cog.paired_associate()
