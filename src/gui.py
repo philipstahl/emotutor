@@ -22,6 +22,31 @@ from speechmodule import OpenMary
 DEBUG = False
 
 
+from dragonfly.all import Grammar, CompoundRule
+
+# Voice command rule combining spoken form and recognition processing.
+class ExampleRule(CompoundRule):
+    spec = "do something computer"                  # Spoken form of command.
+    print 'Command created'
+    def _process_recognition(self, node, extras):   # Callback when command is spoken.
+        print "Voice command spoken."
+
+class EinsRule(CompoundRule):
+    spec = "eins"                  # Spoken form of command.
+    def _process_recognition(self, node, extras):   # Callback when command is spoken.
+        print "eins spoken."
+
+class ZweiRule(CompoundRule):
+    spec = "zwei"                  # Spoken form of command.
+    def _process_recognition(self, node, extras):   # Callback when command is spoken.
+        print "zwei spoken."
+
+class DreiRule(CompoundRule):
+    spec = "drei"                  # Spoken form of command.
+    def _process_recognition(self, node, extras):   # Callback when command is spoken.
+        print "drei spoken."
+
+
 class AssociatedPair(QWidget):
     ''' Gui for a simple vocabulary trainer
     '''
@@ -83,6 +108,7 @@ class AssociatedPair(QWidget):
             self.width = 300
             self.height = 300
             #192.168.0.46
+
             self.exp = Environment(True, False, True)
             self.waiting_for_answer = False
 
@@ -956,6 +982,14 @@ class MainWindow(QMainWindow):
 
         options = menubar.addMenu('&Options')
         options.addAction(settings)
+
+        # Create a grammar which contains and loads the command rule.
+        grammar = Grammar("example grammar")                # Create a grammar to contain the command rule.
+        grammar.add_rule(EinsRule())                     # Add the command rule to the grammar.
+        grammar.add_rule(ZweiRule())                     # Add the command rule to the grammar.
+        grammar.add_rule(DreiRule())                     # Add the command rule to the grammar.
+        grammar.load()                                      # Load the grammar.
+        print 'Grammer loaded. Say something.'
 
         self.setMenuBar(menubar)
         self.load_config()

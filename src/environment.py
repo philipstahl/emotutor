@@ -9,6 +9,7 @@ from marc import Marc
 from logger import Logger
 import utilities
 from emomodule import WasabiListener, EmoModule
+from speechrecognition import *
 
 
 class Word:
@@ -73,6 +74,22 @@ class Environment:
         self.agent = Agent(marc, wasabi, mary)
         self.logger = Logger('logfile.csv')
         self.start_time = 0
+
+        # Speech recognition:
+        # Create a grammar which contains and loads the command rule.
+        grammar = Grammar("example grammar")                # Create a grammar to contain the command rule.
+        grammar.add_rule(NumberNullRule())
+        grammar.add_rule(NumberOneRule())
+        grammar.add_rule(NumberTwoRule())
+        grammar.add_rule(NumberThreeRule())
+        grammar.add_rule(NumberFourRule())
+        grammar.add_rule(NumberFiveRule())
+        grammar.add_rule(NumberSixRule())
+        grammar.add_rule(NumberSevenRule())
+        grammar.add_rule(NumberEightRule())
+        grammar.add_rule(NumberNineRule())
+        grammar.load()                                      # Load the grammar.
+
 
 
     def test(self, emotion, iterations):

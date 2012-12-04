@@ -45,22 +45,90 @@ if __name__ == '__main__':
         (hand, 5), (jack, 6), (king, 7), (lamb, 8), (mask, 9)
         (neck, 0), (pipe, 1), (guip, 2), (rope, 3), (sock, 4)
         (tent, 5), (vent, 6), (wall, 7), (xray, 8), (zinc, 9)
-    '''
-    words = ['Bank', 'Pfeil', 'Gesicht', 'Spiel', 'Hand', 'Jacke', 'Lamm',
-             'Maske', 'Nacken', 'Pfeife', 'Mantel', 'Socke', 'Zelt', 'Wand', 'Zink']
 
+
+        Arzt,Arm,Art,Ast
+        Baum,Brot,Bank,Bett,Berg,Bein,Blatt,Bus,Ball,Busch,Band,Brett,Bild
+        Eis,
+        Frau,Fisch,Fleck,Freund
+        Gas,Glas
+        Hand,Herbst,Hund,Haus,Hemd,Hahn,Herz,Hut,Hof,Kahn
+        Kamm,Kopf,Kind,Knopf,Kran
+        Lamm,Land,Laub,Laus
+        Mann,Milch,Mond,Mann,Meer,Moor
+        Nacht,
+        Pfeil,Pelz,Pilz
+        Rad,Rat
+        Salz,Spiel,Schrank,Stift,Stuhl,Saft,Stern,Sieb,Schuh,Stirn,Sieg,Seil,Stein,Sand,Schwein,Schaf,Schuss,Schluss,Schatz,Stahl
+        Tee,Tisch,Text,Taxi,Topf
+        Uhr,
+        Wand,Wurst,Wal,Wald
+        Zelt,Zink,Zug,Zahl,Zahn
+'''
+
+
+    all_words = 'Arzt,Arm,Art,Ast,\
+             Baum,Brot,Bank,Bett,Berg,Bein,Blatt,Bus,Ball,Busch,Band,Brett,Bild,\
+             Cafe,Carl,Chip,Clip,\
+             Deo,Damm,Dieb,Dock,Dorf,Dachs,Dampf,Deich,Dolch,Dreck,\
+             Eis,\
+             Frau,Fisch,Fleck,Freund,\
+             Gas,Glas,Geld,Grund,Grill\
+             Hand,Herbst,Hund,Haus,Hemd,Hahn,Herz,Hut,Hof,Kahn,\
+             Jod, Jagd,Jahr,\
+             Kamm,Kopf,Kind,Knopf,Kran,\
+             Lamm,Land,Laub,Laus,\
+             Mann,Milch,Mond,Mann,Meer,Moor,\
+             Nacht,\
+             Pfeil,Pelz,Pilz,Pfeil,Pilz,Paar,Park,Pelz,Pfad,Pils,Pult,\
+             Quark,Quiz,Qualm,\
+             Rad,Rat,Rad,Rat,Reh,Rast,Reis,Reim,Rock,\
+             Salz,Spiel,Schrank,Stift,Stuhl,Saft,Stern,Sieb,Schuh,Stirn,Sieg,Seil,Stein,Sand,Schwein,Schaf,Schuss,Schluss,Schatz,Stahl,\
+             Tee,Tisch,Text,Taxi,Topf,\
+             Uhr,\
+             Verb,Vers,Vieh,Volk,\
+             Wand,Wurst,Wal,Wald,\
+             Yen,Yeti,Yak,Yacht,\
+             Zelt,Zink,Zug,Zahl,Zahn'
+
+
+    good_words = 'Baum,Bank,Bett,Bein,Blatt,Bus,Busch,Band,Bild,\
+             Carl,Chip,\
+             Damm,Dorf,Dampf,\
+             Frau,Fisch,Freund,\
+             Geld,\
+             Hand,Hemd,Herz,\
+             Jod, Jagd,Jahr,\
+             Kamm,Kopf,Kind,Knopf,\
+             Lamm,Land,Laub,Laus,\
+             Mann,Milch,Mond,Mann,Meer,\
+             Nacht,\
+             Pfeil,Pilz,Pfeil,Paar,Pfad,Pult,\
+             Quark,\
+             Rock,\
+             Schrank,Stift,Stuhl,Stern,Schuh,Stirn,Sieg,Stein,Schluss,Schatz,\
+             Tisch,Text,Taxi,Topf,\
+             Vers,Vieh,\
+             Wand,Wal,Wald,\
+             Zelt,Zink,Zahl'
+
+    good_words = 'Xanten,Yeti'
+    
+    words = good_words.split(',')
+
+    
     import time
-    from emomodule import Happy, Angry
+    #from emomodule import Happy, Angry
     from speechmodule import Speech
     marc = Marc()
 
     for word in words:
-        speech_happy = Speech('test', word, Happy())
+        #speech_happy = Speech('test', word, Happy())
         speech_neutral = Speech('test', word, None)
-        speech_angry = Speech('test', word, Angry())    
-        marc.speak(speech_happy)
-        time.sleep(2)
+        #speech_angry = Speech('test', word, Angry())    
+        #marc.speak(speech_happy)
+        #time.sleep(2)
         marc.speak(speech_neutral)
         time.sleep(2)
-        marc.speak(speech_angry)
-        time.sleep(2)    
+        #marc.speak(speech_angry)
+        #time.sleep(2)    
