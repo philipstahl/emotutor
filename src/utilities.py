@@ -1,5 +1,6 @@
 import datetime
-from emomodule import Happy, Concentrated, Bored, Annoyed, Angry
+from emomodule import Happy, Concentrated, Bored, Annoyed, Angry, Fear, \
+                      FearsConfirmed, Hope, Relief
 
 def seconds(time):
     ''' Returns the given time in seconds.
@@ -18,8 +19,16 @@ def emotion_by_name(name, impulse=100):
         return None
 
     name = name.lower()
-    name_to_emotion = {'happy': Happy(impulse=impulse), 'concentrated': Concentrated(impulse=impulse),
-                       'bored': Bored(impulse=impulse), 'annoyed': Annoyed(impulse=impulse), 'angry': Angry(impulse=impulse)}
+    name_to_emotion = {'happy': Happy(impulse=impulse),
+                       'concentrated': Concentrated(impulse=impulse),
+                       'bored': Bored(impulse=impulse),
+                       'annoyed': Annoyed(impulse=impulse),
+                       'angry': Angry(impulse=impulse),
+                       'fear': Fear(),
+                       'fears-confirmed': FearsConfirmed(),
+                       'hope': Hope(),
+                       'relief': Relief()}
+
     if name in name_to_emotion.keys():
         return name_to_emotion[name]
     else:
