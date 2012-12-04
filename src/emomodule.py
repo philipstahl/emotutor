@@ -391,7 +391,7 @@ class WasabiListener():
                     highest_imp = self.emo_status[emotion]
             if highest_imp == 0:
                 primary_emotion = 'concentrated'
-            return utilities.emotion_by_name(primary_emo)(impulse = highest_imp)
+            return utilities.emotion_by_name(primary_emo, impulse = highest_imp)
         else:
             return self.static_emotion
 
@@ -411,7 +411,7 @@ class WasabiListener():
 
         # Get dominating emotion:
         primary_emo = self.get_primary_emotion()
-        emotion = utilities.emotion_by_name(primary_emo.name)()
+        emotion = utilities.emotion_by_name(primary_emo.name)
 
         # Send to MARC:
         if self.marc:

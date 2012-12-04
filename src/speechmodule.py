@@ -43,7 +43,10 @@ class Speech:
                  marc:f0_shift="0.0"  marc:locale="de"  \
                  marc:style="' + self.emotion + '"\
                  text="' + self.text + '" />\
+                <marc:subtitles id="bml_item_3" align="DOWN" duration="2.0">' \
+                  + self.text + '</marc:subtitles> \
                 </marc:fork></bml>'
+
 
 
         '''

@@ -18,6 +18,8 @@ def emotion_by_name(name, impulse=100):
     if name == 'None' or impulse == 0:
         return None
 
+    con = Concentrated()
+
     name = name.lower()
     name_to_emotion = {'happy': Happy(impulse=impulse),
                        'concentrated': Concentrated(impulse=impulse),
