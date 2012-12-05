@@ -18,33 +18,10 @@ from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, \
 from marc import Marc
 from cogmodule import CogModule
 from speechmodule import OpenMary
+from speechrecognition import *
 
 DEBUG = False
 
-
-from dragonfly.all import Grammar, CompoundRule
-
-# Voice command rule combining spoken form and recognition processing.
-class ExampleRule(CompoundRule):
-    spec = "do something computer"                  # Spoken form of command.
-    print 'Command created'
-    def _process_recognition(self, node, extras):   # Callback when command is spoken.
-        print "Voice command spoken."
-
-class EinsRule(CompoundRule):
-    spec = "eins"                  # Spoken form of command.
-    def _process_recognition(self, node, extras):   # Callback when command is spoken.
-        print "eins spoken."
-
-class ZweiRule(CompoundRule):
-    spec = "zwei"                  # Spoken form of command.
-    def _process_recognition(self, node, extras):   # Callback when command is spoken.
-        print "zwei spoken."
-
-class DreiRule(CompoundRule):
-    spec = "drei"                  # Spoken form of command.
-    def _process_recognition(self, node, extras):   # Callback when command is spoken.
-        print "drei spoken."
 
 
 class AssociatedPair(QWidget):
@@ -52,6 +29,22 @@ class AssociatedPair(QWidget):
     '''
     def __init__(self, parent=None):
         super(AssociatedPair, self).__init__(parent)
+
+
+        # Speech recognition:
+        # Create a grammar which contains and loads the command rule.
+        grammar = Grammar("example grammar")                # Create a grammar to contain the command rule.
+        grammar.add_rule(NumberNullRule(self.answer_given))
+        grammar.add_rule(NumberOneRule(self.answer_given))
+        grammar.add_rule(NumberTwoRule(self.answer_given))
+        grammar.add_rule(NumberThreeRule(self.answer_given))
+        grammar.add_rule(NumberFourRule(self.answer_given))
+        grammar.add_rule(NumberFiveRule(self.answer_given))
+        grammar.add_rule(NumberSixRule(self.answer_given))
+        grammar.add_rule(NumberSevenRule(self.answer_given))
+        grammar.add_rule(NumberEightRule(self.answer_given))
+        grammar.add_rule(NumberNineRule(self.answer_given))
+        grammar.load()                                      # Load the grammar.
 
         if DEBUG:
             self.emo_output = QLabel('')
@@ -982,14 +975,6 @@ class MainWindow(QMainWindow):
 
         options = menubar.addMenu('&Options')
         options.addAction(settings)
-
-        # Create a grammar which contains and loads the command rule.
-        grammar = Grammar("example grammar")                # Create a grammar to contain the command rule.
-        grammar.add_rule(EinsRule())                     # Add the command rule to the grammar.
-        grammar.add_rule(ZweiRule())                     # Add the command rule to the grammar.
-        grammar.add_rule(DreiRule())                     # Add the command rule to the grammar.
-        grammar.load()                                      # Load the grammar.
-        print 'Grammer loaded. Say something.'
 
         self.setMenuBar(menubar)
         self.load_config()
