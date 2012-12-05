@@ -108,4 +108,9 @@ class Agent:
         #    self.speak(speech)
         #    verbal_output = speech.text
 
+        if correct:
+            self.marc.headYes()
+        else:
+            self.marc.headNo()
+
         return (str(emotion), '...', verbal_output)

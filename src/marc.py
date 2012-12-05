@@ -38,6 +38,60 @@ class Marc:
         self._perform(speech.name, speech.get_bml_code())
 
 
+    def headNo(self):
+        print 'Marc HEAD NO'
+        
+    def headYes(self):
+        print 'MARC HEAD YES'
+        self.headDown(wait=0.0, amount=0.1, interpolate=0.4)
+        self.headClear(wait=0.4, interpolate=0.4)
+
+    def headNo(self):
+        print 'MARC HEAD NO'
+        self.headClear(wait=0.0, interpolate=1.0)
+        self.headLeft(wait=0.1, amount=0.2, interpolate=0.5)
+        self.headClear(wait=0.5, interpolate=0.5)
+        self.headRight(wait=0.9, amount=0.2, interpolate=0.5)
+        self.headClear(wait=1.5, interpolate=0.5)
+
+    def headClear(self, wait=0.0, interpolate=1.0):
+        bml_code = '<bml id="Track_0"><marc:fork id="Track_0_fork_1">' \
+                + '<wait duration="' + str(wait) + '" />' \
+                 + '<face id="bml_item_1" type="FACS" side="BOTH" amount="0" au="marc:ALL" marc:interpolate="' + str(interpolate) + '" />' \
+                 + '</marc:fork></bml>'
+        
+        self._perform('clear', bml_code)
+
+
+    def headUp(self, wait=0.0, amount=0.5, interpolate=1.0):
+        bml_code = '<bml id="Track_0"><marc:fork id="Track_0_fork_1">' \
+                 + '<wait duration="' + str(wait) + '" />' \
+                 + '<face id="bml_item_1_au52"  type="FACS" side="BOTH" amount="' + str(amount) + '" au="53" marc:interpolate="' + str(interpolate) + '" marc:interpolation_type="linear" />' \
+                 + '</marc:fork></bml>'
+        self._perform('head_up', bml_code)
+
+
+    def headDown(self, wait=0.0, amount=0.5, interpolate=1.0):
+        bml_code = '<bml id="Track_0"><marc:fork id="Track_0_fork_1">' \
+                 + '<wait duration="' + str(wait) + '" />' \
+                 + '<face id="bml_item_1_au53"  type="FACS" side="BOTH" amount="' + str(amount) + '" au="54" marc:interpolate="' + str(interpolate) + '" marc:interpolation_type="linear" />' \
+                 + '</marc:fork></bml>'
+        self._perform('head_down', bml_code)
+
+    def headLeft(self, wait=0.0, amount=0.5, interpolate=1.0):
+        bml_code = '<bml id="Track_0"><marc:fork id="Track_0_fork_1">' \
+                 + '<wait duration="' + str(wait) + '" />' \
+                 + '<face id="bml_item_2_au50"  type="FACS" side="BOTH" amount="' + str(amount) + '" au="51" marc:interpolate="' + str(interpolate) + '" marc:interpolation_type="linear" />' \
+                 + '</marc:fork></bml>'
+        self._perform('head_left', bml_code)
+
+    def headRight(self, wait=0.0, amount=0.5, interpolate=1.0):
+        bml_code = '<bml id="Track_0"><marc:fork id="Track_0_fork_1">' \
+                 + '<wait duration="' + str(wait) + '" />' \
+                 + '<face id="bml_item_5_au51"  type="FACS" side="BOTH" amount="' + str(amount) + '" au="52" marc:interpolate="' + str(interpolate) + '" marc:interpolation_type="linear" />' \
+                 + '</marc:fork></bml>'
+        self._perform('head_right', bml_code)
+
 if __name__ == '__main__':
 
     '''
@@ -116,12 +170,15 @@ if __name__ == '__main__':
     
     words = good_words.split(',')
 
-    
+
     import time
     #from emomodule import Happy, Angry
     from speechmodule import Speech
     marc = Marc()
 
+    marc.headNo()
+
+    '''
     for word in words:
         #speech_happy = Speech('test', word, Happy())
         speech_neutral = Speech('test', word, None)
@@ -131,4 +188,5 @@ if __name__ == '__main__':
         marc.speak(speech_neutral)
         time.sleep(2)
         #marc.speak(speech_angry)
-        #time.sleep(2)    
+        #time.sleep(2)
+    '''
