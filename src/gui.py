@@ -886,14 +886,21 @@ class Welcome(QWidget):
         button_emotions = QPushButton('&Edit emotions')
         button_mapping = QPushButton('&Edit mapping')
         button_start = QPushButton('&Start training')
-        button_list = QPushButton('&Start list training')
+        
+        button_start_user = QPushButton('&Start with applied settings.')
+        button_start_neutral = QPushButton('&Start with neutral agent.')
+        button_start_rulebased = QPushButton('&Start with rulebased agent.')
+        button_start_wasabi = QPushButton('&Start with wasabi based agent.')
 
         # Define button funcionalty:
         button_settings.clicked.connect(self.options)
         button_emotions.clicked.connect(self.emotions)
         button_mapping.clicked.connect(self.mapping)
-        button_start.clicked.connect(self.start)
-        button_list.clicked.connect(self.list_test)
+        
+        button_start_user.clicked.connect(self.start_user)
+        button_start_neutral.clicked.connect(self.start_neutral)
+        button_start_rulebased.clicked.connect(self.start_rulebased)
+        button_start_wasabi.clicked.connect(self.start_wasabi)
 
         button_layout = QBoxLayout(2)
         button_layout.addWidget(button_settings)
@@ -911,9 +918,12 @@ class Welcome(QWidget):
         layout.addWidget(left_top, 0, 0)
         layout.addWidget(buttons, 0, 1)
         layout.addWidget(right_top, 0, 2)
-        layout.addWidget(left_bottom, 1, 0)
-        layout.addWidget(button_list, 1, 1)
-        layout.addWidget(right_bottom, 1, 2)
+
+        layout.addWidget(QLabel('Paired Associate Task:'), 1, 1)
+        layout.addWidget(button_start_user, 2, 1)
+        layout.addWidget(button_start_neutral, 3, 1)
+        layout.addWidget(button_start_rulebased, 4, 1)
+        layout.addWidget(button_start_wasabi, 5, 1)
 
         self.setLayout(layout)
         self.resize(600, 100)
@@ -933,15 +943,25 @@ class Welcome(QWidget):
         '''
         self.emit(SIGNAL('mapping'))
 
-    def start(self):
-        ''' Start test
+    def start_user(self):
+        ''' Start task with user specified agent.
         '''
-        self.emit(SIGNAL('training'))
+        self.emit(SIGNAL('start_user'))
 
-    def list_test(self):
-        ''' Start list test
+    def start_neutral(self):
+        ''' Start task with neutral agent.
         '''
-        self.emit(SIGNAL('list_test'))
+        self.emit(SIGNAL('start_neutral'))
+
+    def start_rulebased(self):
+        ''' Start task with rulebased agent.
+        '''
+        self.emit(SIGNAL('start_rulebased'))
+
+    def start_wasabi(self):
+        ''' Start task with wasabi based agent.
+        '''
+        self.emit(SIGNAL('start_wasabi'))
 
 
 class MainWindow(QMainWindow):
@@ -960,8 +980,6 @@ class MainWindow(QMainWindow):
 
         new = QAction(QIcon('icons/icon.png'), 'New training',
                                         self)
-        self.connect(new, SIGNAL('triggered()'), self.show_training)
-
         settings = QAction(QIcon('icons/icon.png'),
                                  'NetworkSettings', self)
         self.connect(settings, SIGNAL('triggered()'), self.show_options)
@@ -977,15 +995,14 @@ class MainWindow(QMainWindow):
         options.addAction(settings)
 
         self.setMenuBar(menubar)
-        self.load_config()
         self.show_welcome()
         self.move(0, 0)
 
-    def load_config(self):
+    def load_config(self, configfile='emotutor.cfg'):
         ''' loads the init values from the config file
         '''
         config = ConfigParser.SafeConfigParser()
-        config.read('emotutor.cfg')
+        config.read(configfile)
         # TODO(path is relative to the path gui.py is called.)
         Marc.IP = config.get('Marc', 'ip')
         Marc.PORT_IN = config.getint('Marc', 'port_in')
@@ -1048,8 +1065,12 @@ class MainWindow(QMainWindow):
         self.connect(welcome, SIGNAL('settings'), self.show_options)
         self.connect(welcome, SIGNAL('emotions'), self.show_emotions)
         self.connect(welcome, SIGNAL('mapping'), self.show_mapping)
-        self.connect(welcome, SIGNAL('training'), self.show_training)
-        self.connect(welcome, SIGNAL('list_test'), self.show_list_training)
+        
+        self.connect(welcome, SIGNAL('start_user'), self.start_user)
+        self.connect(welcome, SIGNAL('start_neutral'), self.start_neutral)
+        self.connect(welcome, SIGNAL('start_rulebased'), self.start_rulebased)
+        self.connect(welcome, SIGNAL('start_wasabi'), self.start_wasabi)
+
         welcome.show()
         self.setCentralWidget(welcome)
 
@@ -1077,22 +1098,27 @@ class MainWindow(QMainWindow):
         mapping.show()
         self.setCentralWidget(mapping)
 
-    def show_training(self):
-        ''' Starts the training
+    
+    def start_user(self):
+        self.load_config('emotutor.cfg')
+        self.start_trainer()
 
-        '''
-        trainer = VocabTrainer()
-        trainer.show()
-        self.setCentralWidget(trainer)
+    def start_neutral(self):
+        self.load_config('emotutor_neutral.cfg')
+        self.start_trainer()
 
-    def show_list_training(self):
-        ''' Starts the list training
+    def start_rulebased(self):
+        self.load_config('emotutor_rulebased.cfg')
+        self.start_trainer()
 
-        '''
-        #trainer = ListTrainer()
+    def start_wasabi(self):
+        self.load_config('emotutor_wasabi.cfg')
+        self.start_trainer()
+           
+    def start_trainer(self):
         trainer = AssociatedPair()
         trainer.show()
-        self.setCentralWidget(trainer)
+        self.setCentralWidget(trainer)        
 
     def center(self):
         ''' Centers the current window
