@@ -32,13 +32,26 @@ class AssociatedPair(QWidget):
 
         # Speech recognition:
         grammar = Grammar("example grammar")
-        rules = [NumberNullRule, NumberOneRule, NumberTwoRule, NumberThreeRule,
-                 NumberFourRule, NumberFiveRule, NumberSixRule,
-                 NumberSevenRule, NumberEightRule, NumberNineRule]
+        #rules = [NumberNullRule, NumberOneRule, NumberTwoRule, NumberThreeRule,
+        #         NumberFourRule, NumberFiveRule, NumberSixRule,
+        #         NumberSevenRule, NumberEightRule, NumberNineRule]
 
-        for rule in rules:
-            grammer.add_rule(rule(self.answer_given))
+        #for rule in rules:
+        #    grammar.add_rule(rule(self.answer_given))
             
+        #grammar.load()
+
+        grammar.add_rule(NumberNullRule(self.answer_given))
+        grammar.add_rule(NumberOneRule(self.answer_given))
+        grammar.add_rule(NumberTwoRule(self.answer_given))
+        grammar.add_rule(NumberThreeRule(self.answer_given))
+        grammar.add_rule(NumberFourRule(self.answer_given))
+        grammar.add_rule(NumberFiveRule(self.answer_given))
+        grammar.add_rule(NumberSixRule(self.answer_given))
+        grammar.add_rule(NumberSevenRule(self.answer_given))
+        grammar.add_rule(NumberEightRule(self.answer_given))
+        grammar.add_rule(NumberNineRule(self.answer_given))
+
         grammar.load()
 
         if DEBUG:
@@ -328,6 +341,20 @@ class Settings(QWidget):
             layout.addWidget(values[i], line_index, i)
 
 
+class TestEmoButton(QWidget):
+    def __init__(self, emo, parent=None):
+        QWidget.__init__(self, parent)
+        self.button = QPushButton('&Test', self)
+        self.name='me'
+        self.emo = emo()
+        self.button.clicked.connect(self.calluser)
+        
+    def calluser(self):
+        print(self.name)
+        environment = TestEnvironment()
+        environment.test(self.emo, 5)
+
+
 class NetworkSettings(Settings):
     ''' Frame showing all network settings
     '''
@@ -427,7 +454,9 @@ class NetworkSettings(Settings):
         ''' Tests if messages are received from wasabi.
         '''
         self.apply_settings()
-        self.environment.test_wasabi()
+
+        environment = TestEnvironment()
+        environment.test_wasabi()
 
     def reset(self):
         ''' Reset settins to original values
@@ -467,8 +496,7 @@ class Emotions(Settings):
              'angry': init(Angry),
              'surprise': init(Surprise)}
 
-        self.environment = Environment()
-        print 'ENVIRONMENT CREATED'
+
 
         super(Emotions, self).__init__(parent)
 
@@ -494,6 +522,12 @@ class Emotions(Settings):
         self.add_line(layout, [QLabel('Surprise')]
                               + self.emo_settings['surprise'], 7)
 
+        #layout.addWidget(TestEmoButton(Happy), 2, 5)
+        #layout.addWidget(TestEmoButton(Concentrated), 3, 5)
+        #layout.addWidget(TestEmoButton(Bored), 4, 5)
+        #layout.addWidget(TestEmoButton(Annoyed), 5, 5)
+        #layout.addWidget(TestEmoButton(Angry), 6, 5)
+        #layout.addWidget(TestEmoButton(Surprise), 7, 5)
         layout.addWidget(self.button('&Test', self.test_happy), 2, 5)
         layout.addWidget(self.button('&Test', self.test_concentrated), 3, 5)
         layout.addWidget(self.button('&Test', self.test_bored), 4, 5)
@@ -1101,22 +1135,22 @@ class MainWindow(QMainWindow):
     
     def start_user(self):
         self.load_config('emotutor.cfg')
-        self.start_trainer()
+        self.start_trainer(use_wasabi=True)
 
     def start_neutral(self):
         self.load_config('emotutor_neutral.cfg')
-        self.start_trainer()
+        self.start_trainer(use_wasabi=False)
 
     def start_rulebased(self):
         self.load_config('emotutor_rulebased.cfg')
-        self.start_trainer()
+        self.start_trainer(use_wasabi=False)
 
     def start_wasabi(self):
         self.load_config('emotutor_wasabi.cfg')
-        self.start_trainer()
+        self.start_trainer(use_wasabi=True)
            
-    def start_trainer(self):
-        trainer = AssociatedPair()
+    def start_trainer(self, use_wasabi):
+        trainer = AssociatedPair(use_wasabi)
         trainer.show()
         self.setCentralWidget(trainer)        
 

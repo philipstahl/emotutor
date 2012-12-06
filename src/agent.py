@@ -16,7 +16,7 @@ class Agent:
     def __init__(self, use_wasabi):
         self.marc = Marc()
 
-        self.emo_module = EmoModule(self.marc, function='wasabi')
+        self.emo_module = EmoModule(self.marc, use_wasabi)
    
         self.speech_module = SpeechModule()
         self.cog_module = CogModule()

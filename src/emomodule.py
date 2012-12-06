@@ -187,20 +187,15 @@ class EmoModule:
     REACT_POS_RIGHT = (False, 'None', 30)
 
 
-    def __init__(self, marc=None, function='passive'):
+    def __init__(self, marc=None, use_wasabi=False):
         self.marc = marc
         
-        # function can be: passive, rule-based, wasabi
-        self.function = function
-        print 'EMOMODULE WITH FUNCTION:', self.function
-        
+        self.use_wasabi = use_wasabi
         self.wasabi = WasabiListener(self.marc)
 
     def get_primary_emotion(self):
         ''' Returns the currently dominating emotion
         '''
-        if self.function == 'passive':
-            return None
         return self.wasabi.get_primary_emotion()
 
     def check(self, correct, expectation):
@@ -211,9 +206,7 @@ class EmoModule:
             expecation: of the answer before answer was given:
                         negative / none / positive
         '''
-        if self.function == 'passive':
-            return None
-        
+        print 'CHECK ANSWER VIA MOMODULE', self.use_wasabi
         emotion = 'None'
         impulse = 0
 
@@ -228,7 +221,8 @@ class EmoModule:
         if surprise:
             self.trigger(Surprise())
 
-        if self.function == 'wasabi':
+        if self.use_wasabi:
+            print 'REACT VIA WASABI', emotion, impulse
             if emotion != 'None':
                 self.trigger(utilities.emotion_by_name(emotion))
 
@@ -263,21 +257,18 @@ class EmoModule:
         self.wasabi.show_static_emotion(emotion)
 
     def start_expressing(self):
-        if self.function != 'passive':
-            self.wasabi.clear_static_emotion()
-            self.wasabi.start_expressing()
+        self.wasabi.clear_static_emotion()
+        self.wasabi.start_expressing()
 
     def start_hearing(self):
         ''' Starts the connectivity to WASABI.
         '''
-        if self.function != 'passive':
-            self.wasabi.start()
+        self.wasabi.start()
 
     def end_hearing(self):
         ''' Ends the connectivity to WASABI
         '''
-        if self.function != 'passive':
-            self.wasabi.end()
+        self.wasabi.end()
 
     def is_dynamic(self):
         if self.wasabi.expressing:

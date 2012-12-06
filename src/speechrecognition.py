@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from dragonfly.all import Grammar, CompoundRule
 
 # Voice command rule combining spoken form and recognition processing.
