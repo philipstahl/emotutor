@@ -43,16 +43,16 @@ class Marc:
         
     def headYes(self):
         print 'MARC HEAD YES'
-        self.headDown(wait=0.0, amount=0.1, interpolate=0.4)
-        self.headClear(wait=0.4, interpolate=0.4)
+        self.headDown(wait=0.0, amount=0.1, interpolate=0.3)
+        self.headClear(wait=0.3, interpolate=0.3)
 
     def headNo(self):
         print 'MARC HEAD NO'
         self.headClear(wait=0.0, interpolate=1.0)
-        self.headLeft(wait=0.1, amount=0.2, interpolate=0.5)
-        self.headClear(wait=0.5, interpolate=0.5)
-        self.headRight(wait=0.9, amount=0.2, interpolate=0.5)
-        self.headClear(wait=1.5, interpolate=0.5)
+        self.headLeft(wait=0.1, amount=0.2, interpolate=0.3)
+        self.headClear(wait=0.3, interpolate=0.3)
+        self.headRight(wait=0.6, amount=0.2, interpolate=0.3)
+        self.headClear(wait=0.9, interpolate=0.5)
 
     def headClear(self, wait=0.0, interpolate=1.0):
         bml_code = '<bml id="Track_0"><marc:fork id="Track_0_fork_1">' \

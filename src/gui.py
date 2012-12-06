@@ -12,7 +12,7 @@ from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
 from PyQt4.QtCore import SIGNAL, Qt, QTimer
 
 from agent import Agent
-from environment import Environment
+from environment import Environment, TestEnvironment
 from emomodule import EmoModule, Happy, Concentrated, Bored, Annoyed, Angry, \
                       Surprise
 from marc import Marc
@@ -27,24 +27,19 @@ DEBUG = False
 class AssociatedPair(QWidget):
     ''' Gui for a simple vocabulary trainer
     '''
-    def __init__(self, parent=None):
-        super(AssociatedPair, self).__init__(parent)
-
+    def __init__(self, use_wasabi=False):
+        super(AssociatedPair, self).__init__()
 
         # Speech recognition:
-        # Create a grammar which contains and loads the command rule.
-        grammar = Grammar("example grammar")                # Create a grammar to contain the command rule.
-        grammar.add_rule(NumberNullRule(self.answer_given))
-        grammar.add_rule(NumberOneRule(self.answer_given))
-        grammar.add_rule(NumberTwoRule(self.answer_given))
-        grammar.add_rule(NumberThreeRule(self.answer_given))
-        grammar.add_rule(NumberFourRule(self.answer_given))
-        grammar.add_rule(NumberFiveRule(self.answer_given))
-        grammar.add_rule(NumberSixRule(self.answer_given))
-        grammar.add_rule(NumberSevenRule(self.answer_given))
-        grammar.add_rule(NumberEightRule(self.answer_given))
-        grammar.add_rule(NumberNineRule(self.answer_given))
-        grammar.load()                                      # Load the grammar.
+        grammar = Grammar("example grammar")
+        rules = [NumberNullRule, NumberOneRule, NumberTwoRule, NumberThreeRule,
+                 NumberFourRule, NumberFiveRule, NumberSixRule,
+                 NumberSevenRule, NumberEightRule, NumberNineRule]
+
+        for rule in rules:
+            grammer.add_rule(rule(self.answer_given))
+            
+        grammar.load()
 
         if DEBUG:
             self.emo_output = QLabel('')
@@ -77,7 +72,7 @@ class AssociatedPair(QWidget):
             self.setLayout(main_layout)
             self.resize(600, 400)
             #192.168.0.46
-            self.exp = Environment(False, False, False)
+            self.exp = Environment(use_wasabi)
             self.waiting_for_answer = False
 
             emotion, cog, speech = self.exp.start()
@@ -90,7 +85,6 @@ class AssociatedPair(QWidget):
             self.start_button.clicked.connect(self.start_button_clicked)
 
             main_layout = QBoxLayout(2)
-            #main_layout.addWidget(self.speech_output)
             main_layout.addWidget(self.start_button)
             self.input_widget = self.get_input_widget()
             self.input_widget.hide()
@@ -102,7 +96,7 @@ class AssociatedPair(QWidget):
             self.height = 300
             #192.168.0.46
 
-            self.exp = Environment(True, False, True)
+            self.exp = Environment(use_wasabi)
             self.waiting_for_answer = False
 
             emotion, cog, speech = self.exp.start()
@@ -111,7 +105,7 @@ class AssociatedPair(QWidget):
 
 
     def get_input_widget(self):
-        # Nr layout:
+        # Nr layout:      
         button0 = QPushButton("&0")
         button1 = QPushButton("&1")
         button2 = QPushButton("&2")
@@ -427,7 +421,7 @@ class NetworkSettings(Settings):
         OpenMary.IP = self.mary_settings['ip'].text()
         OpenMary.PATH = self.mary_settings['path'].text()
 
-        self.environment = Environment(False, False, False)
+        self.environment = Environment()
 
     def test_wasabi(self):
         ''' Tests if messages are received from wasabi.
@@ -472,6 +466,9 @@ class Emotions(Settings):
              'annoyed': init(Annoyed),
              'angry': init(Angry),
              'surprise': init(Surprise)}
+
+        self.environment = Environment()
+        print 'ENVIRONMENT CREATED'
 
         super(Emotions, self).__init__(parent)
 
@@ -530,7 +527,7 @@ class Emotions(Settings):
         apply_emo(Annoyed, 'annoyed')
         apply_emo(Angry, 'angry')
         apply_emo(Surprise, 'surprise')
-        self.environment = Environment(False, False, False)
+        #self.environment = Environment()
 
     def get_function(self, combo_box):
         ''' Returns the keyword of the selected function in the given combobox.
@@ -613,7 +610,8 @@ class Emotions(Settings):
     def test(self, emotion):
         ''' Test current settings
         '''
-        self.environment.test(emotion, 5)
+        environment = TestEnvironment()
+        environment.test(emotion, 5)
 
 
 class Parameters(Settings):
@@ -849,7 +847,7 @@ class Parameters(Settings):
         EmoModule.REACT_NONE_RIGHT = get_reaction(1, 'None')
         EmoModule.REACT_POS_RIGHT = get_reaction(1, 'Pos')
 
-        self.environment = Environment(False, False, False)
+        self.environment = Environment()
 
     def get_function(self, combo_box):
         ''' Returns the selected function in the combo_box.
@@ -994,6 +992,8 @@ class MainWindow(QMainWindow):
         options = menubar.addMenu('&Options')
         options.addAction(settings)
 
+
+        self.load_config()
         self.setMenuBar(menubar)
         self.show_welcome()
         self.move(0, 0)

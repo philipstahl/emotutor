@@ -13,14 +13,12 @@ class Agent:
 
     INIT_EMOTION = 'None'
 
-    def __init__(self, use_marc, use_wasabi, use_mary):
-        self.marc = None
-        if use_marc:
-            self.marc = Marc()
+    def __init__(self, use_wasabi):
+        self.marc = Marc()
 
         self.emo_module = EmoModule(self.marc, function='wasabi')
    
-        self.speech_module = SpeechModule(use_mary)
+        self.speech_module = SpeechModule()
         self.cog_module = CogModule()
 
     def start(self):
@@ -79,11 +77,8 @@ class Agent:
     def speak(self, speech):
         ''' Speaks the given speech via marc or wave file
         '''
-        if self.marc:
-            self.marc.speak(speech)
-        elif self.speech_module.tts:
-            self.play_wave(speech.name)
-
+        self.marc.speak(speech)
+        
     def evaluate(self, word, correct):
         ''' Evalutes the given words regarding to its correctness and time.
             Return emotional and verbal output, based on the cognitve,

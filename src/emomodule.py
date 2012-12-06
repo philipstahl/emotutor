@@ -296,7 +296,7 @@ class WasabiListener():
                            'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
         self.hearing = False
         self.expressing = False
-        self.static_emo = None
+        self.static_emotion = None
 
         self.thread = None
 

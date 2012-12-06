@@ -148,10 +148,8 @@ class SpeechModule:
         agent is defined.
     '''
 
-    def __init__(self, use_mary=False):
-        self.tts = None
-        if use_mary:
-            self.tts = OpenMary()
+    def __init__(self):
+        self.tts = OpenMary()
 
     def introduce(self, emotion):
         ''' The agents reaction at the beginning of the training

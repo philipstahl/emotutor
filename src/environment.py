@@ -3,6 +3,7 @@
     Connects the agent with the gui.
 
 '''
+import random
 import datetime
 from agent import Agent
 from marc import Marc
@@ -43,43 +44,16 @@ class Pair:
         self.answers.append(answer)
 
 
-class Environment:
-    ''' The class for the experimental environment
+class TestEnvironment:
+    ''' Class for testing settings.
     '''
-
-    def __init__(self, marc=False, wasabi=False, mary=False):
-        ''' vars indicate the use of marc, wasabi and open mary
-        '''
-        ''' Original pairs:
-            (bank, 0), (card, 1), (dart, 2), (face, 3), (game, 4)
-            (hand, 5), (jack, 6), (king, 7), (lamb, 8), (mask, 9)
-            (neck, 0), (pipe, 1), (guip, 2), (rope, 3), (sock, 4)
-            (tent, 5), (vent, 6), (wall, 7), (xray, 8), (zinc, 9)
-        '''
-
-        #self.pairs = [Pair('Bank', 'Null'), Pair('Karte', 'Eins'),
-        #              Pair('Dattel', 'Zwei'), Pair('Gesicht', 'drei')]
-
-        self.pairs = [Pair('Bank', '0'), Pair('Dorf', '1'),
-                      Pair('Dose', '2'), Pair('Erde', '3'), 
-                      Pair('Fahrrad', '2'), Pair('Haus', '3')]
-
-        import random
-        random.shuffle(self.pairs)
-
-        self.index = 0
-        self.runs = 2
-
-        self.agent = Agent(marc, wasabi, mary)
-        self.logger = Logger('logfile.csv')
-        self.start_time = 0
-
-
+    def __init__(self):
+        pass
+    
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time
         '''
         marc = Marc()
-
         from threading import Thread
         import socket
         sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -111,6 +85,34 @@ class Environment:
 
         listener = WasabiListener(marc)
         listener.start()
+
+
+class Environment:
+    ''' The class for the experimental environment
+    '''
+
+    def __init__(self, use_wasabi=False):
+        ''' vars indicate the use of marc, wasabi and open mary
+        
+            Original pairs:
+            (bank, 0), (card, 1), (dart, 2), (face, 3), (game, 4)
+            (hand, 5), (jack, 6), (king, 7), (lamb, 8), (mask, 9)
+            (neck, 0), (pipe, 1), (guip, 2), (rope, 3), (sock, 4)
+            (tent, 5), (vent, 6), (wall, 7), (xray, 8), (zinc, 9)
+        '''
+        
+        self.pairs = [Pair('Bank', '0'), Pair('Dorf', '1'),
+                      Pair('Dose', '2'), Pair('Erde', '3'), 
+                      Pair('Fahrrad', '2'), Pair('Haus', '3')]
+
+        random.shuffle(self.pairs)
+
+        self.index = 0
+        self.runs = 2
+
+        self.agent = Agent(use_wasabi)
+        self.logger = Logger('logfile.csv')
+        self.start_time = 0
 
     def start(self):
         ''' Show init text and wait for start button.
