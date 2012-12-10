@@ -193,12 +193,9 @@ class AssociatedPair(QWidget):
 
     def answer_given(self, nr):
         if self.waiting_for_answer:
-            print 'answer given:', nr
             self.exp.evaluate(str(nr))
 
             self.waiting_for_answer = False
-        else:
-            print 'currently no answer allowed'
 
     def update_output(self, emotion, cog, speech):
         ''' Updates the text output of the agent.

@@ -206,7 +206,6 @@ class EmoModule:
             expecation: of the answer before answer was given:
                         negative / none / positive
         '''
-        print 'CHECK ANSWER VIA MOMODULE', self.use_wasabi
         emotion = 'None'
         impulse = 0
 
@@ -222,14 +221,12 @@ class EmoModule:
             self.trigger(Surprise())
 
         if self.use_wasabi:
-            print 'REACT VIA WASABI', emotion, impulse
             if emotion != 'None':
                 self.trigger(utilities.emotion_by_name(emotion))
 
             if impulse != 0:
                 self.impulse(impulse)
         else:
-            print 'SHOW STATITC:', emotion, impulse
             self.show_static_emotion(utilities.emotion_by_name(emotion, impulse))
 
         # TODO(How to wait here until first wasabi message is received?)
@@ -254,7 +251,9 @@ class EmoModule:
                                   EmoModule.WASABI_PORT_IN))
 
     def show_static_emotion(self, emotion):
-        self.wasabi.show_static_emotion(emotion)
+        if emotion:
+            print 'EMOMODULE: Show static emotion', emotion.name, emotion.impulse
+            self.wasabi.show_static_emotion(emotion)
 
     def start_expressing(self):
         self.wasabi.clear_static_emotion()

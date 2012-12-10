@@ -128,7 +128,7 @@ class Environment:
     def present_word(self):
         if 0 <= self.index and self.index <= len(self.pairs):
             word = self.pairs[self.index].word
-            now = utilities.seconds(datetime.datetime.now())
+            now = utilities.milliseconds(datetime.datetime.now())
             self.pairs[self.index].word_called(now)
             return self.agent.present(word)
         else:
@@ -137,7 +137,7 @@ class Environment:
     def present_number(self):
         if 0 <= self.index and self.index <= len(self.pairs):
             number = self.pairs[self.index].number
-            now = utilities.seconds(datetime.datetime.now())
+            now = utilities.milliseconds(datetime.datetime.now())
             self.pairs[self.index].number_called(now)
             self.index += 1
             return self.agent.present(number)
@@ -165,11 +165,8 @@ class Environment:
         correct = False
         if received == self.pairs[self.index].number.word:
             correct = True
-        print received, ' == ', self.pairs[self.index].number.word, correct
-
-
-        
-        now = utilities.seconds(datetime.datetime.now())
+                
+        now = utilities.milliseconds(datetime.datetime.now())
 
         word = self.pairs[self.index].word
         emotion, cog, speech = self.agent.evaluate(word, correct)
@@ -178,11 +175,6 @@ class Environment:
         # log answer:
         time = now - word.time(0)
         self.logger.save(word.word, received, correct, time)
-
-        #if correct:
-        #    self.index += 1
-        #else:
-        #    self.reset()
 
         return (emotion, cog, speech)
 

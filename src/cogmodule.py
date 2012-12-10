@@ -48,7 +48,7 @@ class CogModule:
                 + activation rises
         '''
         if not now:
-            now = utilities.seconds(datetime.datetime.now())
+            now = utilities.milliseconds(datetime.datetime.now())
 
         summed = 0
         for j in range(len(times)):
@@ -68,7 +68,7 @@ class CogModule:
             d = The decay parameter
         '''
         if not now:
-            now = utilities.seconds(datetime.datetime.now())
+            now = utilities.milliseconds(datetime.datetime.now())
 
         n = len(times)
         L = now - times[0]
@@ -76,7 +76,7 @@ class CogModule:
         return math.log(n / (1 - d)) - d * math.log(L)
 
 
-    def logistic_distribution(self, x, s):
+    def logistic_distribution(self, s):
         ''' Formula for computing activation noise.
 
             The mean is 0
@@ -93,38 +93,59 @@ class CogModule:
     def activation(self, times, now=None):
         ''' Computes the activation for the given chunk.
         '''
-        d = 0.5
-        s = 0.5
+        d = CogModule.DECAY_RATE
+        s = CogModule.NOISE
 
         if not now:
-            now = utilities.seconds(datetime.datetime.now())
+            now = utilities.milliseconds(datetime.datetime.now())
 
         if CogModule.FUNCTION == 'optimized':
             base_activation = self.optimized_learning(times, d)
         else:
             base_activation = self.baselevel_activation(times, d)
 
-        noise = self.logistic_distribution(now, s)
+        noise = self.logistic_distribution(s)
 
         return base_activation + noise
 
 
-    def get_expectation_name(self, activation):
+    def retrieval_prob(self, times, now=None):
+        ''' Computes the recall probability
+            = 1 / (1 + e^((threshold - activation) / noise))
+        '''
+        threshold = CogModule.THRESHOLD
+        noise = CogModule.NOISE
+
+        if not now:
+            now = utilities.milliseconds(datetime.datetime.now())
+
+        activation = self.activation(times, noise)
+        
+        return 1.0 / (1.0 + math.exp((threshold - activation) / noise))
+
+    def retrieval_prob(self, activation, threshold, noise):
+        ''' Computes the recall probability
+            = 1 / (1 + e^((threshold - activation) / noise))
+        '''        
+        return 1.0 / (1.0 + math.exp((threshold - activation) / noise))
+
+
+    def get_expectation_name(self, retrieval_prob):
         expectation = 'none'
-        if activation > CogModule.ACT_POS:
+        if retrieval_prob > CogModule.ACT_POS:
             expectation = 'positive'
-        elif activation < CogModule.ACT_NEG:
+        elif retrieval_prob < CogModule.ACT_NEG:
             expectation = 'negative'
         return expectation
 
 
     def get_expectation(self, word):
-        activation = self.activation(word.times)
-        self.last_expectation = self.get_expectation_name(activation)
+        retrieval_prob = self.retrieval_prob(word.times)
+        self.last_expectation = self.get_expectation_name(retrieval_prob)
 
         print '  CogModule: Formulate expectation:', self.last_expectation
 
-        status = str(activation) + ': '
+        status = str(retrieval_prob) + ': '
         emotion = None
 
         if self.last_expectation == 'positive':
@@ -139,13 +160,6 @@ class CogModule:
             print 'Wrong expectation value', self.last_expectation
 
         return (status, utilities.get_emotion_by_name(emotion))
-
-
-    def prob_of_recall(self, threshold, activation, noise):
-        ''' Computes the recall probability
-            = 1 / (1 + e^((threshold - activation) / noise))
-        '''
-        return 1.0 / (1.0 + math.exp((threshold - activation) / noise))
 
 
     def retrieval_latency(self, latency_factor, activation):
@@ -204,7 +218,7 @@ class CogModule:
                  Pair('xray', '8'), Pair('zinc', '9')]
 
         nr_runs = 8
-        now = utilities.seconds(datetime.datetime.now())
+        now = utilities.milliseconds(datetime.datetime.now())
 
         total_recalled = [0 for i in range(nr_runs)]
         total_probs = [0 for i in range(nr_runs)]
@@ -280,7 +294,7 @@ class CogModule:
                 activation = self.activation(times[i][:current_run], now-offset)
                 s = 0.5
                 threshold = -2.0
-                prob = self.prob_of_recall(threshold, activation, s)
+                prob = self.retrieval_prob(activation, threshold, s)
                 probs[i].append(prob)
 
         return probs

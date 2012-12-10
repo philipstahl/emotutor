@@ -2,15 +2,13 @@ import datetime
 from emomodule import Happy, Concentrated, Bored, Annoyed, Angry, Fear, \
                       FearsConfirmed, Hope, Relief
 
-def seconds(time):
-    ''' Returns the given time in seconds.
-    '''
-    return (time.second + 60 * time.minute + 60 * 60 * time.hour)
 
 def milliseconds(time):
     ''' Returns the given time in milli seconds.
     '''
-    return time.microsecond / 100 + seconds(time) * 1000
+    seconds = (time.second + 60 * time.minute + 60 * 60 * time.hour)
+    milliseconds = seconds * 1000
+    return time.microsecond / 100 + milliseconds
 
 def emotion_by_name(name, impulse=100):
     ''' Returns an emotion object with the given impulse.

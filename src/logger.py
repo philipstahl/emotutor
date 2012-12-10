@@ -8,7 +8,7 @@ class Logger:
 
     def save(self, word, answer, correct, sec):
         log_string = str(word) + ',' + str(answer) + ',' + str(correct) + ',' \
-                   + str(sec) + ',' + '\n'
+                   + str(sec) + '\n'
 
         print 'LOG', log_string
         log = open(self.path, 'a')
