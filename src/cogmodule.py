@@ -25,6 +25,7 @@ class CogModule:
 
 
     def __init__(self, logger):
+        print 'CogModule loaded with', CogModule.EXPECT_NEG, CogModule.EXPECT_POS
         self.logger = logger
         self.expectation = None
 
@@ -149,9 +150,6 @@ class CogModule:
         retrieval_latency = self.retrieval_latency(CogModule.LATENCY, activation)
         
         self.expectation = self.get_expectation_name(retrieval_prob)
-
-        self.logger.log('  Formulate expectation: prob={0:.2f}%. latency={1:.2f}s: {2}'.format(retrieval_prob, retrieval_latency, self.expectation))
-
         status = str(retrieval_prob) + ': '
         emotion = None
 
@@ -166,42 +164,39 @@ class CogModule:
         else:
             print 'Wrong expectation value', self.expectation
 
+        self.logger.log('  Formulate expectation: prob={0:.2f}% latency={1:.2f}s : ({2},{3})'.format(retrieval_prob, retrieval_latency, self.expectation, emotion))
+
         return (status, utilities.emotion_by_name(emotion))
 
 
     def resolve_expectation(self, correct, times):
         ''' Cognitive reaction to correctness and times of a given word.
         '''
-        print 'correct??', correct
+        reaction = 'none'
         if self.expectation == 'negative':
-            if correct:
-                return utilities.get_emotion_by_name(CogModule.EXPECT_NEG[2])
+            if correct == 1:
+                reaction = CogModule.EXPECT_NEG[2]
+            elif correct == 0 or correct == 2:
+                reaction = CogModule.EXPECT_NEG[1]
             else:
-                return utilities.get_emotion_by_name(CogModule.EXPECT_NEG[1])
+                print 'WRONG CORRECT VALUE', correct
         elif self.expectation == 'positive':
-            if correct:
-                return utilities.get_emotion_by_name(CogModule.EXPECT_POS[1])
+            if correct == 1:
+                reaction = CogModule.EXPECT_POS[1]
+            elif correct == 0 or correct == 2:
+                reaction = CogModule.EXPECT_POS[2]
             else:
-                return utilities.get_emotion_by_name(CogModule.EXPECT_POS[2])
+                print 'WRONG CORRECT VALUE', correct
+                
+        str_answer = ['false', 'correct', 'notgiven'][correct]
+        self.logger.log('  Reaction to expectation={} and answer={}: {}'.format(self.expectation, correct, reaction))
+        return utilities.emotion_by_name(reaction)
+        
+
+        
 
 
-    ''' TODO: Remove?
-    def get_remaining_task(self, task, current):
-        # remove all items which are already done:
-        remaining_task = []
-        i = 0
-        for group in task:
-            remaining_group = []
-            for item in group:
-                if i < current:
-                    i += 1
-                else:
-                    remaining_group.append(item)
-            if remaining_group:
-                remaining_task.append(remaining_group)
 
-        return remaining_task
-    '''
 
 
     def paired_associate(self):

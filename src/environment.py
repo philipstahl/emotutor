@@ -132,7 +132,7 @@ class Environment:
             number = self.pairs[self.index].number
             now = utilities.milliseconds(datetime.datetime.now())
 
-            self.logger.log('Task [{0} : {1}] @ {2:.2f}s'.format(
+            self.logger.log('\nTask [{0} : {1}] @ {2:.2f}s'.format(
                             word.word, number.word, (now - self.start_time)/1000))
             
             self.pairs[self.index].word_called(now)
@@ -160,8 +160,6 @@ class Environment:
         ''' Checks if the given word matches the current word in the list
         '''
         received = received.replace('\n', '')
-
-        
 
         return correct
 

@@ -220,7 +220,7 @@ class AssociatedPair(QWidget):
                 emotion, cog, speech = self.exp.present_word()
                 self.update_output(emotion, cog, speech)
                 self.waiting_for_answer = True
-                QTimer.singleShot(4000, self.present_number)
+                QTimer.singleShot(5000, self.present_number)
             else:
                 self.end()
 
@@ -228,7 +228,7 @@ class AssociatedPair(QWidget):
         self.waiting_for_answer = False
         emotion, cog, speech = self.exp.present_number()
         self.update_output(emotion, cog, speech)
-        QTimer.singleShot(4000, self.present_word)
+        QTimer.singleShot(5000, self.present_word)
 
     def end(self):
         ''' End vocabulary test

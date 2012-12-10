@@ -214,11 +214,14 @@ class EmoModule:
         impulse = 0
 
         reactions = {'negative': {1: EmoModule.REACT_NEG_RIGHT,
-                                  0: EmoModule.REACT_NEG_WRONG},
+                                  0: EmoModule.REACT_NEG_WRONG,
+                                  2: EmoModule.REACT_NEG_NONE},
                      'none': {1: EmoModule.REACT_NONE_RIGHT,
-                              0: EmoModule.REACT_NONE_WRONG},
+                              0: EmoModule.REACT_NONE_WRONG,
+                              2: EmoModule.REACT_NONE_NONE},
                      'positive': {1:EmoModule.REACT_POS_RIGHT,
-                                  0:EmoModule.REACT_POS_WRONG}}
+                                  0:EmoModule.REACT_POS_WRONG,
+                                  2:EmoModule.REACT_POS_NONE}}
         surprise, emotion, impulse = reactions[expectation][correct]
 
         if surprise:
@@ -246,7 +249,7 @@ class EmoModule:
     def trigger(self, emotion):
         ''' Trigger the given emotion in wasabi.
         '''
-        self.loggger.log('  Wasabi: Trigger {}'.format(emotion.name))
+        self.logger.log('  Wasabi: Trigger {}'.format(emotion.name))
         self.send_to_wasabi("JohnDoe&TRIGGER&1&" + emotion.name)
 
     def send_to_wasabi(self, message):

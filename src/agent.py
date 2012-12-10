@@ -70,7 +70,8 @@ class Agent:
 
         # Check if no answer has been given!
         if not self.answer_given:
-            self.evaluate(number, -1)
+            self.logger.log('  No answer given')
+            self.evaluate(number, 2)
         
         emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_word(number, emotion)
@@ -102,30 +103,23 @@ class Agent:
             Return emotional and verbal output, based on the cognitve,
             emotional and verbal evaluation
         '''
-        print 'Agent: Evaluating answer ...'
         self.answer_given = True
         
         # cognitive evaluation: Determines surprise and intensity of emotion
-        #expectation = self.cog_module.last_expectation
-        expectation = 'none'
-
+        expectation = self.cog_module.expectation
+        cog_react = self.cog_module.resolve_expectation(correct, word.times)
+            
         # emotional evaluation:
         emotion = self.emo_module.check(correct, expectation)
 
-        #cog_react = self.cog_module.react(correct, word.times)
-
-        #if cog_react:
-        #    self.emo_module.trigger(cog_react)
+        if cog_react:
+            self.emo_module.trigger(cog_react)
 
         verbal_output = '...'
-        #if not correct:
-        #    speech = self.speech_module.react(emotion, word.word)
-        #    self.speak(speech)
-        #    verbal_output = speech.text
-
-        if correct:
+        
+        if correct == 1:
             self.marc.headYes()
-        else:
+        elif correct == 0:
             self.marc.headNo()
 
         return (str(emotion), '...', verbal_output)

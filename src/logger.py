@@ -24,7 +24,6 @@ class Logger:
         log_string = str(word) + ',' + str(answer) + ',' + str(correct) + ',' \
                    + str(sec) + '\n'
 
-        print 'LOG', log_string
         log = open(self.path, 'a')
         if correct:
             correct = 1
