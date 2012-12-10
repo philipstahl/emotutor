@@ -655,11 +655,11 @@ class Parameters(Settings):
                                    items=['Happy', 'Neutral', 'Angry', 'Wasabi'])
 
         self.function = self.function_box(CogModule.FUNCTION)
-        self.decay_rate = self.float_widget(0.5, 0.0, 1.0, 0.1)
-        self.activation_noise = self.float_widget(0.5, 0.0, 1.0, 0.1)
-        self.threshold = self.float_widget(-2.0, -10.0, 10.0, 0.1)
+        self.decay_rate = self.float_widget(CogModule.DECAY_RATE, 0.0, 1.0, 0.1)
+        self.activation_noise = self.float_widget(CogModule.NOISE, 0.0, 1.0, 0.1)
+        self.threshold = self.float_widget(CogModule.THRESHOLD, -10.0, 10.0, 0.1)
+        self.latency = self.float_widget(CogModule.LATENCY, 0.0, 2.0, 0.1)
         
-
         self.activations = \
             [self.int_widget(CogModule.ACT_HIGH, 0, 100, 1),
              self.int_widget(CogModule.ACT_NONE, 0, 100, 1)]
@@ -772,10 +772,12 @@ class Parameters(Settings):
 
         layout.addWidget(QLabel('Decay rate d:'), 0, 2)
         layout.addWidget(QLabel('Activation noise s:'), 1, 2)
+        layout.addWidget(QLabel('Latency factor'), 2, 2)
         layout.addWidget(QLabel('Retrieval threshold'), 1, 0)
 
         layout.addWidget(self.decay_rate, 0, 3)
         layout.addWidget(self.activation_noise, 1, 3)
+        layout.addWidget(self.latency, 2, 3)
         layout.addWidget(self.threshold, 1, 1)        
 
         widget = QWidget()
@@ -873,6 +875,7 @@ class Parameters(Settings):
         
         CogModule.DECAY_RATE = self.decay_rate.value()
         CogModule.NOISE = self.activation_noise.value()
+        CogModule.LATENCY = self.latency.value()
         CogModule.THRESHOLD = self.threshold.value()        
 
         CogModule.FUNCTION = self.get_function(self.function)
@@ -1087,6 +1090,7 @@ class MainWindow(QMainWindow):
         CogModule.ACT_NONE = config.getint('Activation', 'low')
         CogModule.DECAY_RATE = config.getfloat('Activation', 'decay')
         CogModule.NOISE = config.getfloat('Activation', 'noise')
+        CogModule.LATENCY = config.getfloat('Activation', 'latency')
         CogModule.THRESHOLD =config.getfloat('Activation', 'threshold')
 
         CogModule.EXPECT_NEG = (config.get('Neg_Expectation', 'before'),

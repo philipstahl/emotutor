@@ -18,6 +18,7 @@ class CogModule:
     ACT_NEG = 60
     DECAY_RATE = 0.5
     NOISE = 0.5
+    LATENCY = 0.4
     THRESHOLD = -2.0    
 
     FUNCTION = 'baselevel'   # or 'optimized'
@@ -110,30 +111,23 @@ class CogModule:
         noise = self.logistic_distribution(s)
         return base_activation + noise
 
-
-    def retrieval_prob(self, times, now=None):
-        ''' Computes the recall probability
-            = 1 / (1 + e^((threshold - activation) / noise))
-        '''
-        if not times:
-            return 0.0
-
-        threshold = CogModule.THRESHOLD
-        noise = CogModule.NOISE
-
-        if not now:
-            now = utilities.milliseconds(datetime.datetime.now())
-
-        activation = self.activation(times, noise)
-        exponent = (threshold - activation) / noise
-        
-        return 1.0 / (1.0 + math.exp(exponent))
-
+    
     def retrieval_probability(self, activation, threshold, noise):
         ''' Computes the recall probability
             = 1 / (1 + e^((threshold - activation) / noise))
-        '''        
-        return 1.0 / (1.0 + math.exp((threshold - activation) / noise))
+        '''
+        if activation == 0.0:
+            return 0.0
+        return 1.0 / (1.0 + math.exp((threshold - activation) / noise)) * 100
+
+
+    def retrieval_latency(self, latency_factor, activation):
+        '''
+            time = latency_factor * e^(-activation)
+        '''
+        if activation == 0.0:
+            return 0.0
+        return latency_factor * math.exp(-activation)
 
 
     def get_expectation_name(self, retrieval_prob):
@@ -146,10 +140,18 @@ class CogModule:
 
 
     def formulate_expectation(self, word):
-        retrieval_prob = self.retrieval_prob(word.times)
+
+        now = utilities.milliseconds(datetime.datetime.now())
+
+        activation = self.activation(word.times)
+        retrieval_prob = self.retrieval_probability(activation, CogModule.THRESHOLD, CogModule.NOISE)
+        retrieval_latency = self.retrieval_latency(CogModule.LATENCY, activation)
+        
+        #retrieval_prob = self.retrieval_prob(word.times)
+
         self.expectation = self.get_expectation_name(retrieval_prob)
 
-        print 'CogModule: Formulate expectation:', self.expectation, str(retrieval_prob) + '%'
+        print ('CogModule: Formulate expectation: {0}. {1:.2f}%. latency {2:.2f}s'.format(self.expectation, retrieval_prob, retrieval_latency))
 
         status = str(retrieval_prob) + ': '
         emotion = None
@@ -166,13 +168,6 @@ class CogModule:
             print 'Wrong expectation value', self.expectation
 
         return (status, utilities.emotion_by_name(emotion))
-
-
-    def retrieval_latency(self, latency_factor, activation):
-        '''
-            time = latency_factor * e^(-activation)
-        '''
-        return latency_factor * math.exp(-activation)
 
 
     def react(self, correct, times):

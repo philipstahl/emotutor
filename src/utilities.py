@@ -13,7 +13,7 @@ def milliseconds(time):
 def emotion_by_name(name, impulse=100):
     ''' Returns an emotion object with the given impulse.
     '''
-    if name == 'None' or impulse == 0:
+    if not name or name == 'None' or impulse == 0:
         return None
 
     con = Concentrated()
