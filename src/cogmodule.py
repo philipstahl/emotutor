@@ -14,8 +14,11 @@ class CogModule:
     EXPECT_NEG = ('Fear', 'Fears-Confirmed', 'None')
     EXPECT_POS = ('Hope', 'Relief', 'None')
 
-    ACT_POS = 0.0
-    ACT_NEG = -0.5
+    ACT_POS = 90
+    ACT_NEG = 60
+    DECAY_RATE = 0.5
+    NOISE = 0.5
+    THRESHOLD = -2.0    
 
     FUNCTION = 'baselevel'   # or 'optimized'
 

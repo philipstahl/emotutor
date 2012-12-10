@@ -658,10 +658,14 @@ class Parameters(Settings):
                                    items=['Happy', 'Neutral', 'Angry', 'Wasabi'])
 
         self.function = self.function_box(CogModule.FUNCTION)
+        self.decay_rate = self.float_widget(0.5, 0.0, 1.0, 0.1)
+        self.activation_noise = self.float_widget(0.5, 0.0, 1.0, 0.1)
+        self.threshold = self.float_widget(-2.0, -10.0, 10.0, 0.1)
+        
 
         self.activations = \
-            [self.float_widget(CogModule.ACT_HIGH, -10.0, 10.0, 0.1),
-             self.float_widget(CogModule.ACT_NONE, -10.0, 10.0, 0.1)]
+            [self.int_widget(CogModule.ACT_HIGH, 0, 100, 1),
+             self.int_widget(CogModule.ACT_NONE, 0, 100, 1)]
 
         # Map expectation {Neg, Pos} to
         #       [emotion to trigger before event,
@@ -765,9 +769,18 @@ class Parameters(Settings):
     def get_function_widget(self):
         ''' Returns the widget containing the function settings
         '''
-        layout = QBoxLayout(0)
-        layout.addWidget(QLabel('Function:'))
-        layout.addWidget(self.function)
+        layout = QGridLayout()
+        layout.addWidget(QLabel('Baselevel:'), 0, 0)
+        layout.addWidget(self.function, 0, 1)
+
+        layout.addWidget(QLabel('Decay rate d:'), 0, 2)
+        layout.addWidget(QLabel('Activation noise s:'), 1, 2)
+        layout.addWidget(QLabel('Retrieval threshold'), 1, 0)
+
+        layout.addWidget(self.decay_rate, 0, 3)
+        layout.addWidget(self.activation_noise, 1, 3)
+        layout.addWidget(self.threshold, 1, 1)        
+
         widget = QWidget()
         widget.setLayout(layout)
         return widget
@@ -780,12 +793,14 @@ class Parameters(Settings):
         layout.addWidget(QLabel('Negative'), 1, 0)
         layout.addWidget(QLabel(' < '), 1, 1)
         layout.addWidget(self.activations[1], 1, 2)
-        layout.addWidget(QLabel(' < '), 1, 3)
-        layout.addWidget(QLabel('None'), 1, 4)
-        layout.addWidget(QLabel(' < '), 1, 5)
-        layout.addWidget(self.activations[0], 1, 6)
-        layout.addWidget(QLabel(' < '), 1, 7)
-        layout.addWidget(QLabel('Positive'), 1, 8)
+        layout.addWidget(QLabel('%'), 1, 3)
+        layout.addWidget(QLabel(' < '), 1, 4)
+        layout.addWidget(QLabel('None'), 1, 5)
+        layout.addWidget(QLabel(' < '), 1, 6)
+        layout.addWidget(self.activations[0], 1, 7)
+        layout.addWidget(QLabel('%'), 1, 8)
+        layout.addWidget(QLabel(' < '), 1, 9)
+        layout.addWidget(QLabel('Positive'), 1, 10)
 
         widget = QWidget()
         widget.setLayout(layout)
@@ -858,6 +873,10 @@ class Parameters(Settings):
 
         CogModule.ACT_HIGH = self.activations[0].value()
         CogModule.ACT_LOW = self.activations[1].value()
+        
+        CogModule.DECAY_RATE = self.decay_rate.value()
+        CogModule.NOISE = self.activation_noise.value()
+        CogModule.THRESHOLD = self.threshold.value()        
 
         CogModule.FUNCTION = self.get_function(self.function)
 
@@ -1067,8 +1086,11 @@ class MainWindow(QMainWindow):
 
         Agent.INIT_EMOTION = config.get('Init', 'emotion')
 
-        CogModule.ACT_HIGH = config.getfloat('Activation', 'high')
-        CogModule.ACT_NONE = config.getfloat('Activation', 'low')
+        CogModule.ACT_HIGH = config.getint('Activation', 'high')
+        CogModule.ACT_NONE = config.getint('Activation', 'low')
+        CogModule.DECAY_RATE = config.getfloat('Activation', 'decay')
+        CogModule.NOISE = config.getfloat('Activation', 'noise')
+        CogModule.THRESHOLD =config.getfloat('Activation', 'threshold')
 
         CogModule.EXPECT_NEG = (config.get('Neg_Expectation', 'before'),
                                 config.get('Neg_Expectation', 'after'),
