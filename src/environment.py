@@ -102,8 +102,8 @@ class Environment:
         '''
         
         self.pairs = [Pair('Bank', '0'), Pair('Dorf', '1'),
-                      Pair('Dose', '2'), Pair('Erde', '3'), 
-                      Pair('Fahrrad', '2'), Pair('Haus', '3')]
+                      Pair('Dose', '2'), Pair('Erde', '3')] 
+                      #Pair('Fahrrad', '2'), Pair('Haus', '3')]
 
         random.shuffle(self.pairs)
 
@@ -128,9 +128,10 @@ class Environment:
     def present_word(self):
         if 0 <= self.index and self.index <= len(self.pairs):
             word = self.pairs[self.index].word
+            number = self.pairs[self.index].number
             now = utilities.milliseconds(datetime.datetime.now())
             self.pairs[self.index].word_called(now)
-            return self.agent.present(word)
+            return self.agent.present_word(word, number)
         else:
             print 'Index Error'
 
@@ -140,7 +141,7 @@ class Environment:
             now = utilities.milliseconds(datetime.datetime.now())
             self.pairs[self.index].number_called(now)
             self.index += 1
-            return self.agent.present(number)
+            return self.agent.present_number(number)
         else:
             print 'Index Error'
 
@@ -182,6 +183,7 @@ class Environment:
     def reset(self):
         ''' Reset the current word index to start
         '''
+        random.shuffle(self.pairs)
         self.index = 0
 
     def has_next(self):

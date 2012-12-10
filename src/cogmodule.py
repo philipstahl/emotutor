@@ -24,7 +24,7 @@ class CogModule:
 
 
     def __init__(self):
-        self.last_expectation = None
+        self.expectation = None
 
 
     def baselevel_activation(self, times, d, now=None):
@@ -52,7 +52,7 @@ class CogModule:
 
         summed = 0
         for j in range(len(times)):
-            diff = now - times[j]
+            diff = (now - times[j]) / 1000
             summed += math.pow(diff, -d)
 
         return math.log(summed)
@@ -93,6 +93,9 @@ class CogModule:
     def activation(self, times, now=None):
         ''' Computes the activation for the given chunk.
         '''
+        if not times:
+            return 0.0
+        
         d = CogModule.DECAY_RATE
         s = CogModule.NOISE
 
@@ -105,7 +108,6 @@ class CogModule:
             base_activation = self.baselevel_activation(times, d)
 
         noise = self.logistic_distribution(s)
-
         return base_activation + noise
 
 
@@ -113,6 +115,9 @@ class CogModule:
         ''' Computes the recall probability
             = 1 / (1 + e^((threshold - activation) / noise))
         '''
+        if not times:
+            return 0.0
+
         threshold = CogModule.THRESHOLD
         noise = CogModule.NOISE
 
@@ -120,10 +125,11 @@ class CogModule:
             now = utilities.milliseconds(datetime.datetime.now())
 
         activation = self.activation(times, noise)
+        exponent = (threshold - activation) / noise
         
-        return 1.0 / (1.0 + math.exp((threshold - activation) / noise))
+        return 1.0 / (1.0 + math.exp(exponent))
 
-    def retrieval_prob(self, activation, threshold, noise):
+    def retrieval_probability(self, activation, threshold, noise):
         ''' Computes the recall probability
             = 1 / (1 + e^((threshold - activation) / noise))
         '''        
@@ -139,27 +145,27 @@ class CogModule:
         return expectation
 
 
-    def get_expectation(self, word):
+    def formulate_expectation(self, word):
         retrieval_prob = self.retrieval_prob(word.times)
-        self.last_expectation = self.get_expectation_name(retrieval_prob)
+        self.expectation = self.get_expectation_name(retrieval_prob)
 
-        print '  CogModule: Formulate expectation:', self.last_expectation
+        print 'CogModule: Formulate expectation:', self.expectation, str(retrieval_prob) + '%'
 
         status = str(retrieval_prob) + ': '
         emotion = None
 
-        if self.last_expectation == 'positive':
+        if self.expectation == 'positive':
             status += 'Expecting right answer.'
             emotion = CogModule.EXPECT_POS[0]
-        elif self.last_expectation == 'none':
+        elif self.expectation == 'none':
             status += 'Expecting nothing.'
-        elif self.last_expectation == 'negative':
+        elif self.expectation == 'negative':
             status += 'Expecting wrong answer'
             emotion = CogModule.EXPECT_NEG[0]
         else:
-            print 'Wrong expectation value', self.last_expectation
+            print 'Wrong expectation value', self.expectation
 
-        return (status, utilities.get_emotion_by_name(emotion))
+        return (status, utilities.emotion_by_name(emotion))
 
 
     def retrieval_latency(self, latency_factor, activation):
@@ -172,12 +178,12 @@ class CogModule:
     def react(self, correct, times):
         ''' Cognitive reaction to correctness and times of a given word.
         '''
-        if self.last_expectation == 'negative':
+        if self.expectation == 'negative':
             if correct:
                 return utilities.get_emotion_by_name(CogModule.EXPECT_NEG[2])
             else:
                 return utilities.get_emotion_by_name(CogModule.EXPECT_NEG[1])
-        elif self.last_expectation == 'positive':
+        elif self.expectation == 'positive':
             if correct:
                 return utilities.get_emotion_by_name(CogModule.EXPECT_POS[1])
             else:
@@ -294,7 +300,7 @@ class CogModule:
                 activation = self.activation(times[i][:current_run], now-offset)
                 s = 0.5
                 threshold = -2.0
-                prob = self.retrieval_prob(activation, threshold, s)
+                prob = self.retrieval_probability(activation, threshold, s)
                 probs[i].append(prob)
 
         return probs

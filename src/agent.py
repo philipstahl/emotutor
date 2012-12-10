@@ -49,18 +49,29 @@ class Agent:
         self.speak(speech)
         return (str(emotion), '...', speech.text)
 
-    def present(self, word):
-        ''' The Agent present the given word
-        '''
 
+
+    def present_word(self, word, number):
         emotion = self.emo_module.get_primary_emotion()
+
+        # formulate expection for number
+        expectation, emo = self.cog_module.formulate_expectation(number)
+        if emo:
+            self.emo_module.trigger(emo)
+
         speech = self.speech_module.present_word(word, emotion)
         self.speak(speech)
-        return (str(emotion), '...', speech.text)
+        return (str(emotion), expectation, speech.text)
 
+
+    def present_number(self, number):
+        emotion = self.emo_module.get_primary_emotion()
+        speech = self.speech_module.present_word(number, emotion)
+        self.speak(speech)
+        return (str(emotion), '...', speech.text)
+    
+    '''
     def wait(self, word):
-        ''' Wait for user input and return the current emotion
-        '''
         print 'Agent: Waiting ...'
         if not self.emo_module.is_dynamic() and self.emo_module.use_wasabi:
 
@@ -72,7 +83,7 @@ class Agent:
             self.emo_module.trigger(emo)
 
         return (str(emotion), expectation, '...')
-
+    '''
 
     def speak(self, speech):
         ''' Speaks the given speech via marc or wave file
