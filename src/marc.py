@@ -10,12 +10,13 @@ class Marc:
     PORT_OUT = 4010
     PORT_IN = 4011
 
-    def __init__(self):
+    def __init__(self, logger):
         self.sock_out = socket.socket(socket.AF_INET,
                                       socket.SOCK_DGRAM)
         self.sock_in = socket.socket(socket.AF_INET,
                               socket.SOCK_DGRAM)
         self.sock_in.bind((Marc.IP, Marc.PORT_IN))
+        self.logger = logger
 
     def _perform(self, name, bml_code):
         ''' Performs the action specified in the bml code
@@ -34,20 +35,17 @@ class Marc:
     def speak(self, speech):
         ''' Sends the BML Code for speacking the given wave file to MARC.
         '''
-        print 'MARC says', speech.text
+        self.logger.log('  Marc: Say {0}'.format(speech.text))
         self._perform(speech.name, speech.get_bml_code())
 
-
-    def headNo(self):
-        print 'Marc HEAD NO'
-        
     def headYes(self):
+        self.logger.log('  Marc: Shake head YES')
         print 'MARC HEAD YES'
         self.headDown(wait=0.0, amount=0.1, interpolate=0.3)
         self.headClear(wait=0.3, interpolate=0.3)
 
     def headNo(self):
-        print 'MARC HEAD NO'
+        self.logger.log('  Marc: Shake head NO')
         self.headClear(wait=0.0, interpolate=1.0)
         self.headLeft(wait=0.1, amount=0.2, interpolate=0.3)
         self.headClear(wait=0.3, interpolate=0.3)

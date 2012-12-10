@@ -159,6 +159,7 @@ class AssociatedPair(QWidget):
     def start_button_clicked(self):
         self.start_button.hide()
         self.input_widget.show()
+        self.exp.save_start_time()
         self.present_word()
 
     def bu0_clicked(self):
@@ -684,7 +685,10 @@ class Parameters(Settings):
              'Pos': self.check_box(EmoModule.REACT_POS_WRONG[0])},
             {'Neg': self.check_box(EmoModule.REACT_NEG_RIGHT[0]),
              'None': self.check_box(EmoModule.REACT_NONE_RIGHT[0]),
-             'Pos': self.check_box(EmoModule.REACT_POS_RIGHT[0])}]
+             'Pos': self.check_box(EmoModule.REACT_POS_RIGHT[0])},
+            {'Neg': self.check_box(EmoModule.REACT_NEG_NONE[0]),
+             'None': self.check_box(EmoModule.REACT_NONE_NONE[0]),
+             'Pos': self.check_box(EmoModule.REACT_POS_NONE[0])}]
 
 
         self.emotion = [\
@@ -693,7 +697,10 @@ class Parameters(Settings):
              'Pos': self.combo_box(EmoModule.REACT_POS_WRONG[1])},
             {'Neg': self.combo_box(EmoModule.REACT_NEG_RIGHT[1]),
              'None': self.combo_box(EmoModule.REACT_NONE_RIGHT[1]),
-             'Pos': self.combo_box(EmoModule.REACT_POS_RIGHT[1])}]
+             'Pos': self.combo_box(EmoModule.REACT_POS_RIGHT[1])},
+            {'Neg': self.combo_box(EmoModule.REACT_NEG_NONE[1]),
+             'None': self.combo_box(EmoModule.REACT_NONE_NONE[1]),
+             'Pos': self.combo_box(EmoModule.REACT_POS_NONE[1])}]
 
         self.impulse = [\
             {'Neg': self.int_widget(EmoModule.REACT_NEG_WRONG[2]),
@@ -701,7 +708,10 @@ class Parameters(Settings):
              'Pos': self.int_widget(EmoModule.REACT_POS_WRONG[2])},
             {'Neg': self.int_widget(EmoModule.REACT_NEG_RIGHT[2]),
              'None': self.int_widget(EmoModule.REACT_NONE_RIGHT[2]),
-             'Pos': self.int_widget(EmoModule.REACT_POS_RIGHT[2])}]
+             'Pos': self.int_widget(EmoModule.REACT_POS_RIGHT[2])},
+            {'Neg': self.int_widget(EmoModule.REACT_NEG_NONE[2]),
+             'None': self.int_widget(EmoModule.REACT_NONE_NONE[2]),
+             'Pos': self.int_widget(EmoModule.REACT_POS_NONE[2])}]
 
         super(Parameters, self).__init__(parent)
 
@@ -854,12 +864,17 @@ class Parameters(Settings):
             layout.addWidget(self.emotion[correct][expect], line, 3)
             layout.addWidget(self.impulse[correct][expect], line, 4)
 
-        add(layout, 'Negative', 'Wrong', 0, 'Neg', 1)
-        add(layout, 'Negative', 'Correct', 1, 'Neg', 2)
-        add(layout, 'None', 'Wrong', 0, 'None', 3)
-        add(layout, 'None', 'Correct', 1, 'None', 4)
-        add(layout, 'Positive', 'Wrong', 0, 'Pos', 5)
-        add(layout, 'Positive', 'Correct', 1, 'Pos', 6)
+        add(layout, 'Negative', 'None', 2, 'Neg', 1)
+        add(layout, 'Negative', 'Wrong', 0, 'Neg', 2)
+        add(layout, 'Negative', 'Correct', 1, 'Neg', 3)
+
+        add(layout, 'None', 'None', 2, 'None', 4)
+        add(layout, 'None', 'Wrong', 0, 'None', 5)
+        add(layout, 'None', 'Correct', 1, 'None', 6)
+        
+        add(layout, 'Positive', 'None', 2, 'Pos', 7)
+        add(layout, 'Positive', 'Wrong', 0, 'Pos', 8)
+        add(layout, 'Positive', 'Correct', 1, 'Pos', 9)
 
         widget = QWidget()
         widget.setLayout(layout)
@@ -893,11 +908,14 @@ class Parameters(Settings):
                     str(self.emotion[correct][expect].currentText()),
                     int(self.impulse[correct][expect].value()))
 
+        EmoModule.REACT_NEG_NONE = get_reaction(2, 'Neg')
         EmoModule.REACT_NEG_WRONG = get_reaction(0, 'Neg')
-        EmoModule.REACT_NONE_WRONG = get_reaction(0, 'None')
-        EmoModule.REACT_POS_WRONG = get_reaction(0, 'Pos')
         EmoModule.REACT_NEG_RIGHT = get_reaction(1, 'Neg')
+        EmoModule.REACT_NONE_NONE = get_reaction(2, 'None')
+        EmoModule.REACT_NONE_WRONG = get_reaction(0, 'None')
         EmoModule.REACT_NONE_RIGHT = get_reaction(1, 'None')
+        EmoModule.REACT_POS_NONE = get_reaction(2, 'Pos')
+        EmoModule.REACT_POS_WRONG = get_reaction(0, 'Pos')
         EmoModule.REACT_POS_RIGHT = get_reaction(1, 'Pos')
 
         self.environment = Environment()
@@ -1106,11 +1124,14 @@ class MainWindow(QMainWindow):
             return (config.getboolean(name, 'surprise'),
                     config.get(name, 'emotion'),
                     config.getint(name, 'impulse'))
-
+        
+        EmoModule.REACT_NEG_NONE = get_config('React_Neg_None')
         EmoModule.REACT_NEG_WRONG = get_config('React_Neg_Wrong')
         EmoModule.REACT_NEG_RIGHT = get_config('React_Neg_Right')
+        EmoModule.REACT_NONE_NONE = get_config('React_None_None') 
         EmoModule.REACT_NONE_WRONG = get_config('React_None_Wrong')
         EmoModule.REACT_NONE_RIGHT = get_config('React_None_Right')
+        EmoModule.REACT_POS_NONE = get_config('React_Pos_None')
         EmoModule.REACT_POS_WRONG = get_config('React_Pos_Wrong')
         EmoModule.REACT_POS_RIGHT = get_config('React_Pos_Right')
 

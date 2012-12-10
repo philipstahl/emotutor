@@ -179,16 +179,20 @@ class EmoModule:
     WASABI_PORT_IN = 0
     WASABI_PORT_OUT = 0
 
+    REACT_NEG_NONE = (False, 'None', 0)
     REACT_NEG_WRONG = (False, 'None', 0)
     REACT_NEG_RIGHT = (True, 'Happy', 80)
+    REACT_NONE_NONE = (False, 'None', 0)
     REACT_NONE_WRONG = (False, 'None', -50)
     REACT_NONE_RIGHT = (False, 'None', 50)
+    REACT_POS_NONE = (False, 'None', 0)
     REACT_POS_WRONG = (True, 'Angry', -80)
     REACT_POS_RIGHT = (False, 'None', 30)
 
 
-    def __init__(self, marc=None, use_wasabi=False):
+    def __init__(self, marc=None, use_wasabi=False, logger=None):
         self.marc = marc
+        self.logger = logger
         
         self.use_wasabi = use_wasabi
         self.wasabi = WasabiListener(self.marc)
@@ -209,12 +213,12 @@ class EmoModule:
         emotion = 'None'
         impulse = 0
 
-        reactions = {'negative': {True: EmoModule.REACT_NEG_RIGHT,
-                                  False: EmoModule.REACT_NEG_WRONG},
-                     'none': {True: EmoModule.REACT_NONE_RIGHT,
-                              False: EmoModule.REACT_NONE_WRONG},
-                     'positive': {True:EmoModule.REACT_POS_RIGHT,
-                                  False:EmoModule.REACT_POS_WRONG}}
+        reactions = {'negative': {1: EmoModule.REACT_NEG_RIGHT,
+                                  0: EmoModule.REACT_NEG_WRONG},
+                     'none': {1: EmoModule.REACT_NONE_RIGHT,
+                              0: EmoModule.REACT_NONE_WRONG},
+                     'positive': {1:EmoModule.REACT_POS_RIGHT,
+                                  0:EmoModule.REACT_POS_WRONG}}
         surprise, emotion, impulse = reactions[expectation][correct]
 
         if surprise:
@@ -236,13 +240,13 @@ class EmoModule:
     def impulse(self, impulse):
         ''' Send the given impulse to wasabi.
         '''
-        print '    Wasabi:Impulse', impulse
+        self.logger.log('  Wasabi: Impulse {}'.format(impluse))
         self.send_to_wasabi("JohnDoe&IMPULSE&1&" + str(impulse))
 
     def trigger(self, emotion):
         ''' Trigger the given emotion in wasabi.
         '''
-        print '    Wasabi:Trigger', emotion.name
+        self.loggger.log('  Wasabi: Trigger {}'.format(emotion.name))
         self.send_to_wasabi("JohnDoe&TRIGGER&1&" + emotion.name)
 
     def send_to_wasabi(self, message):
@@ -252,7 +256,7 @@ class EmoModule:
 
     def show_static_emotion(self, emotion):
         if emotion:
-            print 'EMOMODULE: Show static emotion', emotion.name, emotion.impulse
+            self.logger.log('Show static emotion {} {}'.format(emotion.name, emotion.impulse))
             self.wasabi.show_static_emotion(emotion)
 
     def start_expressing(self):

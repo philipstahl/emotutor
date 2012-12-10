@@ -24,7 +24,8 @@ class CogModule:
     FUNCTION = 'baselevel'   # or 'optimized'
 
 
-    def __init__(self):
+    def __init__(self, logger):
+        self.logger = logger
         self.expectation = None
 
 
@@ -147,11 +148,9 @@ class CogModule:
         retrieval_prob = self.retrieval_probability(activation, CogModule.THRESHOLD, CogModule.NOISE)
         retrieval_latency = self.retrieval_latency(CogModule.LATENCY, activation)
         
-        #retrieval_prob = self.retrieval_prob(word.times)
-
         self.expectation = self.get_expectation_name(retrieval_prob)
 
-        print ('CogModule: Formulate expectation: {0}. {1:.2f}%. latency {2:.2f}s'.format(self.expectation, retrieval_prob, retrieval_latency))
+        self.logger.log('  Formulate expectation: prob={0:.2f}%. latency={1:.2f}s: {2}'.format(retrieval_prob, retrieval_latency, self.expectation))
 
         status = str(retrieval_prob) + ': '
         emotion = None
@@ -170,9 +169,10 @@ class CogModule:
         return (status, utilities.emotion_by_name(emotion))
 
 
-    def react(self, correct, times):
+    def resolve_expectation(self, correct, times):
         ''' Cognitive reaction to correctness and times of a given word.
         '''
+        print 'correct??', correct
         if self.expectation == 'negative':
             if correct:
                 return utilities.get_emotion_by_name(CogModule.EXPECT_NEG[2])

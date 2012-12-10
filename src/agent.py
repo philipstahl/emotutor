@@ -13,13 +13,13 @@ class Agent:
 
     INIT_EMOTION = 'None'
 
-    def __init__(self, use_wasabi):
-        self.marc = Marc()
-
-        self.emo_module = EmoModule(self.marc, use_wasabi)
-   
-        self.speech_module = SpeechModule()
-        self.cog_module = CogModule()
+    def __init__(self, use_wasabi, logger):
+        self.marc = Marc(logger)
+        self.emo_module = EmoModule(self.marc, use_wasabi, logger)
+        self.speech_module = SpeechModule(logger)
+        self.cog_module = CogModule(logger)
+        self.logger = logger
+        self.answer_given = False
 
     def start(self):
         ''' The agents reaction at the beginning of the training
@@ -61,10 +61,17 @@ class Agent:
 
         speech = self.speech_module.present_word(word, emotion)
         self.speak(speech)
+
+        self.answer_given = False
         return (str(emotion), expectation, speech.text)
 
 
     def present_number(self, number):
+
+        # Check if no answer has been given!
+        if not self.answer_given:
+            self.evaluate(number, -1)
+        
         emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_word(number, emotion)
         self.speak(speech)
@@ -96,6 +103,8 @@ class Agent:
             emotional and verbal evaluation
         '''
         print 'Agent: Evaluating answer ...'
+        self.answer_given = True
+        
         # cognitive evaluation: Determines surprise and intensity of emotion
         #expectation = self.cog_module.last_expectation
         expectation = 'none'

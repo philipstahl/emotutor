@@ -148,7 +148,8 @@ class SpeechModule:
         agent is defined.
     '''
 
-    def __init__(self):
+    def __init__(self, logger):
+        self.logger = logger
         self.tts = OpenMary()
 
     def introduce(self, emotion):

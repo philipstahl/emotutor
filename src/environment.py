@@ -110,26 +110,31 @@ class Environment:
         self.index = 0
         self.runs = 2
 
-        self.agent = Agent(use_wasabi)
         self.logger = Logger('logfile.csv')
+        self.agent = Agent(use_wasabi, self.logger)
         self.start_time = 0
+
+
+    def save_start_time(self):
+        self.start_time = utilities.milliseconds(datetime.datetime.now())
+        self.logger.log('Start time: ' + str(self.start_time))
+
 
     def start(self):
         ''' Show init text and wait for start button.
         '''
         return self.agent.start()
 
-    def introduce(self):
-        ''' Returns the introduction text for the presentation of the list of
-            words.
-        '''
-        return self.agent.introduce()
-
+    
     def present_word(self):
         if 0 <= self.index and self.index <= len(self.pairs):
             word = self.pairs[self.index].word
             number = self.pairs[self.index].number
             now = utilities.milliseconds(datetime.datetime.now())
+
+            self.logger.log('Task [{0} : {1}] @ {2:.2f}s'.format(
+                            word.word, number.word, (now - self.start_time)/1000))
+            
             self.pairs[self.index].word_called(now)
             return self.agent.present_word(word, number)
         else:
@@ -163,9 +168,9 @@ class Environment:
     def evaluate(self, received):
         ''' Show feedback of task and wait for next button
         '''
-        correct = False
+        correct = 0
         if received == self.pairs[self.index].number.word:
-            correct = True
+            correct = 1
                 
         now = utilities.milliseconds(datetime.datetime.now())
 
