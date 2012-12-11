@@ -195,7 +195,7 @@ class EmoModule:
         self.logger = logger
         
         self.use_wasabi = use_wasabi
-        self.wasabi = WasabiListener(self.marc)
+        self.wasabi = WasabiListener(self.marc, self.logger)
 
     def get_primary_emotion(self):
         ''' Returns the currently dominating emotion
@@ -223,7 +223,7 @@ class EmoModule:
                                   0:EmoModule.REACT_POS_WRONG,
                                   2:EmoModule.REACT_POS_NONE}}
         surprise, emotion, impulse = reactions[expectation][correct]
-
+        
         if surprise:
             self.trigger(Surprise())
 
@@ -243,7 +243,7 @@ class EmoModule:
     def impulse(self, impulse):
         ''' Send the given impulse to wasabi.
         '''
-        self.logger.log('  Wasabi: Impulse {}'.format(impluse))
+        self.logger.log('  Wasabi: Impulse {}'.format(impulse))
         self.send_to_wasabi("JohnDoe&IMPULSE&1&" + str(impulse))
 
     def trigger(self, emotion):
@@ -286,14 +286,17 @@ class WasabiListener():
     ''' Class for recieving input by WASABI
 
     '''
-    def __init__(self, marc):
+    def __init__(self, marc, logger):
         self.marc = marc
+        self.logger = logger
         self.count = 0
         self.emo_status = {'happy': 0, 'concentrated': 0, 'depressed': 0,
                            'sad': 0, 'angry': 0, 'annoyed': 0, 'bored': 0}
         self.hearing = False
         self.expressing = False
         self.static_emotion = None
+
+        self.dominating_emo = None
 
         self.thread = None
 
@@ -408,6 +411,12 @@ class WasabiListener():
 
         # Get dominating emotion:
         primary_emo = self.get_primary_emotion()
+        # Check for change:
+        if (not self.dominating_emo or (primary_emo and self.dominating_emo
+            and primary_emo.name != self.dominating_emo.name)):
+            self.logger.log('  Dominating emotion changed to {}'.format(primary_emo))
+            self.dominating_emo = primary_emo
+
         emotion = utilities.emotion_by_name(primary_emo.name)
 
         # Send to MARC:

@@ -17,7 +17,7 @@ class Marc:
                               socket.SOCK_DGRAM)
         self.sock_in.bind((Marc.IP, Marc.PORT_IN))
         self.logger = logger
-
+        
     def _perform(self, name, bml_code):
         ''' Performs the action specified in the bml code
         '''

@@ -53,7 +53,7 @@ class TestEnvironment:
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time
         '''
-        marc = Marc()
+        marc = Marc(Logger(path='', write=False))
         from threading import Thread
         import socket
         sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -99,16 +99,48 @@ class Environment:
             (hand, 5), (jack, 6), (king, 7), (lamb, 8), (mask, 9)
             (neck, 0), (pipe, 1), (guip, 2), (rope, 3), (sock, 4)
             (tent, 5), (vent, 6), (wall, 7), (xray, 8), (zinc, 9)
+
+
+
+             good_words =
+             'Baum,Bank,Bett,Bein,Blatt,Bus,Busch,Band,Bild,\
+             Carl,Chip,\
+             Damm,Dorf,Dampf,\
+             Frau,Fisch,Freund,\
+             Geld,\
+             Hand,Hemd,Herz,\
+             Jod, Jagd,Jahr,\
+             Kamm,Kopf,Kind,Knopf,\
+             Lamm,Land,Laub,Laus,\
+             Mann,Milch,Mond,Mann,Meer,\
+             Nacht,\
+             Pfeil,Pilz,Pfeil,Paar,Pfad,Pult,\
+             Quark,\
+             Rock,\
+             Schrank,Stift,Stuhl,Stern,Schuh,Stirn,Sieg,Stein,Schluss,Schatz,\
+             Tisch,Text,Taxi,Topf,\
+             Vers,Vieh,\
+             Wand,Wal,Wald,\
+             Zelt,Zink,Zahl'
+
+            
         '''
         
-        self.pairs = [Pair('Bank', '0'), Pair('Dorf', '1'),
-                      Pair('Dose', '2'), Pair('Erde', '3')] 
-                      #Pair('Fahrrad', '2'), Pair('Haus', '3')]
+        self.pairs = [Pair('Baum', '0'),
+                      Pair('Dorf', '1'),
+                      Pair('Frau', '2'),
+                      Pair('Kopf', '3'),
+                      Pair('Land', '4'),
+                      Pair('Mond', '5'),
+                      Pair('Paar', '6'),
+                      Pair('Stern', '7'),
+                      Pair('Wald', '8'),
+                      Pair('Zahl', '9')]
 
         random.shuffle(self.pairs)
 
         self.index = 0
-        self.runs = 2
+        self.runs = 3
 
         self.logger = Logger('logfile.csv')
         self.agent = Agent(use_wasabi, self.logger)
