@@ -214,13 +214,13 @@ class AssociatedPair(QWidget):
             self.waiting_for_answer = True
             QTimer.singleShot(4000, self.present_number)
         else:
-            if self.exp.runs > 0:
-                self.exp.runs = self.exp.runs -1
+            if self.exp.runs > 1:
                 self.exp.reset()
-                emotion, cog, speech = self.exp.present_word()
-                self.update_output(emotion, cog, speech)
-                self.waiting_for_answer = True
-                QTimer.singleShot(5000, self.present_number)
+                QTimer.singleShot(5000, self.present_word)
+                #emotion, cog, speech = self.exp.present_word()
+                #self.update_output(emotion, cog, speech)
+                #self.waiting_for_answer = True
+                #QTimer.singleShot(5000, self.present_number)
             else:
                 self.end()
 

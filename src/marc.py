@@ -10,7 +10,7 @@ class Marc:
     PORT_OUT = 4010
     PORT_IN = 4011
 
-    def __init__(self, logger):
+    def __init__(self, logger=None):
         self.sock_out = socket.socket(socket.AF_INET,
                                       socket.SOCK_DGRAM)
         self.sock_in = socket.socket(socket.AF_INET,
@@ -35,17 +35,29 @@ class Marc:
     def speak(self, speech):
         ''' Sends the BML Code for speacking the given wave file to MARC.
         '''
-        self.logger.log('  Marc: Say {0}'.format(speech.text))
+        if self.logger:
+            self.logger.log('  Marc: Say {0}'.format(speech.text))
         self._perform(speech.name, speech.get_bml_code())
 
+    def endRound(self, round_nr):
+        bml_code = '<bml id="Track_0"> \
+                    <marc:fork id="Track_0_fork_1"> \
+                    <marc:subtitles id="bml_item_2" align="DOWN" duration="5.0">' \
+                    + 'Ende Runde ' + str(round_nr) \
+                    + '</marc:subtitles></marc:fork></bml>'
+        self._perform('end round', bml_code)
+
+
     def headYes(self):
-        self.logger.log('  Marc: Shake head YES')
+        if self.logger:
+            self.logger.log('  Marc: Shake head YES')
         print 'MARC HEAD YES'
         self.headDown(wait=0.0, amount=0.1, interpolate=0.3)
         self.headClear(wait=0.3, interpolate=0.3)
 
     def headNo(self):
-        self.logger.log('  Marc: Shake head NO')
+        if self.logger:
+            self.logger.log('  Marc: Shake head NO')
         self.headClear(wait=0.0, interpolate=1.0)
         self.headLeft(wait=0.1, amount=0.2, interpolate=0.3)
         self.headClear(wait=0.3, interpolate=0.3)
@@ -175,6 +187,7 @@ if __name__ == '__main__':
     marc = Marc()
 
     marc.headNo()
+    marc.endRound(1)
 
     '''
     for word in words:

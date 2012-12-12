@@ -223,6 +223,7 @@ class EmoModule:
                                   0:EmoModule.REACT_POS_WRONG,
                                   2:EmoModule.REACT_POS_NONE}}
         surprise, emotion, impulse = reactions[expectation][correct]
+        self.logger.log('  Reaction: surprise:{}, emotion={}, impulse={}'.format(surprise, emotion, impulse))
         
         if surprise:
             self.trigger(Surprise())

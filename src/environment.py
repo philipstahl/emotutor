@@ -137,10 +137,14 @@ class Environment:
                       Pair('Wald', '8'),
                       Pair('Zahl', '9')]
 
+        self.pairs = [Pair('Baum', '0'),
+                      Pair('Frau', '2')]
+
         random.shuffle(self.pairs)
 
         self.index = 0
         self.runs = 3
+        self.total_runs = self.runs
 
         self.logger = Logger('logfile.csv')
         self.agent = Agent(use_wasabi, self.logger)
@@ -218,8 +222,11 @@ class Environment:
     def reset(self):
         ''' Reset the current word index to start
         '''
+        self.runs = self.runs - 1
         random.shuffle(self.pairs)
+        self.agent.marc.endRound(self.total_runs - self.runs)
         self.index = 0
+        
 
     def has_next(self):
         ''' Checks if words remains to present
