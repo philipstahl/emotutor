@@ -3,12 +3,18 @@ from emomodule import Happy, Concentrated, Bored, Annoyed, Angry, Fear, \
                       FearsConfirmed, Hope, Relief
 
 
+
+    
+
 def milliseconds(time):
     ''' Returns the given time in milli seconds.
     '''
     seconds = (time.second + 60 * time.minute + 60 * 60 * time.hour)
     milliseconds = seconds * 1000
     return time.microsecond / 100 + milliseconds
+
+def get_time():
+    return milliseconds(datetime.datetime.now())
 
 def emotion_by_name(name, impulse=100):
     ''' Returns an emotion object with the given impulse.

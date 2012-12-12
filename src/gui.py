@@ -3,6 +3,7 @@
 
 import sys
 import ConfigParser
+import datetime
 
 from PyQt4.QtGui import QWidget, QLabel, QLineEdit, QPushButton, QGridLayout, \
                         QBoxLayout, QMainWindow, QAction, QIcon, \
@@ -19,6 +20,7 @@ from marc import Marc
 from cogmodule import CogModule
 from speechmodule import OpenMary
 from speechrecognition import *
+import utilities
 
 DEBUG = False
 
@@ -193,8 +195,10 @@ class AssociatedPair(QWidget):
         self.answer_given(9)
 
     def answer_given(self, nr):
+       
         if self.waiting_for_answer:
-            self.exp.evaluate(str(nr))
+            #print '  @', now - self.exp.start_time, 'answer received: Took', now - self.exp.start_time_answer
+            self.exp.evaluate(str(nr), datetime.datetime.now())
 
             self.waiting_for_answer = False
 
@@ -208,25 +212,29 @@ class AssociatedPair(QWidget):
 
 
     def present_word(self):
+
         if self.exp.has_next():
-            emotion, cog, speech = self.exp.present_word()
+            
+            #print '@', now - self.exp.start_time, 'present word called'
+            
+            emotion, cog, speech = self.exp.present_word(datetime.datetime.now())
             self.update_output(emotion, cog, speech)
             self.waiting_for_answer = True
-            QTimer.singleShot(4000, self.present_number)
+            QTimer.singleShot(5000, self.present_number)
         else:
-            if self.exp.runs > 1:
+            if self.exp.current_run < self.exp.total_runs-1:
                 self.exp.reset()
-                QTimer.singleShot(5000, self.present_word)
-                #emotion, cog, speech = self.exp.present_word()
-                #self.update_output(emotion, cog, speech)
-                #self.waiting_for_answer = True
-                #QTimer.singleShot(5000, self.present_number)
+                QTimer.singleShot(10000, self.present_word)
             else:
                 self.end()
 
     def present_number(self):
+
+        
+        #print '@', now-self.exp.start_time, 'present number called'
+        
         self.waiting_for_answer = False
-        emotion, cog, speech = self.exp.present_number()
+        emotion, cog, speech = self.exp.present_number(datetime.datetime.now())
         self.update_output(emotion, cog, speech)
         QTimer.singleShot(5000, self.present_word)
 

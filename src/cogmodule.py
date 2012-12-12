@@ -169,7 +169,7 @@ class CogModule:
         return (status, utilities.emotion_by_name(emotion))
 
 
-    def resolve_expectation(self, correct, times):
+    def resolve_expectation(self, correct):
         ''' Cognitive reaction to correctness and times of a given word.
         '''
         reaction = 'none'

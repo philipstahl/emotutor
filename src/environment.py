@@ -29,7 +29,8 @@ class Word:
 class Pair:
     ''' Class representing a pair of a word associated with a number.
     '''
-    def __init__(self, word, number):
+    def __init__(self, nr, word, number):
+        self.nr = nr
         self.word = Word(word)
         self.number = Word(number)
         self.answers = []
@@ -125,7 +126,7 @@ class Environment:
 
             
         '''
-        
+        '''
         self.pairs = [Pair('Baum', '0'),
                       Pair('Dorf', '1'),
                       Pair('Frau', '2'),
@@ -136,24 +137,33 @@ class Environment:
                       Pair('Stern', '7'),
                       Pair('Wald', '8'),
                       Pair('Zahl', '9')]
+        '''
 
-        self.pairs = [Pair('Baum', '0'),
-                      Pair('Frau', '2')]
+        self.pairs = [Pair(1, 'Baum', '0'),
+                      Pair(2, 'Frau', '2')]
 
         random.shuffle(self.pairs)
 
         self.index = 0
-        self.runs = 3
-        self.total_runs = self.runs
+        self.current_run = 0
+        self.total_runs = 3
+        self.round_data = [[] for r in range(self.total_runs)]
 
-        self.logger = Logger('logfile.csv')
+        now = datetime.datetime.now()
+        log_name = 'log\log_' + str(now.hour) + '_' + str(now.minute) + '_' + str(now.second) + '.csv'
+        self.logger = Logger(log_name)
+
+        self.logger.save('task','word','number','answer','correct','responsetime','timestamp')
+
         self.agent = Agent(use_wasabi, self.logger)
         self.start_time = 0
+        self.start_time_answer = 0
+        self.answer_given = False
+
 
 
     def save_start_time(self):
-        self.start_time = utilities.milliseconds(datetime.datetime.now())
-        self.logger.log('Start time: ' + str(self.start_time))
+        self.start_time = datetime.datetime.now()
 
 
     def start(self):
@@ -162,59 +172,70 @@ class Environment:
         return self.agent.start()
 
     
-    def present_word(self):
-        if 0 <= self.index and self.index <= len(self.pairs):
+    def present_word(self, now):
+        '''
+        '''
+        time_delta = now-self.start_time
+        print time_delta, ': PRESENT WORD', time_delta.seconds
+        
+        if self.has_next():
             word = self.pairs[self.index].word
             number = self.pairs[self.index].number
-            now = utilities.milliseconds(datetime.datetime.now())
-
-            self.logger.log('\nTask [{0} : {1}] @ {2:.2f}s'.format(
-                            word.word, number.word, (now - self.start_time)/1000))
             
-            self.pairs[self.index].word_called(now)
+            self.logger.log('\nTask [{0} : {1}] @ {2}s'.format(
+                            word.word, number.word, time_delta))
+            
+            self.pairs[self.index].word_called(utilities.milliseconds(now))
+            self.start_time_answer = now
+            self.answer_given = False
+
             return self.agent.present_word(word, number)
         else:
             print 'Index Error'
 
-    def present_number(self):
+    def present_number(self, now):
+        '''
+        '''
+        time_delta = now-self.start_time
+        print time_delta, ': PRESENT NR', time_delta.seconds
+        # Check if answer has been given. If not evaluate.
+        if not self.answer_given:
+            self.logger.log('  No answer given')
+            self.evaluate('-1', now)        
+        
         if 0 <= self.index and self.index <= len(self.pairs):
             number = self.pairs[self.index].number
-            now = utilities.milliseconds(datetime.datetime.now())
-            self.pairs[self.index].number_called(now)
+            self.pairs[self.index].number_called(utilities.milliseconds(now))
             self.index += 1
+
             return self.agent.present_number(number)
         else:
             print 'Index Error'
 
 
-    def wait(self):
-        ''' Waits for user input and returns current emotional status
+    def evaluate(self, received, now):
+        ''' 
         '''
-        return self.agent.wait(self.words[self.index])
-
-    def check(self, received):
-        ''' Checks if the given word matches the current word in the list
-        '''
-        received = received.replace('\n', '')
-
-        return correct
-
-    def evaluate(self, received):
-        ''' Show feedback of task and wait for next button
-        '''
+        time_delta = now-self.start_time
+        print time_delta, 'EVALUATE', now-self.start_time_answer
+        self.answer_given = True
+        
         correct = 0
         if received == self.pairs[self.index].number.word:
             correct = 1
+        elif received == '-1':
+            correct = 2
                 
-        now = utilities.milliseconds(datetime.datetime.now())
-
         word = self.pairs[self.index].word
-        emotion, cog, speech = self.agent.evaluate(word, correct)
-        word.add(now)
+        number = self.pairs[self.index].number
+        emotion, cog, speech = self.agent.evaluate(correct)
 
-        # log answer:
-        time = now - word.time(0)
-        self.logger.save(word.word, received, correct, time)
+        # ADD OR ADD NOT??
+        #word.add(now)
+        log_correct = {0:0, 1:1, 2:0}[correct]
+        time = now - self.start_time_answer
+        self.round_data[self.current_run].append((correct, now-self.start_time_answer))
+        self.logger.save(self.pairs[self.index].nr, word.word, number.word, received, log_correct, now-self.start_time_answer, now-self.start_time)
 
         return (emotion, cog, speech)
 
@@ -222,9 +243,9 @@ class Environment:
     def reset(self):
         ''' Reset the current word index to start
         '''
-        self.runs = self.runs - 1
         random.shuffle(self.pairs)
-        self.agent.marc.endRound(self.total_runs - self.runs)
+        self.agent.marc.endRound(self.current_run+1)
+        self.current_run = self.current_run + 1
         self.index = 0
         
 
@@ -238,4 +259,24 @@ class Environment:
     def end(self):
         ''' Ends the trainig
         '''
+        print 'Round data:', self.round_data
+
+        # compute average:
+        average_data = []
+
+        for run in self.round_data:
+            correctness = 0.0
+            latency = 0.0
+            for item in run:
+                if item[0] == 1:
+                    correctness += 1
+                 
+                plus = item[1].seconds
+                print '+', plus
+                latency += plus
+                
+            average_data.append((correctness / len(self.pairs), latency / len(self.pairs)))
+
+            
+        print average_data
         return ('.', 'Experiment finished')

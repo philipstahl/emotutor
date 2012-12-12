@@ -19,7 +19,6 @@ class Agent:
         self.speech_module = SpeechModule(logger)
         self.cog_module = CogModule(logger)
         self.logger = logger
-        self.answer_given = False
 
     def start(self):
         ''' The agents reaction at the beginning of the training
@@ -62,17 +61,10 @@ class Agent:
         speech = self.speech_module.present_word(word, emotion)
         self.speak(speech)
 
-        self.answer_given = False
         return (str(emotion), expectation, speech.text)
 
 
-    def present_number(self, number):
-
-        # Check if no answer has been given!
-        if not self.answer_given:
-            self.logger.log('  No answer given')
-            self.evaluate(number, 2)
-        
+    def present_number(self, number):       
         emotion = self.emo_module.get_primary_emotion()
         speech = self.speech_module.present_word(number, emotion)
         self.speak(speech)
@@ -98,16 +90,15 @@ class Agent:
         '''
         self.marc.speak(speech)
         
-    def evaluate(self, word, correct):
+    def evaluate(self, correct):
         ''' Evalutes the given words regarding to its correctness and time.
             Return emotional and verbal output, based on the cognitve,
             emotional and verbal evaluation
         '''
-        self.answer_given = True
         
         # cognitive evaluation: Determines surprise and intensity of emotion
         expectation = self.cog_module.expectation
-        cog_react = self.cog_module.resolve_expectation(correct, word.times)
+        cog_react = self.cog_module.resolve_expectation(correct)
             
         # emotional evaluation:
         emotion = self.emo_module.check(correct, expectation)

@@ -16,7 +16,7 @@ class Logger:
         f.close()
 
     def log(self, log_string):
-        print log_string
+        #print log_string
         if not self.write:
             return
         
@@ -25,12 +25,12 @@ class Logger:
         exp_log.close()
 
 
-    def save(self, word, answer, correct, sec):
+    def save(self, nr, word, number, answer, correct, sec, timestamp):
         if not self.write:
             return
         
-        log_string = str(word) + ',' + str(answer) + ',' + str(correct) + ',' \
-                   + str(sec) + '\n'
+        log_string = str(nr) + ',' + str(word) + ',' + str(answer) + ',' + str(correct) + ',' \
+                   + str(sec) + ',' + str(timestamp) + '\n'
 
         log = open(self.path, 'a')
         if correct:
