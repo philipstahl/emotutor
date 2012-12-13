@@ -299,6 +299,8 @@ class WasabiListener():
 
         self.dominating_emo = None
 
+        self.log_wasabi=False
+
         self.thread = None
 
     def start(self):
@@ -318,6 +320,8 @@ class WasabiListener():
             print 'start hearing'
             while self.hearing:
                 data = sock_in.recvfrom(1024)[0]
+                if self.log_wasabi:
+                    self.logger.save_wasabi(data)
                 if self.expressing:
                     self.update_emo_status(data)
                 elif self.static_emotion:

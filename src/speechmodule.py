@@ -197,11 +197,14 @@ class SpeechModule:
         ''' The agents reaction at the beginning of the training
         '''
 
-        speech = Speech("introduction", "Willkommen zum Lernen von Wörtern.",
+        speech = Speech("introduction", "Willkommen zum Lernen von Wortpaaren.",
                         emotion)
         #if self.tts:
         #    self.tts.save_from_xml(speech)
         return speech
+
+    def get_text(self, text):
+        return Speech("text", text, None)
 
 
     def present_list(self, emotion):

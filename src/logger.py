@@ -2,12 +2,15 @@ class Logger:
 
     def __init__(self, path, write=True):
         self.path = path
+        self.wasabi = path.split('-')[0] + 'wasabi_' + path.split('-')[1]
+        
         self.exp_path = 'exp_log.txt'
         self.write = write
 
         if self.write:
             self.init_file(self.path)
             self.init_file(self.exp_path)
+            self.init_file(self.wasabi)
 
 
     def init_file(self, path):
@@ -25,17 +28,18 @@ class Logger:
         exp_log.close()
 
 
-    def save(self, nr, word, number, answer, correct, sec, timestamp):
+    def save(self, run, nr, word, number, answer, correct, sec, timestamp):
         if not self.write:
             return
         
-        log_string = str(nr) + ',' + str(word) + ',' + str(answer) + ',' + str(correct) + ',' \
+        log_string = str(run)+ ',' + str(nr) + ',' + str(word) + ',' + str(answer) + ',' + str(correct) + ',' \
                    + str(sec) + ',' + str(timestamp) + '\n'
 
         log = open(self.path, 'a')
-        if correct:
-            correct = 1
-        else:
-            correct = 0
         log.write(log_string)
+        log.close()
+
+    def save_wasabi(self, text):
+        log = open(self.wasabi, 'a')
+        log.write(text + '\n')
         log.close()

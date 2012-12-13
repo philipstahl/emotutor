@@ -35,6 +35,7 @@ class Agent:
             self.emo_module.show_static_emotion(inits[Agent.INIT_EMOTION])
 
         emotion = self.emo_module.get_primary_emotion()
+        emotion=None
 
         speech = self.speech_module.start_list(emotion)
         self.speak(speech)
@@ -44,14 +45,20 @@ class Agent:
         ''' The agent speaks the introduction text to present the list of words.
         '''
         emotion = self.emo_module.get_primary_emotion()
+        emotion=None
         speech = self.speech_module.present_list(emotion)
         self.speak(speech)
         return (str(emotion), '...', speech.text)
+
+    def say(self, text):
+        speech = self.speech_module.get_text(text)
+        self.speak(speech)
 
 
 
     def present_word(self, word, number):
         emotion = self.emo_module.get_primary_emotion()
+        emotion=None
 
         # formulate expection for number
         expectation, emo = self.cog_module.formulate_expectation(number)
@@ -66,6 +73,7 @@ class Agent:
 
     def present_number(self, number):       
         emotion = self.emo_module.get_primary_emotion()
+        emotion=None
         speech = self.speech_module.present_word(number, emotion)
         self.speak(speech)
         return (str(emotion), '...', speech.text)
@@ -102,6 +110,7 @@ class Agent:
             
         # emotional evaluation:
         emotion = self.emo_module.check(correct, expectation)
+        emotion=None
 
         if cog_react:
             self.emo_module.trigger(cog_react)

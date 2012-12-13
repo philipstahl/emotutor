@@ -30,7 +30,9 @@ class Marc:
             database of the selected agent.
 
         '''
-        self._perform(emotion.name, emotion.get_bml_code())
+        #print 'marc shows', emotion.name
+        #self._perform(emotion.name, emotion.get_bml_code())
+        pass
 
     def speak(self, speech):
         ''' Sends the BML Code for speacking the given wave file to MARC.
@@ -42,11 +44,19 @@ class Marc:
     def endRound(self, round_nr):
         bml_code = '<bml id="Track_0"> \
                     <marc:fork id="Track_0_fork_1"> \
-                    <marc:subtitles id="bml_item_2" align="DOWN" duration="5.0">' \
+                    <marc:subtitles id="bml_item_2" align="DOWN" duration="10.0">' \
                     + 'Ende Runde ' + str(round_nr) \
                     + '</marc:subtitles></marc:fork></bml>'
         self._perform('end round', bml_code)
 
+
+    def subtitle(self, text, duration='2.0'):
+        bml_code = '<bml id="Track_0"> \
+                    <marc:fork id="Track_0_fork_1"> \
+                    <marc:subtitles id="bml_item_2" align="DOWN" duration="'+duration+'">' \
+                    + str(text) \
+                    + '</marc:subtitles></marc:fork></bml>'
+        self._perform('end round', bml_code)
 
     def headYes(self):
         if self.logger:

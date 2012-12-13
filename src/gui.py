@@ -55,6 +55,7 @@ class AssociatedPair(QWidget):
         grammar.add_rule(NumberNineRule(self.answer_given))
 
         grammar.load()
+        self.training = True
 
         if DEBUG:
             self.emo_output = QLabel('')
@@ -117,7 +118,29 @@ class AssociatedPair(QWidget):
             emotion, cog, speech = self.exp.start()
             self.update_output(emotion, cog, speech)
             self.phase = 0
+            QTimer.singleShot(4000, self.second_introduction)
 
+    def second_introduction(self):
+
+        self.exp.agent.say('Bitte sprechen Sie die folgenden Zahlen nach.')
+        QTimer.singleShot(6000, self.train_number)
+
+    def train_number(self):
+        if self.exp.test_nr_index < len(self.exp.test_nr)-1:
+            self.exp.train_number()
+            QTimer.singleShot(3000, self.train_number)
+        else:
+            print 'training finished'
+            if self.exp.test_correct >= 9:
+                self.exp.agent.say('Alles richtig. Starten Sie den Test.')
+                print 'Alles ok'
+            else:
+                print 'Nochmal'
+                self.exp.test_correct = 0
+                self.exp.test_nr_index = -1
+                self.exp.agent.say('Mehr als ein Wort falsch. Noch ein Durchgang.')
+                QTimer.singleShot(6000, self.train_number)
+        
 
     def get_input_widget(self):
         # Nr layout:      
@@ -161,8 +184,9 @@ class AssociatedPair(QWidget):
     def start_button_clicked(self):
         self.start_button.hide()
         self.input_widget.show()
+        self.training = False
         self.exp.save_start_time()
-        self.present_word()
+        QTimer.singleShot(6000, self.present_word)
 
     def bu0_clicked(self):
         self.answer_given(0)
@@ -195,10 +219,13 @@ class AssociatedPair(QWidget):
         self.answer_given(9)
 
     def answer_given(self, nr):
+        if self.training:
+            self.exp.check_nr(str(nr))
+        else:
        
-        if self.waiting_for_answer:
-            #print '  @', now - self.exp.start_time, 'answer received: Took', now - self.exp.start_time_answer
-            self.exp.evaluate(str(nr), datetime.datetime.now())
+            if self.waiting_for_answer:
+                #print '  @', now - self.exp.start_time, 'answer received: Took', now - self.exp.start_time_answer
+                self.exp.evaluate(str(nr), datetime.datetime.now())
 
             self.waiting_for_answer = False
 

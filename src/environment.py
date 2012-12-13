@@ -138,32 +138,73 @@ class Environment:
                       Pair('Wald', '8'),
                       Pair('Zahl', '9')]
         '''
-
         self.pairs = [Pair(1, 'Baum', '0'),
-                      Pair(2, 'Frau', '2')]
+                     Pair(2, 'Chip', '1'),
+                     Pair(3, 'Dorf', '2'),
+                     Pair(4, 'Frau', '3'),
+                     Pair(5, 'Geld', '4'),
+                     Pair(6, 'Herz', '5'),
+                     Pair(7, 'Jahr', '6'),
+                     Pair(8, 'Kopf', '7'),
+                     Pair(9, 'Land', '8'),
+                     Pair(10, 'Mond', '9'),
+                     Pair(11, 'Nacht', '0'),
+                     Pair(12, 'Paar', '1'),
+                     Pair(13, 'Quark', '2'),
+                     Pair(14, 'Rock', '3'),
+                     Pair(15, 'Stuhl', '4'),
+                     Pair(16, 'Schrank', '5'),
+                     Pair(17, 'Tisch', '6'),
+                     Pair(18, 'Vieh', '7'),
+                     Pair(19, 'Wand', '8'),
+                     Pair(20, 'Zelt', '9')]
+
 
         random.shuffle(self.pairs)
 
         self.index = 0
         self.current_run = 0
-        self.total_runs = 3
+        self.total_runs = 8
         self.round_data = [[] for r in range(self.total_runs)]
 
         now = datetime.datetime.now()
-        log_name = 'log\log_' + str(now.hour) + '_' + str(now.minute) + '_' + str(now.second) + '.csv'
+        log_name = 'log\log-' + str(now.hour) + '_' + str(now.minute) + '_' + str(now.second) + '.csv'
         self.logger = Logger(log_name)
 
-        self.logger.save('task','word','number','answer','correct','responsetime','timestamp')
+        self.logger.save('run', 'task','word','number','answer','correct','responsetime','timestamp')
 
         self.agent = Agent(use_wasabi, self.logger)
         self.start_time = 0
         self.start_time_answer = 0
         self.answer_given = False
 
+        self.test_nr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        self.test_correct = 0
+        self.test_nr_index = -1
+
+
+    def train_number(self):
+        self.test_nr_index = self.test_nr_index + 1
+        self.agent.marc.subtitle(self.test_nr[self.test_nr_index])
+
+
+    def check_nr(self, received):
+        if received != str(self.test_nr[self.test_nr_index]):
+            self.agent.marc.headNo()
+            print 'received is false'
+        else:
+            self.agent.marc.headYes()
+            self.test_correct += 1
+            print 'recieved is corrrect'
+
+    def subtitle(self, text, duration='2.0'):
+        self.agent.marc.subtitle(text,duration)
 
 
     def save_start_time(self):
         self.start_time = datetime.datetime.now()
+        self.agent.emo_module.wasabi.log_wasabi=True
+        
 
 
     def start(self):
@@ -235,7 +276,7 @@ class Environment:
         log_correct = {0:0, 1:1, 2:0}[correct]
         time = now - self.start_time_answer
         self.round_data[self.current_run].append((correct, now-self.start_time_answer))
-        self.logger.save(self.pairs[self.index].nr, word.word, number.word, received, log_correct, now-self.start_time_answer, now-self.start_time)
+        self.logger.save(self.current_run, self.pairs[self.index].nr, word.word, number.word, received, log_correct, now-self.start_time_answer, now-self.start_time)
 
         return (emotion, cog, speech)
 
@@ -277,6 +318,7 @@ class Environment:
                 
             average_data.append((correctness / len(self.pairs), latency / len(self.pairs)))
 
-            
+        self.agent.emo_module.wasabi.log_wasabi=False
         print average_data
+        self.subtitle('Ende Experiment', duration='20.0')
         return ('.', 'Experiment finished')
