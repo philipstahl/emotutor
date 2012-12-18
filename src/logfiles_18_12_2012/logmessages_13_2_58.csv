@@ -1,0 +1,1683 @@
+  Marc: Say text_neutral: Bitte sprechen Sie die folgenden Zahlen nach. 
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Shake head YES
+  Marc: Say text_neutral: Alles richtig. Starten Sie den Test. 
+
+Task [Gans : 5] @ 0:00:05.997000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Gans 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 5 
+
+Task [Carl : 8] @ 0:00:16.013000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Carl 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 8 
+
+Task [Rot : 6] @ 0:00:26.027000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Rot 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 6 
+
+Task [Taxi : 3] @ 0:00:36.045000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Taxi 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 3 
+
+Task [Vers : 2] @ 0:00:46.057000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Vers 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 2 
+
+Task [Nuss : 9] @ 0:00:56.073000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Nuss 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 9 
+
+Task [Zink : 0] @ 0:01:06.088000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Zink 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 0 
+
+Task [Schuh : 4] @ 0:01:16.108000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Schuh 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 4 
+
+Task [Hemd : 4] @ 0:01:26.136000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Hemd 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 4 
+
+Task [Quarz : 7] @ 0:01:36.150000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Quarz 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 7 
+
+Task [Pilz : 8] @ 0:01:46.166000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Pilz 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 8 
+
+Task [Kind : 2] @ 0:01:56.184000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Kind 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 2 
+
+Task [Milch : 0] @ 0:02:06.198000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Milch 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 0 
+
+Task [Bein : 9] @ 0:02:16.211000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Bein 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 9 
+
+Task [Jagd : 3] @ 0:02:26.226000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Jagd 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 3 
+
+Task [Dampf : 7] @ 0:02:36.242000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Dampf 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 7 
+
+Task [Fisch : 6] @ 0:02:46.257000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Fisch 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 6 
+
+Task [Laub : 1] @ 0:02:56.273000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Laub 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 1 
+
+Task [Wald : 1] @ 0:03:06.288000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Wald 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 1 
+
+Task [Stern : 5] @ 0:03:16.302000s
+  Formulate expectation: prob=0.00% latency=0.00s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Stern 
+  No answer given
+  Reaction to expectation=negative and answer=2: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=0
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Say word_neutral: 5 
+
+Task [Wald : 1] @ 0:03:36.320000s
+  Formulate expectation: prob=92.86% latency=0.82s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Wald 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 1 
+
+Task [Nuss : 9] @ 0:03:46.333000s
+  Formulate expectation: prob=53.64% latency=2.75s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Nuss 
+  Reaction to expectation=negative and answer=0: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=-30
+  Wasabi: Impulse -30
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Shake head NO
+  Marc: Say word_neutral: 9 
+
+Task [Gans : 5] @ 0:03:56.349000s
+  Formulate expectation: prob=99.81% latency=0.13s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Gans 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 5 
+
+Task [Quarz : 7] @ 0:04:06.363000s
+  Formulate expectation: prob=51.05% latency=2.89s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Quarz 
+  Reaction to expectation=negative and answer=1: None
+  Reaction: surprise:True, emotion=Happy, impulse=80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger happy
+  Wasabi: Impulse 80
+  Marc: Shake head YES
+  Marc: Say word_happy: 7 
+
+Task [Bein : 9] @ 0:04:16.378000s
+  Formulate expectation: prob=73.10% latency=1.79s : (none,None)
+  Marc: Say word_happy: Bein 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 9 
+
+Task [Zink : 0] @ 0:04:26.394000s
+  Formulate expectation: prob=66.36% latency=2.10s : (none,None)
+  Marc: Say word_neutral: Zink 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 0 
+
+Task [Taxi : 3] @ 0:04:36.413000s
+  Formulate expectation: prob=99.88% latency=0.10s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Taxi 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_neutral: 3 
+
+Task [Dampf : 7] @ 0:04:46.424000s
+  Formulate expectation: prob=56.55% latency=2.59s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_angry: Dampf 
+  Reaction to expectation=negative and answer=0: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=-30
+  Wasabi: Impulse -30
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Shake head NO
+  Marc: Say word_angry: 7 
+
+Task [Stern : 5] @ 0:04:56.442000s
+  Formulate expectation: prob=99.97% latency=0.05s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Stern 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 5 
+
+Task [Fisch : 6] @ 0:05:06.454000s
+  Formulate expectation: prob=83.16% latency=1.33s : (none,None)
+  Marc: Say word_angry: Fisch 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 6 
+
+Task [Laub : 1] @ 0:05:16.470000s
+  Formulate expectation: prob=65.21% latency=2.16s : (none,None)
+  Marc: Say word_angry: Laub 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 1 
+
+Task [Carl : 8] @ 0:05:26.487000s
+  Formulate expectation: prob=33.84% latency=4.13s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_angry: Carl 
+  Reaction to expectation=negative and answer=1: None
+  Reaction: surprise:True, emotion=Happy, impulse=80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger happy
+  Wasabi: Impulse 80
+  Marc: Shake head YES
+  Marc: Say word_neutral: 8 
+
+Task [Rot : 6] @ 0:05:36.501000s
+  Formulate expectation: prob=74.50% latency=1.73s : (none,None)
+  Marc: Say word_neutral: Rot 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 6 
+
+Task [Vers : 2] @ 0:05:46.515000s
+  Formulate expectation: prob=64.29% latency=2.20s : (none,None)
+  Marc: Say word_neutral: Vers 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 2 
+
+Task [Jagd : 3] @ 0:05:56.532000s
+  Formulate expectation: prob=32.13% latency=4.30s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_happy: Jagd 
+  Reaction to expectation=negative and answer=0: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=-30
+  Wasabi: Impulse -30
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Shake head NO
+  Marc: Say word_neutral: 3 
+
+Task [Schuh : 4] @ 0:06:06.549000s
+  Formulate expectation: prob=25.07% latency=5.11s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Schuh 
+  Reaction to expectation=negative and answer=0: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=-30
+  Wasabi: Impulse -30
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Shake head NO
+  Marc: Say word_neutral: 4 
+
+Task [Milch : 0] @ 0:06:16.564000s
+  Formulate expectation: prob=42.20% latency=3.46s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Milch 
+  Reaction to expectation=negative and answer=0: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=-30
+  Wasabi: Impulse -30
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Shake head NO
+  Marc: Say word_neutral: 0 
+
+Task [Pilz : 8] @ 0:06:26.579000s
+  Formulate expectation: prob=92.40% latency=0.85s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Pilz 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 8 
+
+Task [Hemd : 4] @ 0:06:36.597000s
+  Formulate expectation: prob=90.17% latency=0.98s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Hemd 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 4 
+
+Task [Kind : 2] @ 0:06:46.623000s
+  Formulate expectation: prob=73.54% latency=1.77s : (none,None)
+  Marc: Say word_angry: Kind 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 2 
+
+Task [Vers : 2] @ 0:07:06.638000s
+  Formulate expectation: prob=96.46% latency=0.57s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Vers 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 2 
+
+Task [Stern : 5] @ 0:07:16.655000s
+  Formulate expectation: prob=99.56% latency=0.20s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Stern 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 5 
+
+Task [Quarz : 7] @ 0:07:26.670000s
+  Formulate expectation: prob=97.36% latency=0.49s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Quarz 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 7 
+
+Task [Dampf : 7] @ 0:07:36.684000s
+  Formulate expectation: prob=99.77% latency=0.14s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Dampf 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_neutral: 7 
+
+Task [Bein : 9] @ 0:07:46.699000s
+  Formulate expectation: prob=99.63% latency=0.18s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Bein 
+  No answer given
+  Reaction to expectation=positive and answer=2: None
+  Reaction: surprise:False, emotion=Angry, impulse=-50
+  Wasabi: Trigger angry
+  Wasabi: Impulse -50
+  Marc: Say word_angry: 9 
+
+Task [Schuh : 4] @ 0:07:56.716000s
+  Formulate expectation: prob=97.67% latency=0.46s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Schuh 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_angry: 4 
+
+Task [Laub : 1] @ 0:08:06.730000s
+  Formulate expectation: prob=98.10% latency=0.41s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Laub 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 1 
+
+Task [Zink : 0] @ 0:08:16.749000s
+  Formulate expectation: prob=56.68% latency=2.58s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Zink 
+  Reaction to expectation=negative and answer=1: None
+  Reaction: surprise:True, emotion=Happy, impulse=80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger happy
+  Wasabi: Impulse 80
+  Marc: Shake head YES
+  Marc: Say word_happy: 0 
+
+Task [Wald : 1] @ 0:08:26.762000s
+  Formulate expectation: prob=63.85% latency=2.22s : (none,None)
+  Marc: Say word_happy: Wald 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 1 
+
+Task [Kind : 2] @ 0:08:36.778000s
+  Formulate expectation: prob=99.87% latency=0.11s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Kind 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_neutral: 2 
+
+Task [Pilz : 8] @ 0:08:46.792000s
+  Formulate expectation: prob=80.59% latency=1.45s : (none,None)
+  Marc: Say word_neutral: Pilz 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 8 
+
+Task [Milch : 0] @ 0:08:56.809000s
+  Formulate expectation: prob=87.95% latency=1.09s : (none,None)
+  Marc: Say word_angry: Milch 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 0 
+
+Task [Rot : 6] @ 0:09:06.821000s
+  Formulate expectation: prob=97.59% latency=0.46s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Rot 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 6 
+
+Task [Hemd : 4] @ 0:09:16.838000s
+  Formulate expectation: prob=99.88% latency=0.10s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Hemd 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 4 
+
+Task [Gans : 5] @ 0:09:26.853000s
+  Formulate expectation: prob=66.71% latency=2.09s : (none,None)
+  Marc: Say word_angry: Gans 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 5 
+
+Task [Fisch : 6] @ 0:09:36.869000s
+  Formulate expectation: prob=79.61% latency=1.50s : (none,None)
+  Marc: Say word_angry: Fisch 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 6 
+
+Task [Carl : 8] @ 0:09:46.882000s
+  Formulate expectation: prob=92.35% latency=0.85s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Carl 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 8 
+
+Task [Jagd : 3] @ 0:09:56.898000s
+  Formulate expectation: prob=59.96% latency=2.42s : (negative,Fear)
+  Wasabi: Trigger fearful
+  Marc: Say word_neutral: Jagd 
+  Reaction to expectation=negative and answer=0: Fears-Confirmed
+  Reaction: surprise:False, emotion=None, impulse=-30
+  Wasabi: Impulse -30
+  Wasabi: Trigger FEARS-CONFIRMED
+  Marc: Shake head NO
+  Marc: Say word_angry: 3 
+
+Task [Nuss : 9] @ 0:10:06.913000s
+  Formulate expectation: prob=67.94% latency=2.03s : (none,None)
+  Marc: Say word_angry: Nuss 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 9 
+
+Task [Taxi : 3] @ 0:10:16.930000s
+  Formulate expectation: prob=85.97% latency=1.19s : (none,None)
+  Marc: Say word_angry: Taxi 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 3 
+
+Task [Carl : 8] @ 0:10:36.946000s
+  Formulate expectation: prob=94.97% latency=0.68s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Carl 
+  No answer given
+  Reaction to expectation=positive and answer=2: None
+  Reaction: surprise:False, emotion=Angry, impulse=-50
+  Wasabi: Trigger angry
+  Wasabi: Impulse -50
+  Marc: Say word_neutral: 8 
+
+Task [Stern : 5] @ 0:10:46.959000s
+  Formulate expectation: prob=84.99% latency=1.24s : (none,None)
+  Marc: Say word_angry: Stern 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 5 
+
+Task [Fisch : 6] @ 0:10:56.974000s
+  Formulate expectation: prob=89.34% latency=1.02s : (none,None)
+  Marc: Say word_angry: Fisch 
+  No answer given
+  Reaction to expectation=none and answer=2: none
+  Reaction: surprise:False, emotion=Angry, impulse=-20
+  Wasabi: Trigger angry
+  Wasabi: Impulse -20
+  Marc: Say word_angry: 6 
+
+Task [Rot : 6] @ 0:11:07.006000s
+  Formulate expectation: prob=99.97% latency=0.05s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Rot 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 6 
+
+Task [Bein : 9] @ 0:11:17.021000s
+  Formulate expectation: prob=87.73% latency=1.11s : (none,None)
+  Marc: Say word_neutral: Bein 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_neutral: 9 
+
+Task [Gans : 5] @ 0:11:27.035000s
+  Formulate expectation: prob=96.31% latency=0.58s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Gans 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 5 
+
+Task [Milch : 0] @ 0:11:37.051000s
+  Formulate expectation: prob=83.61% latency=1.31s : (none,None)
+  Marc: Say word_neutral: Milch 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 0 
+
+Task [Quarz : 7] @ 0:11:47.065000s
+  Formulate expectation: prob=96.41% latency=0.57s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Quarz 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 7 
+
+Task [Vers : 2] @ 0:11:57.081000s
+  Formulate expectation: prob=72.79% latency=1.81s : (none,None)
+  Marc: Say word_neutral: Vers 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 2 
+
+Task [Wald : 1] @ 0:12:07.096000s
+  Formulate expectation: prob=93.05% latency=0.81s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Wald 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 1 
+
+Task [Hemd : 4] @ 0:12:17.111000s
+  Formulate expectation: prob=95.04% latency=0.68s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Hemd 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 4 
+
+Task [Dampf : 7] @ 0:12:27.128000s
+  Formulate expectation: prob=78.27% latency=1.56s : (none,None)
+  Marc: Say word_happy: Dampf 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 7 
+
+Task [Kind : 2] @ 0:12:37.143000s
+  Formulate expectation: prob=76.68% latency=1.63s : (none,None)
+  Marc: Say word_neutral: Kind 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 2 
+
+Task [Nuss : 9] @ 0:12:47.158000s
+  Formulate expectation: prob=72.90% latency=1.80s : (none,None)
+  Marc: Say word_angry: Nuss 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 9 
+
+Task [Jagd : 3] @ 0:12:57.175000s
+  Formulate expectation: prob=99.11% latency=0.28s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Jagd 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 3 
+
+Task [Schuh : 4] @ 0:13:07.188000s
+  Formulate expectation: prob=80.24% latency=1.47s : (none,None)
+  Marc: Say word_angry: Schuh 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_angry: 4 
+
+Task [Laub : 1] @ 0:13:17.204000s
+  Formulate expectation: prob=61.22% latency=2.35s : (none,None)
+  Marc: Say word_angry: Laub 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_neutral: 1 
+
+Task [Zink : 0] @ 0:13:27.220000s
+  Formulate expectation: prob=98.99% latency=0.30s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Zink 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 0 
+
+Task [Pilz : 8] @ 0:13:37.239000s
+  Formulate expectation: prob=100.00% latency=0.01s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Pilz 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 8 
+
+Task [Taxi : 3] @ 0:13:47.268000s
+  Formulate expectation: prob=95.53% latency=0.64s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Taxi 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 3 
+
+Task [Gans : 5] @ 0:14:07.279000s
+  Formulate expectation: prob=97.71% latency=0.45s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Gans 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 5 
+
+Task [Dampf : 7] @ 0:14:17.295000s
+  Formulate expectation: prob=87.60% latency=1.11s : (none,None)
+  Marc: Say word_neutral: Dampf 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 7 
+
+Task [Carl : 8] @ 0:14:27.309000s
+  Formulate expectation: prob=99.89% latency=0.10s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Carl 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 8 
+
+Task [Pilz : 8] @ 0:14:37.325000s
+  Formulate expectation: prob=98.72% latency=0.34s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Pilz 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_neutral: 8 
+
+Task [Milch : 0] @ 0:14:47.340000s
+  Formulate expectation: prob=83.15% latency=1.33s : (none,None)
+  Marc: Say word_angry: Milch 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_neutral: 0 
+
+Task [Rot : 6] @ 0:14:57.358000s
+  Formulate expectation: prob=89.98% latency=0.99s : (none,None)
+  Marc: Say word_neutral: Rot 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_neutral: 6 
+
+Task [Hemd : 4] @ 0:15:07.371000s
+  Formulate expectation: prob=80.92% latency=1.44s : (none,None)
+  Marc: Say word_neutral: Hemd 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 4 
+
+Task [Laub : 1] @ 0:15:17.387000s
+  Formulate expectation: prob=97.20% latency=0.50s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Laub 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 1 
+
+Task [Jagd : 3] @ 0:15:27.402000s
+  Formulate expectation: prob=99.85% latency=0.12s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Jagd 
+  No answer given
+  Reaction to expectation=positive and answer=2: None
+  Reaction: surprise:False, emotion=Angry, impulse=-50
+  Wasabi: Trigger angry
+  Wasabi: Impulse -50
+  Marc: Say word_neutral: 3 
+
+Task [Kind : 2] @ 0:15:37.417000s
+  Formulate expectation: prob=96.33% latency=0.58s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Kind 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 2 
+
+Task [Stern : 5] @ 0:15:47.433000s
+  Formulate expectation: prob=99.31% latency=0.25s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Stern 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 5 
+
+Task [Nuss : 9] @ 0:15:57.449000s
+  Formulate expectation: prob=83.24% latency=1.33s : (none,None)
+  Marc: Say word_angry: Nuss 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_neutral: 9 
+
+Task [Vers : 2] @ 0:16:07.464000s
+  Formulate expectation: prob=87.36% latency=1.12s : (none,None)
+  Marc: Say word_neutral: Vers 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_neutral: 2 
+
+Task [Bein : 9] @ 0:16:17.478000s
+  Formulate expectation: prob=92.31% latency=0.85s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Bein 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 9 
+
+Task [Schuh : 4] @ 0:16:27.494000s
+  Formulate expectation: prob=92.00% latency=0.87s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Schuh 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 4 
+
+Task [Zink : 0] @ 0:16:37.510000s
+  Formulate expectation: prob=99.47% latency=0.22s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Zink 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 0 
+
+Task [Fisch : 6] @ 0:16:47.524000s
+  Formulate expectation: prob=94.67% latency=0.70s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Fisch 
+  No answer given
+  Reaction to expectation=positive and answer=2: None
+  Reaction: surprise:False, emotion=Angry, impulse=-50
+  Wasabi: Trigger angry
+  Wasabi: Impulse -50
+  Marc: Say word_neutral: 6 
+
+Task [Quarz : 7] @ 0:16:57.539000s
+  Formulate expectation: prob=98.66% latency=0.35s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Quarz 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 7 
+
+Task [Wald : 1] @ 0:17:07.554000s
+  Formulate expectation: prob=98.49% latency=0.37s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Wald 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 1 
+
+Task [Taxi : 3] @ 0:17:17.570000s
+  Formulate expectation: prob=72.54% latency=1.82s : (none,None)
+  Marc: Say word_neutral: Taxi 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 3 
+
+Task [Gans : 5] @ 0:17:37.585000s
+  Formulate expectation: prob=99.02% latency=0.29s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Gans 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 5 
+
+Task [Nuss : 9] @ 0:17:47.601000s
+  Formulate expectation: prob=95.15% latency=0.67s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Nuss 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 9 
+
+Task [Stern : 5] @ 0:17:57.616000s
+  Formulate expectation: prob=99.95% latency=0.06s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Stern 
+  No answer given
+  Reaction to expectation=positive and answer=2: None
+  Reaction: surprise:False, emotion=Angry, impulse=-50
+  Wasabi: Trigger angry
+  Wasabi: Impulse -50
+  Marc: Say word_neutral: 5 
+
+Task [Taxi : 3] @ 0:18:07.630000s
+  Formulate expectation: prob=99.75% latency=0.15s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Taxi 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 3 
+
+Task [Dampf : 7] @ 0:18:17.646000s
+  Formulate expectation: prob=78.97% latency=1.53s : (none,None)
+  Marc: Say word_neutral: Dampf 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 7 
+
+Task [Vers : 2] @ 0:18:27.664000s
+  Formulate expectation: prob=99.83% latency=0.12s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Vers 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 2 
+
+Task [Hemd : 4] @ 0:18:37.677000s
+  Formulate expectation: prob=92.99% latency=0.81s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Hemd 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 4 
+
+Task [Bein : 9] @ 0:18:47.692000s
+  Formulate expectation: prob=88.91% latency=1.04s : (none,None)
+  Marc: Say word_neutral: Bein 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 9 
+
+Task [Quarz : 7] @ 0:18:57.706000s
+  Formulate expectation: prob=92.19% latency=0.86s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Quarz 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 7 
+
+Task [Fisch : 6] @ 0:19:07.721000s
+  Formulate expectation: prob=93.64% latency=0.77s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Fisch 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 6 
+
+Task [Rot : 6] @ 0:19:17.739000s
+  Formulate expectation: prob=89.91% latency=0.99s : (none,None)
+  Marc: Say word_happy: Rot 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 6 
+
+Task [Jagd : 3] @ 0:19:27.754000s
+  Formulate expectation: prob=100.00% latency=0.02s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Jagd 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 3 
+
+Task [Kind : 2] @ 0:19:37.771000s
+  Formulate expectation: prob=93.48% latency=0.78s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Kind 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 2 
+
+Task [Zink : 0] @ 0:19:47.786000s
+  Formulate expectation: prob=95.82% latency=0.62s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Zink 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 0 
+
+Task [Schuh : 4] @ 0:19:57.799000s
+  Formulate expectation: prob=97.34% latency=0.49s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Schuh 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 4 
+
+Task [Carl : 8] @ 0:20:07.814000s
+  Formulate expectation: prob=91.66% latency=0.89s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Carl 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 8 
+
+Task [Laub : 1] @ 0:20:17.829000s
+  Formulate expectation: prob=81.25% latency=1.42s : (none,None)
+  Marc: Say word_happy: Laub 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 1 
+
+Task [Milch : 0] @ 0:20:27.844000s
+  Formulate expectation: prob=88.17% latency=1.08s : (none,None)
+  Marc: Say word_happy: Milch 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 0 
+
+Task [Wald : 1] @ 0:20:37.859000s
+  Formulate expectation: prob=98.28% latency=0.39s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Wald 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 1 
+
+Task [Pilz : 8] @ 0:20:47.875000s
+  Formulate expectation: prob=87.63% latency=1.11s : (none,None)
+  Marc: Say word_happy: Pilz 
+  No answer given
+  Reaction to expectation=none and answer=2: none
+  Reaction: surprise:False, emotion=Angry, impulse=-20
+  Wasabi: Trigger angry
+  Wasabi: Impulse -20
+  Marc: Say word_neutral: 8 
+
+Task [Pilz : 8] @ 0:21:07.889000s
+  Formulate expectation: prob=98.21% latency=0.40s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Pilz 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 8 
+
+Task [Taxi : 3] @ 0:21:17.904000s
+  Formulate expectation: prob=96.39% latency=0.57s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Taxi 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 3 
+
+Task [Milch : 0] @ 0:21:27.920000s
+  Formulate expectation: prob=99.92% latency=0.08s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Milch 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 0 
+
+Task [Quarz : 7] @ 0:21:37.936000s
+  Formulate expectation: prob=86.36% latency=1.17s : (none,None)
+  Marc: Say word_neutral: Quarz 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 7 
+
+Task [Wald : 1] @ 0:21:47.950000s
+  Formulate expectation: prob=91.97% latency=0.87s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Wald 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 1 
+
+Task [Zink : 0] @ 0:21:57.967000s
+  Formulate expectation: prob=96.78% latency=0.54s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Zink 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 0 
+
+Task [Carl : 8] @ 0:22:07.982000s
+  Formulate expectation: prob=96.80% latency=0.54s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Carl 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 8 
+
+Task [Laub : 1] @ 0:22:17.996000s
+  Formulate expectation: prob=93.42% latency=0.78s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Laub 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 1 
+
+Task [Schuh : 4] @ 0:22:28.013000s
+  Formulate expectation: prob=94.74% latency=0.70s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Schuh 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 4 
+
+Task [Vers : 2] @ 0:22:38.027000s
+  Formulate expectation: prob=99.80% latency=0.13s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Vers 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 2 
+
+Task [Dampf : 7] @ 0:22:48.044000s
+  Formulate expectation: prob=95.68% latency=0.63s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Dampf 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 7 
+
+Task [Fisch : 6] @ 0:22:58.056000s
+  Formulate expectation: prob=99.79% latency=0.14s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Fisch 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 6 
+
+Task [Rot : 6] @ 0:23:08.073000s
+  Formulate expectation: prob=86.84% latency=1.15s : (none,None)
+  Marc: Say word_happy: Rot 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 6 
+
+Task [Gans : 5] @ 0:23:18.090000s
+  Formulate expectation: prob=87.77% latency=1.10s : (none,None)
+  Marc: Say word_happy: Gans 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 5 
+
+Task [Jagd : 3] @ 0:23:28.105000s
+  Formulate expectation: prob=98.78% latency=0.33s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Jagd 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 3 
+
+Task [Hemd : 4] @ 0:23:38.120000s
+  Formulate expectation: prob=81.90% latency=1.39s : (none,None)
+  Marc: Say word_happy: Hemd 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 4 
+
+Task [Nuss : 9] @ 0:23:48.134000s
+  Formulate expectation: prob=92.99% latency=0.81s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Nuss 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 9 
+
+Task [Stern : 5] @ 0:23:58.148000s
+  Formulate expectation: prob=83.38% latency=1.32s : (none,None)
+  Marc: Say word_happy: Stern 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_happy: 5 
+
+Task [Kind : 2] @ 0:24:08.164000s
+  Formulate expectation: prob=98.21% latency=0.40s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Kind 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 2 
+
+Task [Bein : 9] @ 0:24:18.179000s
+  Formulate expectation: prob=94.08% latency=0.74s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Bein 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 9 
+
+Task [Vers : 2] @ 0:24:38.195000s
+  Formulate expectation: prob=99.78% latency=0.14s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Vers 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 2 
+
+Task [Jagd : 3] @ 0:24:48.210000s
+  Formulate expectation: prob=94.44% latency=0.72s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Jagd 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 3 
+
+Task [Rot : 6] @ 0:24:58.228000s
+  Formulate expectation: prob=99.98% latency=0.05s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Rot 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 6 
+
+Task [Zink : 0] @ 0:25:08.240000s
+  Formulate expectation: prob=90.37% latency=0.96s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Zink 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 0 
+
+Task [Laub : 1] @ 0:25:18.255000s
+  Formulate expectation: prob=97.01% latency=0.52s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Laub 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 1 
+
+Task [Pilz : 8] @ 0:25:28.270000s
+  Formulate expectation: prob=99.69% latency=0.16s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Pilz 
+  No answer given
+  Reaction to expectation=positive and answer=2: None
+  Reaction: surprise:False, emotion=Angry, impulse=-50
+  Wasabi: Trigger angry
+  Wasabi: Impulse -50
+  Marc: Say word_neutral: 8 
+
+Task [Wald : 1] @ 0:25:38.288000s
+  Formulate expectation: prob=99.91% latency=0.09s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Wald 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 1 
+
+Task [Gans : 5] @ 0:25:48.300000s
+  Formulate expectation: prob=86.33% latency=1.18s : (none,None)
+  Marc: Say word_neutral: Gans 
+  Reaction to expectation=none and answer=1: none
+  Reaction: surprise:False, emotion=None, impulse=50
+  Wasabi: Impulse 50
+  Marc: Shake head YES
+  Marc: Say word_happy: 5 
+
+Task [Fisch : 6] @ 0:25:58.317000s
+  Formulate expectation: prob=87.14% latency=1.14s : (none,None)
+  Marc: Say word_neutral: Fisch 
+  Reaction to expectation=none and answer=0: none
+  Reaction: surprise:False, emotion=None, impulse=-50
+  Wasabi: Impulse -50
+  Marc: Shake head NO
+  Marc: Say word_neutral: 6 
+
+Task [Nuss : 9] @ 0:26:08.333000s
+  Formulate expectation: prob=99.85% latency=0.11s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Nuss 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 9 
+
+Task [Taxi : 3] @ 0:26:18.349000s
+  Formulate expectation: prob=91.22% latency=0.92s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Taxi 
+  Reaction to expectation=positive and answer=0: None
+  Reaction: surprise:True, emotion=Angry, impulse=-80
+  Wasabi: Trigger surprised
+  Wasabi: Trigger angry
+  Wasabi: Impulse -80
+  Marc: Shake head NO
+  Marc: Say word_angry: 3 
+
+Task [Dampf : 7] @ 0:26:28.364000s
+  Formulate expectation: prob=91.05% latency=0.93s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_angry: Dampf 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 7 
+
+Task [Milch : 0] @ 0:26:38.381000s
+  Formulate expectation: prob=99.37% latency=0.24s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Milch 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 0 
+
+Task [Bein : 9] @ 0:26:48.393000s
+  Formulate expectation: prob=92.60% latency=0.84s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Bein 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_neutral: 9 
+
+Task [Kind : 2] @ 0:26:58.408000s
+  Formulate expectation: prob=98.00% latency=0.42s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Kind 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 2 
+
+Task [Schuh : 4] @ 0:27:08.424000s
+  Formulate expectation: prob=97.50% latency=0.47s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_neutral: Schuh 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 4 
+
+Task [Stern : 5] @ 0:27:18.441000s
+  Formulate expectation: prob=94.35% latency=0.72s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Stern 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 5 
+
+Task [Carl : 8] @ 0:27:28.453000s
+  Formulate expectation: prob=90.96% latency=0.93s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Carl 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 8 
+
+Task [Quarz : 7] @ 0:27:38.469000s
+  Formulate expectation: prob=93.89% latency=0.75s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Quarz 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 7 
+
+Task [Hemd : 4] @ 0:27:48.486000s
+  Formulate expectation: prob=94.21% latency=0.73s : (positive,Hope)
+  Wasabi: Trigger HOPE
+  Marc: Say word_happy: Hemd 
+  Reaction to expectation=positive and answer=1: Relief
+  Reaction: surprise:False, emotion=None, impulse=30
+  Wasabi: Impulse 30
+  Wasabi: Trigger RELIEF
+  Marc: Shake head YES
+  Marc: Say word_happy: 4 
