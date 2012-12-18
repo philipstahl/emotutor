@@ -30,15 +30,13 @@ class Marc:
             database of the selected agent.
 
         '''
-        #print 'marc shows', emotion.name
-        #self._perform(emotion.name, emotion.get_bml_code())
-        pass
+        self._perform(emotion.name, emotion.get_bml_code())
 
     def speak(self, speech):
         ''' Sends the BML Code for speacking the given wave file to MARC.
         '''
         if self.logger:
-            self.logger.log('  Marc: Say {0}'.format(speech.text))
+            self.logger.log('  Marc: Say {}: {} '.format(speech.name, speech.text))
         self._perform(speech.name, speech.get_bml_code())
 
     def endRound(self, round_nr):
@@ -186,20 +184,19 @@ if __name__ == '__main__':
              Wand,Wal,Wald,\
              Zelt,Zink,Zahl'
 
-    good_words = 'Xanten,Yeti'
+    good_words = 'Bein,Carl,Dampf,Fisch,Gans,Hemd,Jagd,Kind,Laub,Milch,Nuss,Pilz,Quarz,Rot,Stern,Schuh,Taxi,Vers,Wald,Zink'
     
     words = good_words.split(',')
-
 
     import time
     #from emomodule import Happy, Angry
     from speechmodule import Speech
     marc = Marc()
 
-    marc.headNo()
-    marc.endRound(1)
+    #marc.headNo()
+    #marc.endRound(1)
 
-    '''
+
     for word in words:
         #speech_happy = Speech('test', word, Happy())
         speech_neutral = Speech('test', word, None)
@@ -210,4 +207,3 @@ if __name__ == '__main__':
         time.sleep(2)
         #marc.speak(speech_angry)
         #time.sleep(2)
-    '''

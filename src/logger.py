@@ -4,7 +4,7 @@ class Logger:
         self.path = path
         self.wasabi = path.split('-')[0] + 'wasabi_' + path.split('-')[1]
         
-        self.exp_path = 'exp_log.txt'
+        self.exp_path = path.split('-')[0] + 'messages_' + path.split('-')[1]
         self.write = write
 
         if self.write:
@@ -19,7 +19,7 @@ class Logger:
         f.close()
 
     def log(self, log_string):
-        #print log_string
+        print log_string
         if not self.write:
             return
         
@@ -32,7 +32,7 @@ class Logger:
         if not self.write:
             return
         
-        log_string = str(run)+ ',' + str(nr) + ',' + str(word) + ',' + str(answer) + ',' + str(correct) + ',' \
+        log_string = str(run)+ ',' + str(nr) + ',' + str(word) + ',' + str(number) + ',' + str(answer) + ',' + str(correct) + ',' \
                    + str(sec) + ',' + str(timestamp) + '\n'
 
         log = open(self.path, 'a')

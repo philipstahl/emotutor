@@ -28,7 +28,8 @@ class Speech:
             if emotion.name == 'happy':
                 self.emotion = 'happy'
             if emotion.name == 'annoyed':
-                self.emotion = 'sad'
+                #self.emotion = 'sad'
+                self.emotion = 'angry'
             if emotion.name == 'angry':
                 self.emotion = 'angry'
         self.name = name + '_' + self.emotion

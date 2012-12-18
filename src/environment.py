@@ -54,7 +54,7 @@ class TestEnvironment:
     def test(self, emotion, iterations):
         ''' Simulate a facial expression for a certain time
         '''
-        marc = Marc(Logger(path='', write=False))
+        marc = Marc(Logger(path='log/test-log', write=False))
         from threading import Thread
         import socket
         sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -67,7 +67,9 @@ class TestEnvironment:
             '''
             count = 0
             while iterations > 0:
+                print 'start receiving'
                 sock_in.recvfrom(1024)[0]
+                print 'RECEIVED!'
                 if count >= emotion.FREQUENCE:
                     print 'Test: Marc shows', emotion.name, emotion.marc, emotion.intensity
                     marc.show(emotion)
@@ -138,7 +140,7 @@ class Environment:
                       Pair('Wald', '8'),
                       Pair('Zahl', '9')]
         '''
-        self.pairs = [Pair(1, 'Baum', '0'),
+        self.pairs1 = [Pair(1, 'Baum', '0'),
                      Pair(2, 'Chip', '1'),
                      Pair(3, 'Dorf', '2'),
                      Pair(4, 'Frau', '3'),
@@ -158,6 +160,27 @@ class Environment:
                      Pair(18, 'Vieh', '7'),
                      Pair(19, 'Wand', '8'),
                      Pair(20, 'Zelt', '9')]
+
+        self.pairs = [Pair(1, 'Bein',  '9'),
+                     Pair(2, 'Carl',  '8'),
+                     Pair(3, 'Dampf', '7'),
+                     Pair(4, 'Fisch', '6'),
+                     Pair(5, 'Gans',  '5'),
+                     Pair(6, 'Hemd',  '4'),
+                     Pair(7, 'Jagd',  '3'),
+                     Pair(8, 'Kind',  '2'),
+                     Pair(9, 'Laub',  '1'),
+                     Pair(10, 'Milch', '0'),
+                     Pair(11, 'Nuss',  '9'),
+                     Pair(12, 'Pilz',  '8'),
+                     Pair(13, 'Quarz', '7'),
+                     Pair(14, 'Rot',   '6'),
+                     Pair(15, 'Stern', '5'),
+                     Pair(16, 'Schuh', '4'),
+                     Pair(17, 'Taxi',  '3'),
+                     Pair(18, 'Vers',  '2'),
+                     Pair(19, 'Wald',  '1'),
+                     Pair(20, 'Zink',  '0')]
 
 
         random.shuffle(self.pairs)
@@ -206,10 +229,10 @@ class Environment:
         self.agent.emo_module.wasabi.log_wasabi=True
         
 
-
     def start(self):
         ''' Show init text and wait for start button.
         '''
+        print 'started!'
         return self.agent.start()
 
     

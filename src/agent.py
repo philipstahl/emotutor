@@ -27,25 +27,26 @@ class Agent:
             the rules of the task.
 
         '''
-        self.emo_module.start_hearing()
+        print 'Agent started'
+        
         if Agent.INIT_EMOTION == 'Wasabi':
             self.emo_module.start_expressing()
         else:
             inits = {'Happy': Happy(), 'Neutral': None, 'Angry': Angry()}
             self.emo_module.show_static_emotion(inits[Agent.INIT_EMOTION])
 
-        emotion = self.emo_module.get_primary_emotion()
-        emotion=None
+        self.emo_module.start_hearing()
 
-        speech = self.speech_module.start_list(emotion)
-        self.speak(speech)
-        return (str(emotion), '...', speech.text)
+        emotion = self.emo_module.get_primary_emotion()
+        
+        #speech = self.speech_module.start_list(emotion)
+        #self.speak(speech)
+        return (str(emotion), '...', '')
 
     def introduce(self):
         ''' The agent speaks the introduction text to present the list of words.
         '''
         emotion = self.emo_module.get_primary_emotion()
-        emotion=None
         speech = self.speech_module.present_list(emotion)
         self.speak(speech)
         return (str(emotion), '...', speech.text)
@@ -58,8 +59,7 @@ class Agent:
 
     def present_word(self, word, number):
         emotion = self.emo_module.get_primary_emotion()
-        emotion=None
-
+        
         # formulate expection for number
         expectation, emo = self.cog_module.formulate_expectation(number)
         if emo:
@@ -73,7 +73,7 @@ class Agent:
 
     def present_number(self, number):       
         emotion = self.emo_module.get_primary_emotion()
-        emotion=None
+
         speech = self.speech_module.present_word(number, emotion)
         self.speak(speech)
         return (str(emotion), '...', speech.text)

@@ -91,8 +91,8 @@ class AssociatedPair(QWidget):
             self.exp = Environment(use_wasabi)
             self.waiting_for_answer = False
 
-            emotion, cog, speech = self.exp.start()
-            self.update_output(emotion, cog, speech)
+            #emotion, cog, speech = self.exp.start()
+            #self.update_output(emotion, cog, speech)
             self.phase = 0
         else:
             self.speech_output = QLabel('')
@@ -115,8 +115,8 @@ class AssociatedPair(QWidget):
             self.exp = Environment(use_wasabi)
             self.waiting_for_answer = False
 
-            emotion, cog, speech = self.exp.start()
-            self.update_output(emotion, cog, speech)
+            #emotion, cog, speech = self.exp.start()
+            #self.update_output(emotion, cog, speech)
             self.phase = 0
             QTimer.singleShot(4000, self.second_introduction)
 
@@ -186,6 +186,7 @@ class AssociatedPair(QWidget):
         self.input_widget.show()
         self.training = False
         self.exp.save_start_time()
+        self.exp.start()
         QTimer.singleShot(6000, self.present_word)
 
     def bu0_clicked(self):

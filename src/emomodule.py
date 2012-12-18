@@ -233,6 +233,7 @@ class EmoModule:
                 self.trigger(utilities.emotion_by_name(emotion))
 
             if impulse != 0:
+                print 'IMPULSE IS NEG', impulse
                 self.impulse(impulse)
         else:
             self.show_static_emotion(utilities.emotion_by_name(emotion, impulse))
@@ -306,16 +307,17 @@ class WasabiListener():
     def start(self):
         ''' Starts the thread and waits for WASABI messages
         '''
+        print 'Listener started'
         self.hearing = True
         def run():
             ''' Wait for wasabi messages. Everytime one is received, update
                 current emotional status.
             '''
+            print 'THREAD STARTET'
             sock_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             #sock_in.bind((EmoModule.WASABI_IP, EmoModule.WASABI_PORT_OUT))
             #sock_in.bind(('192.168.0.46', EmoModule.WASABI_PORT_OUT))
             sock_in.bind(('132.230.17.153', EmoModule.WASABI_PORT_OUT))
-
 
             print 'start hearing'
             while self.hearing:
@@ -419,7 +421,7 @@ class WasabiListener():
         # Check for change:
         if (not self.dominating_emo or (primary_emo and self.dominating_emo
             and primary_emo.name != self.dominating_emo.name)):
-            self.logger.log('  Dominating emotion changed to {}'.format(primary_emo))
+            #self.logger.log('  Dominating emotion changed to {}'.format(primary_emo))
             self.dominating_emo = primary_emo
 
         emotion = utilities.emotion_by_name(primary_emo.name)
